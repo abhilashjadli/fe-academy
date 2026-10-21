@@ -162,13 +162,13 @@ a:hover {
 
 /* colour-locked tokens in prose and maths */
 .tok-truth {
-  color: var(--truth);
+  color: var(--truth-text);
 }
 .tok-approx {
-  color: var(--approx);
+  color: var(--approx-text);
 }
 .tok-error {
-  color: var(--error);
+  color: var(--error-text);
 }
 .tok-ghost {
   color: var(--ghost);
@@ -468,13 +468,13 @@ a:hover {
   fill: var(--ink-2);
 }
 .plot .label.truth {
-  fill: var(--truth);
+  fill: var(--truth-text);
 }
 .plot .label.approx {
-  fill: var(--approx);
+  fill: var(--approx-text);
 }
 .plot .label.error {
-  fill: var(--error);
+  fill: var(--error-text);
 }
 .plot .curve {
   fill: none;

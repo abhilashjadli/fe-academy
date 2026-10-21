@@ -1,16 +1,15 @@
 import { useMemo, useState } from "react";
-import { FUNCTIONS, bsCurve, coefficients, sample, taylor, type TaylorFn } from "../../../engine/taylor";
+import { FUNCTIONS, coefficients, sample, taylor, type TaylorFn } from "../../../engine/taylor";
 import { Figure } from "../../../ui/Figure";
 import { Band, Curve, Marker, Plot, Tip, VLine, fmt } from "../../../ui/Plot";
 import { Segmented, Stepper } from "../../../ui/controls";
 import { M } from "../../../ui/Math";
 
-type FnId = "cos" | "exp" | "ln" | "sqrt1p" | "bs";
-const BS = bsCurve();
-const LIB: Record<FnId, TaylorFn> = { ...FUNCTIONS, bs: BS } as Record<FnId, TaylorFn>;
-const Y_DOMAIN: Record<FnId, [number, number]> = { cos: [-2.2, 2.2], exp: [-2, 12], ln: [-3, 2], sqrt1p: [-0.5, 2.5], bs: [-2, 60] };
-const MAX_N: Record<FnId, number> = { cos: 10, exp: 10, ln: 12, sqrt1p: 10, bs: 3 };
-const X_LABEL: Record<FnId, string> = { cos: "x", exp: "x", ln: "x", sqrt1p: "x", bs: "S" };
+type FnId = "cos" | "exp" | "ln" | "sqrt1p";
+const LIB: Record<FnId, TaylorFn> = FUNCTIONS as Record<FnId, TaylorFn>;
+const Y_DOMAIN: Record<FnId, [number, number]> = { cos: [-2.2, 2.2], exp: [-2, 12], ln: [-3, 2], sqrt1p: [-0.5, 2.5] };
+const MAX_N: Record<FnId, number> = { cos: 10, exp: 10, ln: 12, sqrt1p: 10 };
+const X_LABEL: Record<FnId, string> = { cos: "x", exp: "x", ln: "x", sqrt1p: "x" };
 
 function termTex(k: number, c: number, a: number, varName: string, highlight: boolean): string {
   const h = a === 0 ? varName : `(${varName} - ${fmtA(a)})`;
@@ -38,13 +37,13 @@ export function F4BuildUp() {
   const poly = useMemo(() => sample((x) => taylor(f, nn, a, x), x0, x1, 241), [fn, nn]);
   const ghost = useMemo(() => (nn > 0 ? sample((x) => taylor(f, nn - 1, a, x), x0, x1, 241) : null), [fn, nn]);
   const cs = coefficients(f, nn, a);
-  const varName = fn === "bs" ? "S" : "x";
+  const varName = "x";
   const prefix = cs.map((c, k) => termTex(k, c, a, varName, k === nn)).join("");
 
-  const px = probe ?? (fn === "bs" ? 118 : fn === "ln" ? 2.2 : 1.5);
+  const px = probe ?? (fn === "ln" ? 2.2 : 1.5);
   const fv = f.deriv(0, px);
   const pv = taylor(f, nn, a, px);
-  const fm = fn === "bs" ? fmt.n(2) : fmt.n(4);
+  const fm = fmt.n(4);
 
   return (
     <Figure
@@ -69,7 +68,6 @@ export function F4BuildUp() {
               { id: "exp", label: "eˣ" },
               { id: "ln", label: "ln x" },
               { id: "sqrt1p", label: "√(1+x)" },
-              { id: "bs", label: "option V(S)" },
             ]}
           />
           <Stepper label="terms n" value={nn} min={0} max={MAX_N[fn]} onChange={setN} />
@@ -88,7 +86,6 @@ export function F4BuildUp() {
       observe={
         <>
           The shaded band is the gap. It is tiny near the centre and grows with distance; every added term pushes the edge of "tiny" outward. The ghost is the previous polynomial, so you can see exactly what the newest term bought.
-          {fn === "bs" && <> For the option curve only three derivatives are supplied — Δ, Γ and the third one, called speed — which is also how far a risk report goes.</>}
         </>
       }
     >

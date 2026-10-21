@@ -19,6 +19,10 @@
   --truth-soft: rgba(47, 91, 234, 0.12);
   --approx-soft: rgba(184, 110, 0, 0.14);
   --error-soft: rgba(200, 50, 95, 0.14);
+  /* text wearing a role colour: same as the mark in light, lighter in dark */
+  --truth-text: var(--truth);
+  --approx-text: var(--approx);
+  --error-text: var(--error);
 
   --accent: var(--truth);
   --focus: #2f5bea;
@@ -43,8 +47,8 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --surface: #10151c;
-    --surface-figure: #141922;
-    --surface-raised: #1a2029;
+    --surface-figure: #161b22;
+    --surface-raised: #1c222b;
     --ink: #e6eaf0;
     --ink-2: #aeb7c3;
     --ink-3: #7f8a98;
@@ -55,18 +59,21 @@
     --truth: #5f80f5;
     --approx: #bf841c;
     --error: #e6617f;
-    --ghost: #5d6775;
+    --ghost: #7f8a98;
     --truth-soft: rgba(95, 128, 245, 0.18);
     --approx-soft: rgba(191, 132, 28, 0.2);
     --error-soft: rgba(230, 97, 127, 0.2);
+    --truth-text: #b4c3ff;
+    --approx-text: #e0a63a;
+    --error-text: #ff8aa6;
     --focus: #8fa6ff;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --surface: #10151c;
-  --surface-figure: #141922;
-  --surface-raised: #1a2029;
+  --surface-figure: #161b22;
+  --surface-raised: #1c222b;
   --ink: #e6eaf0;
   --ink-2: #aeb7c3;
   --ink-3: #7f8a98;
@@ -77,10 +84,13 @@
   --truth: #5f80f5;
   --approx: #bf841c;
   --error: #e6617f;
-  --ghost: #5d6775;
+  --ghost: #7f8a98;
   --truth-soft: rgba(95, 128, 245, 0.18);
   --approx-soft: rgba(191, 132, 28, 0.2);
   --error-soft: rgba(230, 97, 127, 0.2);
+  --truth-text: #b4c3ff;
+  --approx-text: #e0a63a;
+  --error-text: #ff8aa6;
   --focus: #8fa6ff;
   color-scheme: dark;
 }

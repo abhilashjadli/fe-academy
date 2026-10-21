@@ -1,5 +1,4 @@
 import { M } from "../../ui/Math";
-import { F0Opening } from "./figures/F0Opening";
 import { F1Knobs } from "./figures/F1Knobs";
 import { F2Derive } from "./figures/F2Derive";
 import { F3Table } from "./figures/F3Table";
@@ -7,7 +6,6 @@ import { F4BuildUp } from "./figures/F4BuildUp";
 import { F5Centre } from "./figures/F5Centre";
 import { F6Converge } from "./figures/F6Converge";
 import { F7Zoom } from "./figures/F7Zoom";
-import { F8Ladder } from "./figures/F8Ladder";
 
 export function TaylorChapter() {
   return (
@@ -16,25 +14,17 @@ export function TaylorChapter() {
         <p className="chapter-id">Chapter 0.1 · Foundations</p>
         <h1>Taylor series: derivatives at one point buy you the curve nearby</h1>
         <p className="standfirst">
-          A position's value is a curve. A risk report is a short polynomial pretending to be that curve. This chapter is about why the pretence works, how far it
-          works, and where the ½ comes from.
+          Most functions are awkward to compute and easy to differentiate. A Taylor series turns a few derivatives, measured at a single point, into a
+          polynomial that stands in for the function near that point. This chapter is about why that works, how far it works, and where the ½ comes from.
         </p>
-        <p className="assumes">Assumes you can differentiate: power rule, chain rule, derivatives of sin, cos and eˣ. Nothing about markets is assumed.</p>
+        <p className="assumes">Assumes you can differentiate: power rule, chain rule, derivatives of sin, cos and eˣ. That is all.</p>
       </header>
-
-      <F0Opening />
 
       <div className="prose">
         <p>
-          The curve above is the value of a position as the market moves. Nobody on a trading desk re-computes that whole curve every time the market
-          ticks; they carry a handful of numbers measured at today's level — a slope, a bend — and use those to say what happens next. The straight line is
-          the first of those numbers at work; the parabola is the second. For a small move both are fine, for a large one the line drifts off while the bend
-          stays close, and for a very large one even the bend gives up.
-        </p>
-        <p>
-          That is the entire idea. Measure a few derivatives <em>at one point</em>, and you can reconstruct the function <em>near</em> that point. The
-          cleanest way to see how is to try it by hand on a curve you know well. Here is <span className="tok-truth">cos x</span> and a polynomial with three
-          free numbers.
+          Polynomials are the functions a computer, or a person with a pencil, can actually evaluate: multiply, add, done. <span className="tok-truth">cos x</span>{" "}
+          is not one of them. So here is a question: can a polynomial with three free numbers be made to behave like cos x — at least near x = 0? Try it
+          before reading on. The three sliders set the three numbers; the table reports how close you are.
         </p>
       </div>
 
@@ -103,9 +93,8 @@ export function TaylorChapter() {
       <div className="prose">
         <p>
           So "more terms" is not a free lunch; it works inside a radius and fails outside, and the radius is set by the nearest trouble spot of the function.
-          For most of what this library does — option values as a function of the stock price, say — the functions are well behaved and the practical
-          question is a different one: <em>how good is the approximation for the moves I actually care about?</em> That is a question about the first term
-          left out, and it has a clean answer.
+          For most functions you will meet the practical question is a different one: <em>how good is the approximation for the step I actually care
+          about?</em> That is a question about the first term left out, and it has a clean answer.
         </p>
       </div>
 
@@ -113,21 +102,29 @@ export function TaylorChapter() {
 
       <div className="prose">
         <p>
-          The error of the n-th polynomial shrinks like the (n + 1)-th power of the step. That one line is the budget for every approximation in this library:
-          it says why a first-order hedge is fine for small moves and not for large ones, and why adding the second-order term buys an extra power of
-          accuracy. Which brings us back to the curve we started with.
+          The error of the n-th polynomial shrinks like the (n + 1)-th power of the step. That one line is the budget for every approximation built from
+          derivatives: it says why a first-order estimate is fine for small steps and not for large ones, and why adding the second-order term buys an extra
+          power of accuracy.
         </p>
       </div>
-
-      <F8Ladder />
 
       <div className="ending">
         <p>
           A few derivatives at one point — height, slope, bend, each divided by its factorial — rebuild a function in a neighbourhood of that point, and the
-          first term you leave out tells you how large the neighbourhood is. In this firm the point is today's market, the derivatives are the Greeks, and the
-          polynomial is the risk report. Everything else on this page is the same idea with the names changed.
+          first term you leave out tells you how large the neighbourhood is. Everything else on this page is that one sentence, drawn.
         </p>
         <details className="prose" style={{ marginTop: "1rem" }}>
+          <summary className="links" style={{ cursor: "pointer" }}>
+            Where you will meet this again
+          </summary>
+          <p className="footnote" style={{ marginTop: "0.6em" }}>
+            The value of a financial position is a curve in the market level, and the numbers a risk desk carries about it — slope, bend, and the rate of
+            change in time — are exactly the Taylor coefficients of that curve; they are called the Greeks and are the subject of chapter C4. The one place
+            the recipe on this page needs amending is for functions of a random, jagged input, where the second-order term refuses to vanish even for tiny
+            steps; that is Itô's lemma, chapter B4.
+          </p>
+        </details>
+        <details className="prose" style={{ marginTop: "0.5rem" }}>
           <summary className="links" style={{ cursor: "pointer" }}>
             What computes the figures on this page
           </summary>
@@ -141,14 +138,10 @@ taylor(f, n, a, x):
   for k = n down to 0: acc = acc * (x - a) + coefficient(f, k, a)
   return acc
 
-// the option curve supplies V, Δ = ∂V/∂S, Γ = ∂²V/∂S² analytically
-// (Black-Scholes; engine/blackscholes.ts, tested against a Python answer key)`}
+// each function supplies its n-th derivative analytically (engine/taylor.ts),
+// tested against an independent Python answer key`}
           </pre>
         </details>
-        <p className="links" style={{ marginTop: "1rem" }}>
-          Continue with <a href="#/">C4 Greeks I</a> (the coefficients, named and interlocked) · <a href="#/">D1 Delta hedging</a> (this table as a P&amp;L) ·{" "}
-          <a href="#/">B4 Itô's lemma</a> (when the second-order term will not vanish).
-        </p>
       </div>
     </article>
   );
