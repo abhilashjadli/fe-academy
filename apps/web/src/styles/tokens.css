@@ -1,0 +1,86 @@
+/* FE Library — design tokens. Light is the default; dark is a selected set, not a flip. */
+:root {
+  --surface: #f4f6f8;
+  --surface-figure: #fcfcfb;
+  --surface-raised: #ffffff;
+  --ink: #1b2430;
+  --ink-2: #4b5665;
+  --ink-3: #7a8594;
+  --rule: #d6dbe2;
+  --rule-soft: #e7eaef;
+  --grid: #e3e7ec;
+  --axis: #9aa3af;
+
+  /* figure roles — validated (dataviz validator, light surface) */
+  --truth: #2f5bea;
+  --approx: #b86e00;
+  --error: #c8325f;
+  --ghost: #9aa3af;
+  --truth-soft: rgba(47, 91, 234, 0.12);
+  --approx-soft: rgba(184, 110, 0, 0.14);
+  --error-soft: rgba(200, 50, 95, 0.14);
+
+  --accent: var(--truth);
+  --focus: #2f5bea;
+
+  --font-prose: "Newsreader Variable", Georgia, "Times New Roman", serif;
+  --font-ui: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --measure: 68ch;
+  --figure-max: 920px;
+  --radius: 4px;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --surface: #10151c;
+    --surface-figure: #141922;
+    --surface-raised: #1a2029;
+    --ink: #e6eaf0;
+    --ink-2: #aeb7c3;
+    --ink-3: #7f8a98;
+    --rule: #2b333e;
+    --rule-soft: #222932;
+    --grid: #1f2630;
+    --axis: #5d6775;
+    --truth: #5f80f5;
+    --approx: #bf841c;
+    --error: #e6617f;
+    --ghost: #5d6775;
+    --truth-soft: rgba(95, 128, 245, 0.18);
+    --approx-soft: rgba(191, 132, 28, 0.2);
+    --error-soft: rgba(230, 97, 127, 0.2);
+    --focus: #8fa6ff;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #10151c;
+  --surface-figure: #141922;
+  --surface-raised: #1a2029;
+  --ink: #e6eaf0;
+  --ink-2: #aeb7c3;
+  --ink-3: #7f8a98;
+  --rule: #2b333e;
+  --rule-soft: #222932;
+  --grid: #1f2630;
+  --axis: #5d6775;
+  --truth: #5f80f5;
+  --approx: #bf841c;
+  --error: #e6617f;
+  --ghost: #5d6775;
+  --truth-soft: rgba(95, 128, 245, 0.18);
+  --approx-soft: rgba(191, 132, 28, 0.2);
+  --error-soft: rgba(230, 97, 127, 0.2);
+  --focus: #8fa6ff;
+  color-scheme: dark;
+}
