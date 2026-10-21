@@ -18,3 +18,9 @@ Catalogue entry format (use everywhere):
 - Our chapters that could use it: <ids> — <how>
 - Notes on execution (what makes it work, pitfalls): <...>
 ```
+
+## Re-creating the source checkouts in a new session
+
+The 3Blue1Brown scene paths cited throughout are relative to a shallow clone of the public repo:
+`GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/3b1b/videos /home/claude/3b1b/videos`
+(pinned at commit 306a1346 on 2026-10-21). Books are in the Project's files, not in this repo.
