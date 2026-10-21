@@ -232,3 +232,19 @@ export const fmt = {
   sci: format(".2e"),
   pct: (d = 1) => format(`.${d}%`),
 };
+
+/** Bars centred at x with width w (data units) from the baseline y=0 (or from y0) to y. */
+export function Bars({ bars, role = "approx", opacity = 0.85, gap = 1 }: { bars: Array<{ x: number; y: number; w: number; y0?: number }>; role?: Role; opacity?: number; gap?: number }) {
+  const { x, y } = usePlot();
+  return (
+    <g>
+      {bars.map((b, i) => {
+        const x0 = x(b.x - b.w / 2) + gap / 2;
+        const x1 = x(b.x + b.w / 2) - gap / 2;
+        const yTop = y(Math.max(b.y, b.y0 ?? 0));
+        const yBot = y(Math.min(b.y, b.y0 ?? 0));
+        return <rect key={i} className={`marker ${role}`} x={x0} y={yTop} width={Math.max(0.5, x1 - x0)} height={Math.max(0, yBot - yTop)} style={{ opacity, stroke: "none" }} />;
+      })}
+    </g>
+  );
+}

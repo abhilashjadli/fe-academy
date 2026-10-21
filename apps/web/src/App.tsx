@@ -2,9 +2,11 @@ import { useEffect, useState, type ComponentType } from "react";
 import { SYLLABUS } from "./syllabus";
 import { Index } from "./Index";
 import { TaylorChapter } from "./chapters/0.1-taylor/Chapter";
+import { NormalChapter } from "./chapters/0.2-normal/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
+  "0.2": NormalChapter,
 };
 
 function useHashRoute() {

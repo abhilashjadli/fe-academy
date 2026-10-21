@@ -15,7 +15,7 @@ export const SYLLABUS: Track[] = [
     title: "Foundations made interactive",
     chapters: [
       { id: "0.1", title: "Taylor series", built: true },
-      { id: "0.2", title: "Counting, the binomial and the normal" },
+      { id: "0.2", title: "Counting, the binomial and the normal", built: true },
     ],
   },
   {
