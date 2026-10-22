@@ -1,7 +1,10 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useNarration } from "./narration";
 
 export interface Step {
   caption: ReactNode;
+  /** optional text to read aloud; defaults to the caption's text */
+  speak?: string;
 }
 
 interface Props {
@@ -14,11 +17,13 @@ interface Props {
 
 /**
  * Button-driven step-through: Back / Reset / Forward, "step i of n", the caption changes per step,
- * the body does one thing per click. Keyboard: ← → Home.
+ * the body does one thing per click. Keyboard: ← → Home. Optional voice reads each caption.
  */
 export function StepThrough({ steps, render, onStep }: Props) {
   const [i, setI] = useState(0);
   const n = steps.length;
+  const narration = useNarration();
+  const capRef = useRef<HTMLDivElement>(null);
   const go = (j: number) => {
     const k = Math.max(0, Math.min(n - 1, j));
     setI(k);
@@ -26,7 +31,15 @@ export function StepThrough({ steps, render, onStep }: Props) {
   };
   useEffect(() => {
     onStep?.(i);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useEffect(() => {
+    if (!narration.enabled) return;
+    const text = steps[i].speak ?? capRef.current?.textContent ?? "";
+    if (text) narration.speak(text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [i, narration.enabled]);
+  useEffect(() => () => narration.stop(), []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div
       className="steps"
@@ -42,7 +55,9 @@ export function StepThrough({ steps, render, onStep }: Props) {
         <div className="step-n">
           Step {i + 1} of {n}
         </div>
-        <div className="step-text">{steps[i].caption}</div>
+        <div className="step-text" ref={capRef}>
+          {steps[i].caption}
+        </div>
         <div className="steps-nav">
           <button type="button" className="btn" disabled={i === 0} onClick={() => go(i - 1)}>
             Back
@@ -53,6 +68,11 @@ export function StepThrough({ steps, render, onStep }: Props) {
           <button type="button" className="btn primary" disabled={i === n - 1} onClick={() => go(i + 1)}>
             Forward
           </button>
+          {narration.available && (
+            <button type="button" className={"btn step-voice " + (narration.enabled ? "toggled" : "")} aria-pressed={narration.enabled} onClick={() => narration.toggle()} title="read each step aloud">
+              {narration.enabled ? "Voice on" : "Voice"}
+            </button>
+          )}
         </div>
       </div>
     </div>

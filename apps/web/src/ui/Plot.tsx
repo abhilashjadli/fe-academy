@@ -1,7 +1,7 @@
 import { scaleLinear, type ScaleLinear } from "d3-scale";
 import { line as d3line, area as d3area, curveMonotoneX, curveLinear } from "d3-shape";
 import { format } from "d3-format";
-import { createContext, useContext, useMemo, useRef, type PointerEvent, type ReactNode } from "react";
+import { createContext, useContext, useId, useMemo, useRef, type PointerEvent, type ReactNode } from "react";
 
 export type Pt = [number, number];
 export type Role = "truth" | "approx" | "error" | "ghost" | "ink";
@@ -34,6 +34,10 @@ interface PlotProps {
   onDrag?: (x: number, y: number, phase: "down" | "move" | "up") => void;
   onHover?: (x: number | null, y: number | null) => void;
   ariaLabel?: string;
+  /** where to draw the vertical axis line (default: at x = 0 clamped into the domain) */
+  axisX?: number;
+  /** where to draw the horizontal axis line (default: at y = 0 clamped into the domain) */
+  axisY?: number;
 }
 
 const fmtTick = format("~g");
@@ -53,12 +57,15 @@ export function Plot({
   onDrag,
   onHover,
   ariaLabel,
+  axisX,
+  axisY,
 }: PlotProps) {
   const inner = { left: margin.left, top: margin.top, width: width - margin.left - margin.right, height: height - margin.top - margin.bottom };
   const x = useMemo(() => scaleLinear().domain(xDomain).range([inner.left, inner.left + inner.width]), [xDomain[0], xDomain[1], inner.left, inner.width]);
   const y = useMemo(() => scaleLinear().domain(yDomain).range([inner.top + inner.height, inner.top]), [yDomain[0], yDomain[1], inner.top, inner.height]);
   const svgRef = useRef<SVGSVGElement>(null);
   const pressed = useRef(false);
+  const clipId = useId().replace(/:/g, "") + "-clip";
 
   const toData = (e: PointerEvent<SVGSVGElement>) => {
     const svg = svgRef.current!;
@@ -70,8 +77,8 @@ export function Plot({
 
   const xt = x.ticks(xTicks);
   const yt = y.ticks(yTicks);
-  const x0 = Math.max(xDomain[0], Math.min(xDomain[1], 0));
-  const y0 = Math.max(yDomain[0], Math.min(yDomain[1], 0));
+  const x0 = axisX ?? Math.max(xDomain[0], Math.min(xDomain[1], 0));
+  const y0 = axisY ?? Math.max(yDomain[0], Math.min(yDomain[1], 0));
 
   return (
     <svg
@@ -135,10 +142,10 @@ export function Plot({
             </text>
           )}
         </g>
-        <clipPath id="plot-clip">
+        <clipPath id={clipId}>
           <rect x={inner.left} y={inner.top} width={inner.width} height={inner.height} />
         </clipPath>
-        <g clipPath="url(#plot-clip)">{children}</g>
+        <g clipPath={`url(#${clipId})`}>{children}</g>
       </Ctx.Provider>
     </svg>
   );

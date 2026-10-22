@@ -2,6 +2,10 @@
 
 One line per decision, newest first. Product decisions in the charter are not repeated here.
 
+- 2026-10-22 — **Animation + voice machinery** added for all chapters: `ui/Timeline` (scrubbable segments with synced captions, speed, part buttons) and `ui/narration` (browser speech synthesis read-aloud, one global toggle remembered per browser; the timeline holds a segment's last frame until its narration ends). A studio voice (recorded audio) can replace speech synthesis behind the same `speak/stop/speaking` interface later.
+- 2026-10-22 — **Story-led openings are allowed in track A onward** (A1 opens on two savers), consistent with the foundations rule: finance *objects* (balances, returns) may carry a chapter, finance *jargon* arrives after the mathematics.
+- 2026-10-22 — Bug fixed in `ui/Plot`: clip-path ids were shared across plots on a page; now unique per plot (`useId`). Labels get a surface-coloured halo.
+
 - 2026-10-21 — **House style (sponsor, after playing 0.1 v2): inline-live figures are the default feel; step-through where a derivation or algorithm needs it. No ceiling on form** — animation, narrated clips, built-up relatable examples and anything else are welcome when they teach the idea best.
 
 - 2026-10-21 — **Foundations chapters (track 0, and the maths-only parts of A and B) are taught as mathematics.** No market framing in the opening or the body; the finance connection goes in a short, collapsed "Where you will meet this again" note at the end. (Sponsor review of 0.1 v1: the market opening made a refresher carry two unknowns at once.)

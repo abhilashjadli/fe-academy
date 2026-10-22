@@ -3,10 +3,12 @@ import { SYLLABUS } from "./syllabus";
 import { Index } from "./Index";
 import { TaylorChapter } from "./chapters/0.1-taylor/Chapter";
 import { NormalChapter } from "./chapters/0.2-normal/Chapter";
+import { LognormalChapter } from "./chapters/A1-lognormal/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
   "0.2": NormalChapter,
+  A1: LognormalChapter,
 };
 
 function useHashRoute() {

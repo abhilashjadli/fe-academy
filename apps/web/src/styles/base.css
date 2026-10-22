@@ -466,6 +466,10 @@ a:hover {
 .plot .label {
   font-size: 12px;
   fill: var(--ink-2);
+  paint-order: stroke;
+  stroke: var(--surface-figure);
+  stroke-width: 3px;
+  stroke-linejoin: round;
 }
 .plot .label.truth {
   fill: var(--truth-text);
@@ -655,4 +659,49 @@ a:hover {
     transition: none !important;
     animation: none !important;
   }
+}
+
+/* ---------- timeline (animation with captions) ---------- */
+.timeline-stage {
+  min-width: 0;
+}
+.timeline-caption {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-prose);
+  font-size: 1.02rem;
+  line-height: 1.45;
+  min-height: 3.2em;
+  border-top: 1px solid var(--rule-soft);
+}
+.timeline-caption .timeline-n {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+  min-width: 2.6em;
+}
+.timeline-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  align-items: center;
+  padding: var(--space-2) var(--space-4) var(--space-3);
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+}
+.timeline-scrub {
+  flex: 1 1 160px;
+  min-width: 120px;
+  accent-color: var(--ink-2);
+  margin: 0;
+}
+.timeline-bar .readout {
+  color: var(--ink-3);
+  min-width: 7ch;
+}
+.step-voice {
+  margin-left: auto;
 }
