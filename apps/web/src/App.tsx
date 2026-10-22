@@ -4,11 +4,13 @@ import { Index } from "./Index";
 import { TaylorChapter } from "./chapters/0.1-taylor/Chapter";
 import { NormalChapter } from "./chapters/0.2-normal/Chapter";
 import { LognormalChapter } from "./chapters/A1-lognormal/Chapter";
+import { DependenceChapter } from "./chapters/A2-dependence/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
   "0.2": NormalChapter,
   A1: LognormalChapter,
+  A2: DependenceChapter,
 };
 
 function useHashRoute() {

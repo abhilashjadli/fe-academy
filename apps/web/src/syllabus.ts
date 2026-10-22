@@ -23,7 +23,7 @@ export const SYLLABUS: Track[] = [
     title: "Probability & statistics for finance",
     chapters: [
       { id: "A1", title: "Normal, lognormal and fat tails", built: true },
-      { id: "A2", title: "Dependence: correlation, Cholesky, PCA" },
+      { id: "A2", title: "Dependence: correlation is a shear", built: true },
       { id: "A3", title: "Regression and its failure modes" },
       { id: "A4", title: "Time series: stationarity, ARIMA, unit roots" },
       { id: "A5", title: "Volatility: EWMA, ARCH/GARCH" },

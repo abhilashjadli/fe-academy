@@ -255,3 +255,31 @@ export function Bars({ bars, role = "approx", opacity = 0.85, gap = 1 }: { bars:
     </g>
   );
 }
+
+/** A cloud of points. */
+export function Points({ pts, role = "truth", r = 2.4, opacity = 0.6 }: { pts: Pt[]; role?: Role; r?: number; opacity?: number }) {
+  const { x, y } = usePlot();
+  return (
+    <g>
+      {pts.map((p, i) => (
+        <circle key={i} className={`marker ${role}`} cx={x(p[0])} cy={y(p[1])} r={r} style={{ opacity, stroke: "none" }} />
+      ))}
+    </g>
+  );
+}
+
+/** A covariance ellipse (k standard deviations) for a 2×2 covariance matrix with Cholesky factor L. */
+export function CovEllipse({ L, k = 1, cx = 0, cy = 0, role = "ink", dash }: { L: number[][]; k?: number; cx?: number; cy?: number; role?: Role; dash?: string }) {
+  const pts: Pt[] = [];
+  for (let i = 0; i <= 90; i++) {
+    const t = (2 * Math.PI * i) / 90;
+    const u = [Math.cos(t), Math.sin(t)];
+    pts.push([cx + k * (L[0][0] * u[0] + L[0][1] * u[1]), cy + k * (L[1][0] * u[0] + L[1][1] * u[1])]);
+  }
+  return <Curve pts={pts} role={role} width={1.5} dash={dash} smooth={false} />;
+}
+
+/** A line through (cx, cy) with direction u, clipped to the plot. */
+export function DirLine({ u, cx = 0, cy = 0, role = "ink", width = 2, len = 100 }: { u: number[]; cx?: number; cy?: number; role?: Role; width?: number; len?: number }) {
+  return <Curve pts={[[cx - len * u[0], cy - len * u[1]], [cx + len * u[0], cy + len * u[1]]]} role={role} width={width} smooth={false} />;
+}
