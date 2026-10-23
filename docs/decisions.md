@@ -18,3 +18,11 @@ One line per decision, newest first. Product decisions in the charter are not re
 - Pending sponsor decisions S1–S9 and the per-chapter picks; no chapter is built until its storyboard is approved.
 - Manim Community 0.22 confirmed working in the workspace (both themes from one script via `THEME=dark`); clips are an allowed mode.
 - Recorded: A1 and A2 are v1; their v2 list is `style-guide-draft.md` §7.
+
+## 2026-10-23 — Sponsor answers to the discussion pack
+- Charter §2 amended: **lightness** — pages must not feel heavy; maths serves the picture, derivations collapsible; "would a tired fresher keep reading" is the first test.
+- S1–S9 accepted, with the caveat that S1/S2 are guidance, not hard rules: use whatever procedure suits the topic.
+- Per chapter: A3 real rates (FRED GS1/GS3 if simpler), comic OK; A4 bowl, DF (simplest); A5 whichever is easier; B1 try 3-state, real rain data; B2 casino kept; B3 comic first then zoom; **B4 is the showcase — both the square and the tiles, most interactive, best chapter of the series (reviewer's favourite topic, may be the demo)**; B5 simpler; B6 clip OK; C1 simpler; C2 as recommended; **C3 very important — maximally interactive, easy, addictive**; C4 3-D surface, one running example; D1, D2 simpler.
+- Data received: NIFTY 50 daily, 23-Oct-2025 → 23-Oct-2026 (`data/nifty/`, 248 days, ann. vol 13.9 %, worst day −3.3 %); NSE NIFTY option chain screenshot 23-Oct-2026 (`data/option-chain/`, strikes 22,250–23,050 with call/put IVs — a real smile slice). Vol-surface page (tradingalgo) is JS-only and blocked from the workspace; term sheet to follow; Tsay file unavailable.
+- Antigravity: Gemini Argon not available on the sponsor's plan there. Reviewer model in Antigravity = Claude Opus 4.6 (Thinking); optionally a second pass of `reviews/summary.md` through Gemini Argon in the Gemini app.
+- Order of work accepted: style sprint → A1/A2 v2 → A3 onward with storyboard approval.

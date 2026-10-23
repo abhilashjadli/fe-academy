@@ -16,6 +16,8 @@ _Single source of truth. Mirror of the Project doc `claude/00-project-charter.md
 - Programming: can read code; comfortable with the idea of simulation. **Minimal programming tasks** — code appears only as short "this is what computes it" panels.
 - Nothing about financial markets or instruments is assumed. Statistics beyond intro, time series, stochastic processes, measure theory, options are all taught from scratch.
 
+**Sponsor amendment, 2026-10-23 — lightness.** Learners are not assumed to be keen on this material or sharp on the prerequisites: they met calculus and probability years ago. We do not re-teach the basics, but nothing here may *feel* heavy. The point of the project is to incite interest. Maths is used where it is needed and is never the spine of a page; a chapter is judged first by "would a tired fresher keep reading", then by rigour. When a derivation can be replaced by a picture plus one sentence, replace it; the full derivation goes in a collapsed panel for the curious. Review ("the fresher test") applies to every storyboard before code.
+
 ## 3. Syllabus (locked)
 
 **0. Foundations made interactive**
