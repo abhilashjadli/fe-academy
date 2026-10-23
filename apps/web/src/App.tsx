@@ -1,6 +1,7 @@
 import { useEffect, useState, type ComponentType } from "react";
 import { SYLLABUS } from "./syllabus";
 import { Index } from "./Index";
+import { Lab } from "./Lab";
 import { TaylorChapter } from "./chapters/0.1-taylor/Chapter";
 import { NormalChapter } from "./chapters/0.2-normal/Chapter";
 import { LognormalChapter } from "./chapters/A1-lognormal/Chapter";
@@ -11,6 +12,7 @@ const CHAPTERS: Record<string, ComponentType> = {
   "0.2": NormalChapter,
   A1: LognormalChapter,
   A2: DependenceChapter,
+  lab: Lab,
 };
 
 function useHashRoute() {

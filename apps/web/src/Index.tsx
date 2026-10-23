@@ -23,6 +23,9 @@ export function Index() {
           </section>
         ))}
       </div>
+      <p className="footnote">
+        <a href="#/lab">Style lab</a> — new kinds of figure, one real beat each, for review before they go into chapters.
+      </p>
     </main>
   );
 }
