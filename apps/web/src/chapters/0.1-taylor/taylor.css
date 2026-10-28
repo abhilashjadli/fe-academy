@@ -1,0 +1,83 @@
+/* Chapter 0.1 — local styles (v2 lightness pass). Nothing here touches the shared ui/ styles. */
+
+/* "more" disclosure under an observe box or a prose paragraph */
+.t-more {
+  margin-top: 0.5rem;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+.t-more > summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  list-style: none;
+}
+.t-more > summary::before {
+  content: "▸ ";
+}
+.t-more[open] > summary::before {
+  content: "▾ ";
+}
+.t-more > p {
+  margin: 0.4em 0 0;
+}
+.t-more .plot {
+  margin-top: 0.5rem;
+}
+
+/* the button that opens a figure's second act */
+.t-act {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.t-act .btn.primary {
+  font-size: 0.9rem;
+}
+
+/* a strip of controls placed inside a Bet's children (same look as .figure-controls) */
+.t-ctl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  padding: 0.6rem 0.25rem 0;
+  align-items: center;
+  font-size: 0.86rem;
+  font-family: var(--font-ui);
+}
+
+/* the visible "next problem" card at the end */
+.t-pull {
+  margin-top: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--surface-figure);
+  font-family: var(--font-ui);
+}
+.t-pull .t-pull-k {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+  margin-bottom: 0.35rem;
+}
+.t-pull p {
+  margin: 0.25em 0;
+  font-family: var(--font-prose);
+  font-size: 1rem;
+  color: var(--ink);
+}
+.t-pull a {
+  color: var(--truth-text);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+}
+
+/* the wall figure: hatched no-go zone */
+.t-wall {
+  fill: var(--error-soft);
+}

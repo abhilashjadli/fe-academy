@@ -21,7 +21,7 @@ export function F6Break() {
   return (
     <Figure
       n="6"
-      prompt={<>Break it. One number for a whole cloud — two ways it can mislead.</>}
+      prompt={<>Break it. One number for a whole cloud — two ways it can mislead you.</>}
       controls={
         <>
           <Segmented value={mode} onChange={setMode} options={[{ id: "round", label: "independent" }, { id: "parabola", label: "a parabola" }, { id: "outlier", label: "one outlier" }]} />
@@ -35,19 +35,19 @@ export function F6Break() {
       }
       observe={
         <>
-          {mode === "round" && <>Independent noise: a round cloud, ρ ≈ 0, and nothing to see.</>}
+          {mode === "round" && <>Independent noise: a round cloud, correlation about zero, and nothing to see. Now try the other two.</>}
           {mode === "parabola" && (
             <>
-              <strong>ρ ≈ 0, total dependence.</strong> y is almost exactly a function of x — know x and you know y — yet the correlation is nearly zero,
-              because correlation only measures <em>linear</em> co-movement and the uphill half cancels the downhill half. "Uncorrelated" is not
-              "independent"; it is "no straight-line relationship".
+              <strong>Correlation {fmt.n(2)(rho)}, total dependence.</strong> Know x and you know y almost exactly — yet the number says "nothing here", because
+              it only sees straight lines, and the uphill half cancels the downhill half. "Uncorrelated" does not mean "independent". It means "no
+              straight-line relationship".
             </>
           )}
           {mode === "outlier" && (
             <>
-              <strong>One point, ρ = {fmt.n(2)(rho)}.</strong> Two hundred independent days and a single joint extreme, and the correlation reports a strong
-              relationship. Covariance is an average of products of deviations, and one large product dominates two hundred small ones. Every
-              correlation estimated from market data has days like this in it; the question is always whether they are the signal or the noise.
+              <strong>One point, correlation {fmt.n(2)(rho)}.</strong> Two hundred independent days plus a single wild one, and the number reports a strong
+              relationship. One huge product of deviations outweighs two hundred small ones. Every correlation from market data has a day like this inside
+              it. Is it signal or noise? That is always the question.
             </>
           )}
         </>

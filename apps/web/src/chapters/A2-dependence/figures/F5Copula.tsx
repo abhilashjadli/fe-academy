@@ -1,15 +1,19 @@
 import { useMemo, useState } from "react";
 import { Figure } from "../../../ui/Figure";
+import { Bet, ResultCard, useBet } from "../../../ui/Bet";
 import { Curve, Plot, Points, fmt, type Pt } from "../../../ui/Plot";
 import { Slider } from "../../../ui/controls";
 import { gammaSample, normalSample, rng } from "../../../engine/random";
 import { correlation } from "../../../engine/linalg";
 
 const N = 2000;
-const NU = 4;
+const NU = 4; // degrees of freedom of the t pair — the label below reads this constant, so they cannot disagree
 
-/** Same ρ, different tails: a Gaussian pair vs a t pair. */
+type Pick = "left" | "right" | "same";
+
+/** Same ρ, different corners: a Gaussian pair vs a t pair (ν = 4). Bet on the corner, then count it. */
 export function F5Copula() {
+  const [pick, setPick] = useBet<Pick>("A2-F5");
   const [rho, setRho] = useState(0.5);
   const [k, setK] = useState(2);
   const q = Math.sqrt(1 - rho * rho);
@@ -33,52 +37,90 @@ export function F5Copula() {
   const either = (pts: Pt[]) => pts.filter((p) => p[0] < -k).length;
   const rg = correlation(clouds.g.map((p) => p[0]), clouds.g.map((p) => p[1]));
   const rt = correlation(clouds.t.map((p) => p[0]), clouds.t.map((p) => p[1]));
+  const tLabel = `fat-tailed pair (t, ν = ${NU})`;
   const panel = (pts: Pt[], role: "truth" | "error", label: string, rMeasured: number) => (
     <div>
-      <Plot xDomain={[-6, 6]} yDomain={[-6, 6]} width={400} height={340} xTicks={6} yTicks={6} ariaLabel={label}>
+      <Plot xDomain={[-6, 6]} yDomain={[-6, 6]} width={400} height={340} xTicks={6} yTicks={6} xLabel="stock 1, in σ" yLabel="stock 2, in σ" ariaLabel={label}>
         <Points pts={pts} role={role} r={1.8} opacity={0.45} />
         <Curve pts={[[-6, -k], [-k, -k], [-k, -6]]} role="ink" width={1.5} dash="4 3" smooth={false} />
       </Plot>
       <div className="readouts" style={{ padding: "0.3rem 0.5rem 0", fontSize: "0.8rem" }}>
         <span>
-          <span className="k">{label} · measured ρ </span>
+          <span className="k">{label} · ρ measured </span>
           <span className="v">{fmt.n(2)(rMeasured)}</span>
         </span>
         <span>
-          <span className="k">days x below −{k}σ: </span>
+          <span className="k">days stock 1 fell past {k}σ: </span>
           <span className="v">{either(pts)}</span>
-          <span className="k"> · of those, y also below: </span>
+          <span className="k"> · stock 2 fell too on </span>
           <span className="v">{both(pts)}</span>
-          <span className="k"> ({either(pts) ? fmt.pct(0)(both(pts) / either(pts)) : "—"})</span>
+          <span className="k"> of them ({either(pts) ? fmt.pct(0)(both(pts) / either(pts)) : "—"})</span>
         </span>
       </div>
     </div>
   );
+  const gShare = either(clouds.g) ? both(clouds.g) / either(clouds.g) : 0;
+  const tShare = either(clouds.t) ? both(clouds.t) / either(clouds.t) : 0;
 
   return (
     <Figure
       n="5"
-      prompt={<>Two clouds with the same correlation. Count the days that land in the bottom-left corner — both assets crashing together.</>}
+      prompt={<>Two clouds, two stocks each, the same correlation. The dashed corner is where both crash at once. Bet, then count.</>}
       controls={
-        <>
-          <Slider label="ρ" value={rho} min={0} max={0.9} step={0.05} onChange={setRho} />
-          <Slider label="corner threshold, σ" value={k} min={1} max={3.5} step={0.25} onChange={setK} />
-        </>
+        pick && (
+          <>
+            <Slider label="ρ, the correlation" value={rho} min={0} max={0.9} step={0.05} onChange={setRho} />
+            <Slider label="where the corner starts, in σ" value={k} min={1} max={3.5} step={0.25} onChange={setK} />
+          </>
+        )
       }
       observe={
-        <>
-          Left, a Gaussian pair: when x has a bad day, y is somewhat likely to. Right, a <strong>t-copula</strong> — the same ρ, the same marginal
-          spread, but both coordinates share one random scale, so the bad days arrive together and the cloud grows an X of joint extremes. Given that x
-          fell beyond the threshold, the chance that y did too is far higher on the right, and the gap widens as you push the threshold out. This is what
-          "correlations go to one in a crisis" means: ρ did not change; ρ was never the whole story. One number summarises the centre of a cloud and says
-          almost nothing about its corners — and the corners are where risk lives (E1). (The measured ρ on the right wobbles from sample to sample: with tails this fat, even correlation is hard to estimate.)
-        </>
+        pick && (
+          <>
+            <p style={{ margin: 0 }}>
+              Same ρ, same spread, different corners. On the right both stocks share one bad-luck dial, so their bad days arrive together and the cloud grows
+              an X. Push the corner out and the gap widens. This is what "correlations go to one in a crisis" means: ρ never changed. ρ describes the middle;
+              risk lives in the corner (E1).
+            </p>
+            <details className="a2-more">
+              <summary>more: how the right-hand cloud is made</summary>
+              <p>
+                Take a correlated pair of normals and divide both by the same random number, √(χ²/ν) with ν = {NU}. On most days that number is near 1 and
+                nothing changes. On a few days it is tiny, both coordinates blow up together, and a dot lands far out along the diagonal. The recipe is
+                called a <strong>t-copula</strong>; ν is the knob for how often the tiny days come. The right-hand cloud is rescaled so both panels have
+                spread 1 per axis.
+              </p>
+              <p>
+                The measured ρ on the right wobbles from sample to sample: with tails this fat, even the correlation is hard to pin down.
+              </p>
+            </details>
+          </>
+        )
       }
     >
-      <div className="two">
-        {panel(clouds.g, "truth", "Gaussian", rg)}
-        {panel(clouds.t, "error", `t-copula, ν = ${NU}`, rt)}
-      </div>
+      <Bet
+        question="Same correlation. Which cloud has more days when BOTH crash?"
+        options={[
+          { id: "left", label: "left" },
+          { id: "right", label: "right" },
+          { id: "same", label: "same — same ρ, same corner" },
+        ]}
+        pick={pick}
+        onPick={setPick}
+      >
+        <div className="two" style={{ marginTop: "0.5rem" }}>
+          {panel(clouds.g, "truth", "bell-shaped pair", rg)}
+          {panel(clouds.t, "error", tLabel, rt)}
+        </div>
+        <ResultCard
+          yours={pick === "left" ? "the left cloud" : pick === "right" ? "the right cloud" : "the same"}
+          answer={`the right cloud — ${both(clouds.t)} joint crashes against ${both(clouds.g)}, out of ${N.toLocaleString()} days each`}
+          verdict={pick === "right" ? "right" : "miss"}
+        >
+          Given that stock 1 fell past {k}σ, stock 2 fell too on {fmt.pct(0)(gShare)} of those days on the left and {fmt.pct(0)(tShare)} on the right. One number,
+          ρ, for both clouds — and it never saw the corner.
+        </ResultCard>
+      </Bet>
     </Figure>
   );
 }

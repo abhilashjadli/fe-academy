@@ -5,8 +5,17 @@ import { Curve, Marker, Plot, Label, usePlot } from "../../../ui/Plot";
 import { M } from "../../../ui/Math";
 import { rng } from "../../../engine/random";
 
-/** Why multiplying becomes adding — and why Mel's typical year is worse than her average one. */
+/** Why multiplying becomes adding — and why Mel's typical year is worse than her average one. (v1 figure, kept as the collapsed "watch the derivation" option under Figure 2.) */
 export function F2Derive() {
+  return (
+    <Figure n="2" prompt="Why multiplying becomes adding — and where Mel's missing 1.24 went.">
+      <F2DeriveTimeline />
+    </Figure>
+  );
+}
+
+/** The narrated timeline on its own, so Figure 2 can fold it under the ledger. */
+export function F2DeriveTimeline() {
   const flips = useMemo(() => {
     const r = rng(9);
     return Array.from({ length: 24 }, () => (r() < 0.5 ? 1 : -1));
@@ -14,17 +23,16 @@ export function F2Derive() {
   const upLog = Math.log(1.01),
     dnLog = Math.log(0.99);
   const segments: Segment[] = [
-    { duration: 9, caption: "Mel's balance after a year is her starting 100 multiplied by 250 factors, each either 1.01 or 0.99. Here are the first twenty-four of them as bars around 1. Multiplying 250 things together is hard to reason about — nothing in chapter 0.2 was about products." },
-    { duration: 10, caption: "Take the logarithm of everything. A logarithm turns multiplication into addition: the log of the product is the sum of the logs. So log of Mel's balance equals log 100 plus a sum of 250 small random numbers — and sums of small random things are exactly what chapter 0.2 was about: they make a bell." },
+    { duration: 9, caption: "Mel's balance after a year is her starting 100 multiplied by 250 factors, each either 1.01 or 0.99. Here are the first twenty-four of them as bars around 1. Multiplying 250 things together is hard to reason about — a sum of many small random steps makes a bell (that was chapter 0.2), but this is a product, not a sum." },
+    { duration: 10, caption: "Take the logarithm of everything. A logarithm turns multiplication into addition: the log of the product is the sum of the logs. So log of Mel's balance equals log 100 plus a sum of 250 small random numbers — and sums of small random things make a bell — that was the whole of chapter 0.2." },
     { duration: 9, caption: "That is the whole reason: the logarithm of Mel's balance is normal, so Mel's balance is called lognormal. Ada's balance is a sum from the start, so it is normal without any help." },
-    { duration: 12, caption: "Now look closely at the two logs. Log of 1.01 is plus 0.00995. Log of 0.99 is minus 0.01005. The down-step is a little bigger than the up-step. Chapter 0.1 says why: log of one plus r is r minus r squared over two, plus smaller terms — and the r squared over two is subtracted whichever way the coin falls." },
-    { duration: 12, caption: "So every toss costs Mel half of r squared on average: half of one percent squared, five millionths, per day. Over 250 days that is a drag of 0.0125 in the log, which puts her median year at 100 times e to the minus 0.0125 — about 98.76 — while her mean stays at exactly 100. This is volatility drag, and it is the first number in this library that a trading desk would recognise." },
+    { duration: 12, caption: "Now look closely at the two logs. Log of 1.01 is plus 0.00995. Log of 0.99 is minus 0.01005. The down-step is a little bigger than the up-step. The Taylor series of chapter 0.1 says why: log of one plus r is r minus r squared over two, plus smaller terms — and the r squared over two is subtracted whichever way the coin falls." },
+    { duration: 12, caption: "Each toss, win or lose, costs Mel a tiny amount: half of 1 % squared, which is 0.005 % — nothing. But she pays it 250 times, so by year end her typical balance is 98.76, not 100. Her average is still 100, because a few lucky years are very lucky. Traders call this volatility drag." },
     { duration: 7, caption: "To sum up: multiplying becomes adding under a logarithm; adding makes a bell; and the second-order term of the logarithm quietly taxes every wobble. The next figure shows the lognormal curve itself." },
   ];
 
   return (
-    <Figure n="2" prompt="Why multiplying becomes adding — and where Mel's missing 1.24 went.">
-      <Timeline
+    <Timeline
         segments={segments}
         render={(_t, i, u) => (
           <div className="two" style={{ gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)" }}>
@@ -77,7 +85,6 @@ export function F2Derive() {
           </div>
         )}
       />
-    </Figure>
   );
 }
 

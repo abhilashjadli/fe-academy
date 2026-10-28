@@ -1,19 +1,17 @@
 import { useMemo, useState } from "react";
 import { Figure } from "../../../ui/Figure";
-import { CovEllipse, DirLine, Plot, Points, fmt, usePlot, type Pt } from "../../../ui/Plot";
+import { CovEllipse, Plot, Points, fmt, usePlot, type Pt } from "../../../ui/Plot";
 import { Slider, Toggle } from "../../../ui/controls";
 import { normalSample, rng } from "../../../engine/random";
-import { correlation, covariance, symEigen } from "../../../engine/linalg";
+import { correlation, covariance } from "../../../engine/linalg";
 import { M } from "../../../ui/Math";
 
 const N = 400;
 
-/** The cloud machine: independent noise, sheared by ρ; the same points slide. */
+/** The cloud machine: independent noise, sheared by ρ; the same points slide. One slider, one readout. */
 export function F1Cloud() {
   const [rho, setRho] = useState(0.6);
   const [rects, setRects] = useState(false);
-  const [ellipse, setEllipse] = useState(true);
-  const [ghost, setGhost] = useState(true);
   const z = useMemo(() => {
     const r = rng(42);
     return Array.from({ length: N }, () => [normalSample(r), normalSample(r)] as Pt);
@@ -28,57 +26,58 @@ export function F1Cloud() {
     [1, 0],
     [rho, q],
   ];
-  const e = symEigen([
-    [1, rho],
-    [rho, 1],
-  ]);
 
   return (
     <Figure
       n="1"
-      prompt={<>The cloud machine. Four hundred points of independent noise; the slider shears them. Every point keeps its identity — watch one slide.</>}
+      prompt={<>The cloud machine. Four hundred dots of plain noise; the slider pushes them sideways. Watch the red dot — it keeps its identity.</>}
       controls={
         <>
-          <Slider label="ρ" value={rho} min={-0.98} max={0.98} step={0.01} onChange={setRho} role="approx" width={220} />
-          <Toggle label="ghost: the unsheared cloud" on={ghost} onChange={setGhost} />
-          <Toggle label="covariance rectangles" on={rects} onChange={setRects} />
-          <Toggle label="ellipse and its axes" on={ellipse} onChange={setEllipse} />
+          <Slider label="ρ, the correlation" value={rho} min={-0.98} max={0.98} step={0.01} onChange={setRho} role="approx" width={240} />
           <span className="readouts">
             <span>
-              <span className="k">measured correlation </span>
-              <span className="v">{fmt.n(3)(rMeasured)}</span>
-            </span>
-            <span>
-              <span className="k">covariance </span>
-              <span className="v">{fmt.n(3)(cov)}</span>
+              <span className="k">tilt measured from the dots </span>
+              <span className="v">{fmt.n(2)(rMeasured)}</span>
             </span>
           </span>
         </>
       }
       observe={
         <>
-          <M block tex="x = z_1, \qquad y = \tok{approx}{\rho}\,z_1 + \sqrt{1-\tok{approx}{\rho}^{2}}\;z_2 \qquad\Rightarrow\qquad \operatorname{corr}(x, y) = \rho" />
           <p style={{ margin: 0 }}>
-            The second coordinate borrows a share ρ of the first and tops up with just enough fresh noise to keep its variance at 1. That is all correlation is
-            geometrically: a <strong>shear</strong> of a round cloud. Switch on the rectangles: each point draws a box from the centre, blue where x and y
-            deviate the same way, rose where they deviate oppositely; the covariance is the average signed area, and correlation is covariance with the units
-            divided out. Switch on the ellipse: its long axis is the cloud's direction, the subject of Figure 3.
+            The grey cloud is plain independent noise. Slide ρ and each grey dot slides to its amber place: y borrows a share ρ of x and keeps the rest of
+            itself. That sliding is a <strong>shear</strong>, and the tilt it leaves behind is the correlation. The outline is where a typical dot lands.
           </p>
+          <details className="a2-more">
+            <summary>more: the recipe, and what covariance is</summary>
+            <M block tex="x = z_1, \qquad y = \tok{approx}{\rho}\,z_1 + \sqrt{1-\tok{approx}{\rho}^{2}}\;z_2 \qquad\Rightarrow\qquad \operatorname{corr}(x, y) = \rho" />
+            <p>
+              The second coordinate borrows a share ρ of the first and tops up with just enough fresh noise to keep its spread at 1. The square root is the
+              top-up.
+            </p>
+            <p style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem 1rem", alignItems: "center" }}>
+              <Toggle label="draw the covariance rectangles" on={rects} onChange={setRects} />
+              <span className="readouts">
+                <span>
+                  <span className="k">covariance </span>
+                  <span className="v">{fmt.n(2)(cov)}</span>
+                </span>
+              </span>
+            </p>
+            <p>
+              Each dot draws a box from the centre: blue where x and y lean the same way, rose where they lean opposite ways. The <strong>covariance</strong> is
+              the average signed area. Correlation is covariance with the units divided out, so it always sits between −1 and 1.
+            </p>
+          </details>
         </>
       }
     >
       <Plot xDomain={[-3.5, 3.5]} yDomain={[-3.5, 3.5]} xLabel="x" yLabel="y" height={400} width={720} ariaLabel="A sheared cloud of points">
         {rects && <CovRects pts={pts.slice(0, 120)} />}
-        {ghost && <Points pts={z} role="ghost" r={2} opacity={0.35} />}
+        <Points pts={z} role="ghost" r={2} opacity={0.35} />
         <Points pts={pts} role="approx" r={2.6} opacity={0.65} />
-        {ellipse && (
-          <>
-            <CovEllipse L={L} k={1} role="ink" />
-            <CovEllipse L={L} k={2} role="ink" dash="4 3" />
-            <DirLine u={e.vectors[0]} role="truth" width={1.5} />
-            <DirLine u={e.vectors[1]} role="truth" width={1} />
-          </>
-        )}
+        <CovEllipse L={L} k={1} role="ink" />
+        <Points pts={[z[0]]} role="error" r={4} opacity={0.4} />
         <Points pts={[pts[0]]} role="error" r={5} opacity={1} />
       </Plot>
     </Figure>

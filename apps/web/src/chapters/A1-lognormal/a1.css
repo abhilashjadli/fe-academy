@@ -1,0 +1,123 @@
+/* Chapter A1 — local styles (v2 lightness pass). Nothing here touches the shared ui/ styles. */
+
+/* "more" disclosure under an observe box */
+.a1-more {
+  margin-top: 0.5rem;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+.a1-more > summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  list-style: none;
+}
+.a1-more > summary::before {
+  content: "▸ ";
+}
+.a1-more[open] > summary::before {
+  content: "▾ ";
+}
+.a1-more > p {
+  margin: 0.4em 0 0;
+}
+
+/* a collapsed figure body (the old derivation, the code) */
+.a1-fold {
+  margin: 0.5rem 0.75rem 0.75rem;
+}
+.a1-fold > summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  color: var(--ink-2);
+  padding: 0.35rem 0.6rem;
+  border: 1px dashed var(--rule);
+  border-radius: 4px;
+  display: inline-block;
+}
+.a1-fold[open] > summary {
+  margin-bottom: 0.5rem;
+}
+
+/* legend strip: faces as the legend */
+.a1-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.25rem;
+  align-items: center;
+  padding: 0.25rem 0.5rem 0.4rem;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+
+/* the visible "next problem" card at the end */
+.a1-pull {
+  margin-top: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--surface-figure);
+  font-family: var(--font-ui);
+}
+.a1-pull .a1-pull-k {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+  margin-bottom: 0.35rem;
+}
+.a1-pull p {
+  margin: 0.25em 0;
+  font-family: var(--font-prose);
+  font-size: 1rem;
+  color: var(--ink);
+}
+.a1-pull a {
+  color: var(--truth-text);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+}
+
+/* readout that jumps when a monster lands (F6) */
+.a1-jump {
+  display: inline-block;
+  animation: a1-jump 0.6s ease-out;
+  color: var(--error-text);
+  font-weight: 600;
+}
+@keyframes a1-jump {
+  0% {
+    transform: scale(1.6);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* a strip of controls placed inside a Bet's children (same look as .figure-controls) */
+.a1-ctl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  padding: 0.6rem 0.25rem;
+  align-items: center;
+  font-size: 0.86rem;
+  font-family: var(--font-ui);
+}
+
+/* small list of dated days (F4) */
+.a1-days {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.8rem;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-2);
+  padding: 0.25rem 0.5rem 0;
+}
+.a1-days .d {
+  font-variant-numeric: tabular-nums;
+}
