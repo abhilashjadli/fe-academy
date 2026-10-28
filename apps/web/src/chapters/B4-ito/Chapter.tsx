@@ -61,7 +61,7 @@ export function ItoChapter() {
           It is the chain rule for things that jitter. Ordinary calculus says: if you know how S moves, the slope tells you how any function of S moves.
           Itô's lemma says the same, with one extra term that ordinary calculus throws away — <strong>half the bend, times the wobble squared</strong>.
         </p>
-        <M block tex="df = \big(\tok{approx}{\text{what the chain rule says}} + \tok{truth}{\tfrac12\,\text{bend}\times\text{wobble}^2}\big)\,dt + \tok{approx}{\text{slope}\times\text{wobble}}\,dW" />
+        <M block tex="df = \big(\tok{approx}{\text{chain rule}} + \tok{truth}{\tfrac12\,\text{bend}\cdot\text{wobble}^2}\big)\,dt + \tok{approx}{\text{slope}\cdot\text{wobble}}\,dW" />
         <p>
           That is the whole result. The surviving tile is the blue term. Everything you do with the lemma is: write down how S wobbles, pick a function
           of S you care about, and read off how <em>that</em> wobbles. Try it.
