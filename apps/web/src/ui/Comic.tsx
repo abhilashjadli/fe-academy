@@ -46,6 +46,8 @@ const REGISTER: Record<string, { colour: string; hair: "short" | "long" | "bun" 
   Raj: { colour: "var(--error)", hair: "short", glasses: true, skin: "#a86a3b" },
   You: { colour: "var(--ink-2)", hair: "curly", skin: "#d9a97f" },
   Desk: { colour: "var(--ink-2)", hair: "bald", glasses: true, skin: "#e0b48f" },
+  Lemonade: { colour: "var(--approx)", hair: "curly", skin: "#c68c5a" },
+  Umbrella: { colour: "var(--truth)", hair: "long", skin: "#b8743f" },
 };
 const PALETTE = ["var(--truth)", "var(--approx)", "var(--error)", "var(--ink-2)"];
 const HAIRS = ["short", "long", "bun", "curly", "bald"] as const;
@@ -54,7 +56,7 @@ function lookup(name: string) {
   if (REGISTER[name]) return REGISTER[name];
   let h = 0;
   for (const ch of name) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return { colour: PALETTE[h % PALETTE.length], hair: HAIRS[(h >> 3) % HAIRS.length], glasses: ((h >> 5) & 1) === 1, skin: "#d9a97f" };
+  return { colour: PALETTE[h % PALETTE.length], hair: HAIRS[(h >>> 3) % HAIRS.length], glasses: ((h >>> 5) & 1) === 1, skin: "#d9a97f" };
 }
 
 /**
