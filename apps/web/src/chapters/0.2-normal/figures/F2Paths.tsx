@@ -14,7 +14,7 @@ export function F2Paths() {
   return (
     <Figure
       n="2"
-      prompt={<>Buckets are now labelled by the number of right-bounces, k. Click a bucket to light every path into it; reveal the fractions row by row.</>}
+      prompt={<>Label each bucket by how many bounces went right, k. Click a bucket to light every route into it; then reveal the fractions on the pegs, row by row.</>}
       controls={
         <>
           <span className="ctl">
@@ -51,9 +51,8 @@ export function F2Paths() {
       observe={
         <>
           <p style={{ margin: 0 }}>
-            Every path is equally likely (five independent ½ chances: 1/32 each), so a bucket's probability is just <em>how many paths lead there</em> over 32.
-            The fractions on the pegs are built by the ball's own rule — each peg's fraction is the sum of the two above it — and that rule generates{" "}
-            <strong>Pascal's triangle</strong>: 1 · 5 · 10 · 10 · 5 · 1 for the last row.
+            Every route is equally likely — five ½-chances in a row, 1 in 32 each — so a bucket's probability is just how many routes lead there, over 32. Each peg's
+            fraction is the sum of the two above it; that rule builds <strong>Pascal's triangle</strong>, 1 · 5 · 10 · 10 · 5 · 1 on the last row.
           </p>
           {k !== null && (
             <M block tex={`P(\\text{bucket } ${k}) = \\frac{\\text{paths into } ${k}}{\\text{all paths}} = \\frac{${choose(n, k)}}{${2 ** n}} = ${(choose(n, k) / 2 ** n).toFixed(4)}`} />

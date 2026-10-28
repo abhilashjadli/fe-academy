@@ -1,4 +1,3 @@
-import { M } from "../../ui/Math";
 import { F0Board } from "./figures/F0Board";
 import { F1OneBall } from "./figures/F1OneBall";
 import { F2Paths } from "./figures/F2Paths";
@@ -6,10 +5,10 @@ import { F3Coins } from "./figures/F3Coins";
 import { F4Binomial } from "./figures/F4Binomial";
 import { F5Dice } from "./figures/F5Dice";
 import { F6Gaussian } from "./figures/F6Gaussian";
-import { F7Rule } from "./figures/F7Rule";
-import { F8Measure } from "./figures/F8Measure";
-import { F9Break } from "./figures/F9Break";
-import { F10Lattice } from "./figures/F10Lattice";
+import { F7Measure } from "./figures/F7Measure";
+import { F8Break } from "./figures/F8Break";
+import { F9Nifty } from "./figures/F9Nifty";
+import "./normal.css";
 
 export function NormalChapter() {
   return (
@@ -18,27 +17,24 @@ export function NormalChapter() {
         <p className="chapter-id">Chapter 0.2 · Foundations</p>
         <h1>Counting, the binomial and the normal: a pile of coin flips is a bell</h1>
         <p className="standfirst">
-          Drop balls through a board of pegs and a shape appears that nobody designed. This chapter follows that shape from counting paths, through the
-          binomial distribution, to the normal curve — and shows what the curve needs from the world in order to show up.
+          Drop balls through a board of pegs and a shape appears that nobody designed. This page follows that shape — count the routes, stack them, and a bell shows
+          up — and then asks what the bell needs from the world in order to show up at all.
         </p>
-        <p className="assumes">Assumes: random variables, expectation, variance, independence. Counting and the normal distribution are taught here.</p>
+        <p className="assumes">Assumes: you have met random variables, averages, variance and independence. Counting and the bell curve are taught here. That is all.</p>
       </header>
 
       <F0Board />
 
       <div className="prose">
-        <p>
-          To see why the pile is predictable, slow one ball down to a crawl. The board below has only five rows, and the ball moves one peg per click.
-        </p>
+        <p>To see why the pile is predictable, slow one ball down to a crawl. The board below has only five rows, and the ball moves one peg per click.</p>
       </div>
 
       <F1OneBall />
 
       <div className="prose">
         <p>
-          So a bucket is a <em>sum</em>: five steps of +1 or −1, added. The ball does not aim for the middle; the middle is simply where most of the sums
-          land. How many sums land there? That is a counting question, and the board answers it for us if we ask the right way: instead of labelling a
-          bucket by its total, label it by how many of the five bounces went right. Then ask how many routes lead into each bucket.
+          So a bucket is a <em>sum</em>: five steps of +1 or −1, added. The ball does not aim for the middle; the middle is simply where most sums land. How many? That
+          is a counting question. Label each bucket by how many of the five bounces went right, and ask how many routes lead into it.
         </p>
       </div>
 
@@ -46,9 +42,8 @@ export function NormalChapter() {
 
       <div className="prose">
         <p>
-          Ten routes into bucket 2, one into bucket 0. Since every route is equally likely, that ratio is the whole story of the pile's shape. But the
-          fractions on the pegs were <em>generated</em> — each from the two above it — not counted. To count them directly, forget the board for a moment and
-          think about the choice the ball is making.
+          Ten routes into bucket 2, one into bucket 0 — and since every route is equally likely, that ratio is the whole shape of the pile. But you <em>generated</em> those
+          numbers, each from the two above it. Can you count them directly? Forget the board for a moment and think about the choice the ball makes.
         </p>
       </div>
 
@@ -56,8 +51,8 @@ export function NormalChapter() {
 
       <div className="prose">
         <p>
-          With the count in hand, the probability of each bucket is an explicit formula, and it is worth seeing it as bricks rather than symbols: one brick
-          per route, stacked by bucket. Then make the board bigger, and tilt it.
+          With the count in hand, every bucket's probability is a formula — but see it as bricks before symbols: one brick per route, stacked by bucket. Then make the
+          board bigger, and tilt it.
         </p>
       </div>
 
@@ -65,9 +60,8 @@ export function NormalChapter() {
 
       <div className="prose">
         <p>
-          The bars form a bell even when the pegs are tilted, and even though nothing in the formula mentions a bell. The hint is in the readouts: the hump
-          sits at np and has width √(np(1−p)), so its position grows like n and its width only like √n. Is this special to coins? The next figure says
-          no — any repeated random thing with a finite spread will do, however lopsided.
+          The bars form a bell even when the pegs are tilted, and nothing in the formula mentions a bell. Is this special to coins? The next figure says no: add up
+          enough copies of almost any random thing — however lopsided — and the same hump appears.
         </p>
       </div>
 
@@ -75,80 +69,67 @@ export function NormalChapter() {
 
       <div className="prose">
         <p>
-          This is the <strong>central limit theorem</strong>, seen before it is stated: add up enough independent copies of almost any random quantity,
-          subtract the mean, divide by the standard deviation, and the result is drawn from one universal curve. Here is that curve, built one symbol at a
-          time.
+          You just saw the <strong>central limit theorem</strong> before anyone stated it: add up enough independent copies of almost any random quantity, shift by the
+          mean, squeeze by the spread, and you get one universal curve. Here is that curve, built one symbol at a time — with a knob for each symbol.
         </p>
       </div>
 
       <F6Gaussian />
 
       <div className="prose">
-        <p>
-          Because area is what carries probability, the useful facts about the curve are areas, and three of them are worth knowing by heart.
-        </p>
+        <p>Now put the whole chain to work on a question with a definite answer, and check the answer by brute force.</p>
       </div>
 
-      <F7Rule />
+      <F7Measure />
 
       <div className="prose">
         <p>
-          Now put the whole chain to work on a question with a definite answer, and check the answer by brute force.
+          Every link in that chain rested on something the board did silently: each bounce ignored the previous ones, each peg behaved like the others, and no single
+          bounce could move the ball more than one slot. Take those away, one at a time.
         </p>
       </div>
 
-      <F8Measure />
+      <F8Break />
 
       <div className="prose">
         <p>
-          Every step in that chain rested on assumptions that were easy to miss because the Galton board satisfied them silently: each bounce ignored the
-          previous ones, each peg behaved like the others, and no single bounce could move the ball more than one slot. Take those away one at a time.
+          Which board is the real world? Here is one year of a real index, one square per day. The question is simply how many days landed beyond the bell's comfort
+          zone, compared with how many the bell promised.
         </p>
       </div>
 
-      <F9Break />
-
-      <div className="prose">
-        <p>
-          One last thing to do with the board, and it costs nothing but a rotation.
-        </p>
-      </div>
-
-      <F10Lattice />
+      <F9Nifty />
 
       <div className="ending">
         <p>
-          A bucket on a Galton board is a sum of coin flips; counting the routes into each bucket gives Pascal's triangle and the binomial distribution,{" "}
-          <M tex="\binom{n}{k}p^k(1-p)^{n-k}" />; rescale the binomial — or the sum of any dice with a finite spread — and the same bell appears every
-          time, <M tex="\tfrac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}" />, with probability carried by its area. The bell needs independence and
-          a finite spread, and it is exactly where those fail that the next chapters begin.
+          A bucket on the board is a sum of coin flips. Count the routes into each bucket and you get Pascal's triangle and the binomial; rescale it — or the sum of any dice
+          with a finite spread — and the same bell appears every time, with probability carried by its area. The bell needs independence and no single giant step. The one
+          sentence to keep: a sum of many small, independent things is a bell — and the days that matter are the ones that are not.
         </p>
+        <div className="n2-pull">
+          <div className="n2-pull-k">Where you will meet this again</div>
+          <p>Market moves are percentages, not fixed steps, and some days are a hundred times bigger than the rest. What does the bell become then?</p>
+          <p>The next chapter builds the lognormal from this board, and counts how often the real index breaks it.</p>
+          <a href="#/A1">A1 · Normal, lognormal and fat tails →</a>
+        </div>
         <details className="prose" style={{ marginTop: "1rem" }}>
-          <summary className="links" style={{ cursor: "pointer" }}>
-            Where you will meet this again
-          </summary>
-          <p className="footnote" style={{ marginTop: "0.6em" }}>
-            A1 asks what happens when the steps are percentages (the bell becomes the lognormal) and when a single day can dwarf the others (fat tails).
-            A2 puts two boards side by side and lets them lean on each other (correlation). C2 prices an option on the sideways board. E2 uses the fact
-            that an average tightens like 1/√n to understand why Monte Carlo is slow.
-          </p>
-        </details>
-        <details className="prose" style={{ marginTop: "0.5rem" }}>
           <summary className="links" style={{ cursor: "pointer" }}>
             What computes the figures on this page
           </summary>
           <pre className="num" style={{ fontSize: "0.8rem", lineHeight: 1.5, overflowX: "auto" }}>
-            {`// the board: each ball is n coin flips from a seeded generator
+            {`// the board: each ball is n coin flips from a seeded random-number generator
 bits[r] = (random() < p) ? 1 : 0 ;  bucket = sum(bits)
+// the wild peg: with probability 1/100 per row, bucket += ±5
 
-// paths into bucket k
+// routes into bucket k
 choose(n, k) = n! / (k! (n-k)!)
 binomial(k) = choose(n, k) * p^k * (1-p)^(n-k)
 
-// exact distribution of a sum of dice: repeated convolution
+// exact distribution of a sum of dice: list every combination (a convolution)
 sum_of(die, n) = die * die * ... * die      // (p*q)[s] = Σ p[x] q[s-x]
 
-// normal density and the 68-95-99.7 areas (engine/normal.ts, tested against a Python answer key)`}
+// normal density and areas (engine/normal.ts, tested against a Python answer key)
+// NIFTY 50 closes: src/data/nifty50.json; daily move = ln(close / previous close)`}
           </pre>
         </details>
       </div>

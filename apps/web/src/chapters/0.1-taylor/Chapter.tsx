@@ -1,30 +1,32 @@
 import { M } from "../../ui/Math";
+import { F0Car } from "./figures/F0Car";
 import { F1Knobs } from "./figures/F1Knobs";
-import { F2Derive } from "./figures/F2Derive";
-import { F3Table } from "./figures/F3Table";
-import { F4BuildUp } from "./figures/F4BuildUp";
-import { F5Centre } from "./figures/F5Centre";
-import { F6Converge } from "./figures/F6Converge";
-import { F7Zoom } from "./figures/F7Zoom";
+import { F2Table } from "./figures/F2Table";
+import { F3BuildUp } from "./figures/F3BuildUp";
+import { F4Wall } from "./figures/F4Wall";
+import { F5Zoom } from "./figures/F5Zoom";
+import "./taylor.css";
 
 export function TaylorChapter() {
   return (
     <article className="chapter">
       <header className="chapter-head">
         <p className="chapter-id">Chapter 0.1 · Foundations</p>
-        <h1>Taylor series: derivatives at one point buy you the curve nearby</h1>
+        <h1>Taylor series: a few numbers at one point buy you the curve nearby</h1>
         <p className="standfirst">
-          Most functions are awkward to compute and easy to differentiate. A Taylor series turns a few derivatives, measured at a single point, into a
-          polynomial that stands in for the function near that point. This chapter is about why that works, how far it works, and where the ½ comes from.
+          Your calculator cannot compute cos x. Nobody can, by hand. What it does instead is multiply and add a handful of numbers, and this page is about where
+          those numbers come from and when the trick stops working.
         </p>
         <p className="assumes">Assumes you can differentiate: power rule, chain rule, derivatives of sin, cos and eˣ. That is all.</p>
       </header>
 
+      <F0Car />
+
       <div className="prose">
         <p>
-          Polynomials are the functions a computer, or a person with a pencil, can actually evaluate: multiply, add, done. <span className="tok-truth">cos x</span>{" "}
-          is not one of them. So here is a question: can a polynomial with three free numbers be made to behave like cos x — at least near x = 0? Try it
-          before reading on. The three sliders set the three numbers; the table reports how close you are.
+          Multiplying and adding is all a calculator, or a person with a pencil, can really do. So the only curves you can compute directly are polynomials.{" "}
+          <span className="tok-truth">cos x</span> is not one. Can a <strong>quadratic</strong> — a polynomial with three numbers, c₀ + c₁x + c₂x² — be made to
+          behave like cos x near x = 0? Try it before reading on.
         </p>
       </div>
 
@@ -32,99 +34,65 @@ export function TaylorChapter() {
 
       <div className="prose">
         <p>
-          You will have found that c₀ wants to be 1, c₁ wants to be 0, and c₂ wants to be somewhere around −0.5. You will also have found that no setting
-          makes the fit perfect everywhere: a quadratic is not a cosine, and the farther you look from x = 0 the more the two curves disagree. Both of those
-          findings are the chapter in miniature. Now let us get the numbers exactly, and see why they are what they are.
+          Three facts about <span className="tok-truth">cos x</span> at x = 0 — height 1, slope 0, bend −1 — fixed the three numbers. The ½ in{" "}
+          <M tex="1 - \tfrac{x^2}{2}" /> appeared because differentiating x² twice produces a 2, which you had to divide back out. A cubic term would bring a 6;
+          a fourth power, 24. Those are factorials, and the reason they show up is worth one picture.
         </p>
       </div>
 
-      <F2Derive />
+      <F2Table />
 
       <div className="prose">
         <p>
-          Three facts about <span className="tok-truth">cos x</span> at x = 0 — its height is 1, its slope is 0, its bend is −1 — fixed the three numbers.
-          The ½ in <M tex="1 - \tfrac{x^2}{2}" /> appeared because differentiating x² twice produces a 2, and we had to divide it back out. Add a cubic term
-          and the same thing happens with a 6; add a quartic and it is 24. Those are factorials, and the reason they appear is worth seeing laid out, because
-          it is also the reason each knob could be set on its own without disturbing the others.
-        </p>
-      </div>
-
-      <F3Table />
-
-      <div className="prose">
-        <p>
-          The table says something stronger than "there are factorials". Read a column at x = 0: exactly one entry is non-zero. The k-th derivative of the
-          polynomial, evaluated at the centre, hears only the k-th term. That independence is what made Figure 2 a sequence of three separate decisions
-          rather than one tangled fit, and it is what lets us write the whole recipe down at once:
+          Differentiate the polynomial k times and set x = 0: every term except the xᵏ one has been wiped out. So knob k is the only knob that touches the k-th
+          derivative — which is why you could set the knobs one at a time without undoing the last one. That lets you write the whole recipe down at once:
         </p>
         <M block tex="\tok{approx}{c_k} = \frac{f^{(k)}(0)}{k!}, \qquad f(x) \;\approx\; f(0) + f'(0)\,x + \frac{f''(0)}{2!}\,x^2 + \frac{f'''(0)}{3!}\,x^3 + \cdots" />
         <p>
-          Each term is a derivative at the centre, divided by its factorial, times a power of the distance. With the recipe in hand we can keep adding terms
-          for as long as we like. Watch what each new term buys.
+          Read it as words: the k-th knob is the k-th derivative at the centre, divided by k factorial. Each term is one derivative, one factorial, one power of the
+          distance. You can keep adding terms as long as you like. Watch what each new one buys.
         </p>
       </div>
 
-      <F4BuildUp />
+      <F3BuildUp />
 
       <div className="prose">
         <p>
-          Two things to notice. First, the band of disagreement is always thinnest at the centre and widens with distance — the polynomial knows the function{" "}
-          <em>at a point</em>, and that knowledge fades as you walk away. Second, each new term does not improve the fit uniformly; it pushes the edge of the
-          good region outward. The ghost of the previous polynomial makes the increment visible.
-        </p>
-        <p>
-          Nothing special happened at x = 0 except that cos and eˣ have convenient derivatives there. The centre can be anywhere. Move it, and the polynomial
-          moves with it.
+          For cos x and eˣ you can push the fit as far as you like by adding terms. For ln x you cannot: there is a wall, exactly as far from the centre as the point
+          where ln x itself blows up. Here is that wall, with the running totals of the series bouncing off it.
         </p>
       </div>
 
-      <F5Centre />
+      <F4Wall />
 
       <div className="prose">
         <p>
-          For cos x the fit can be pushed as far as you like by adding terms. For ln x and <M tex="\sqrt{1+x}" /> it cannot: there is a wall, at the same
-          distance from the centre as the point where the function itself misbehaves (ln x at 0; <M tex="\sqrt{1+x}" /> at −1). No number of terms crosses it.
-          Here is that wall, in the digits.
+          So "more terms" is not a free lunch; it works inside the wall and fails outside. But for most functions you meet, the practical question is different:{" "}
+          <em>how good is the guess for the step I actually care about?</em> Zoom in and the answer draws itself.
         </p>
       </div>
 
-      <F6Converge />
+      <F5Zoom />
 
       <div className="prose">
         <p>
-          So "more terms" is not a free lunch; it works inside a radius and fails outside, and the radius is set by the nearest trouble spot of the function.
-          For most functions you will meet the practical question is a different one: <em>how good is the approximation for the step I actually care
-          about?</em> That is a question about the first term left out, and it has a clean answer.
-        </p>
-      </div>
-
-      <F7Zoom />
-
-      <div className="prose">
-        <p>
-          The error of the n-th polynomial shrinks like the (n + 1)-th power of the step. That one line is the budget for every approximation built from
-          derivatives: it says why a first-order estimate is fine for small steps and not for large ones, and why adding the second-order term buys an extra
-          power of accuracy.
+          Keep n terms and the leftover error is about the size of the first term you threw away. Halve your step and a one-term guess gets 4× better, a two-term
+          guess 8× better. That is the whole budget — it says why the line is fine for small steps and not for big ones, and what the bend buys you.
         </p>
       </div>
 
       <div className="ending">
         <p>
-          A few derivatives at one point — height, slope, bend, each divided by its factorial — rebuild a function in a neighbourhood of that point, and the
-          first term you leave out tells you how large the neighbourhood is. Everything else on this page is that one sentence, drawn.
+          A few numbers measured at one point — height, slope, bend, each divided by its factorial — rebuild a curve near that point, and the first number you leave
+          out tells you how far "near" reaches. If someone asks what a Taylor series is: a guess that earns one more correction every time you look closer.
         </p>
+        <div className="t-pull">
+          <div className="t-pull-k">Where you will meet this again</div>
+          <p>The value of a trading position is a curve in the market level. The slope and bend of that curve are the numbers a desk carries about it.</p>
+          <p>They are called the Greeks — and they are exactly these coefficients.</p>
+          <a href="#/C4">C4 · Greeks I: delta, gamma, theta →</a>
+        </div>
         <details className="prose" style={{ marginTop: "1rem" }}>
-          <summary className="links" style={{ cursor: "pointer" }}>
-            Where you will meet this again
-          </summary>
-          <p className="footnote" style={{ marginTop: "0.6em" }}>
-            The value of a financial position is a curve in the market level, and the numbers a risk desk carries about it — slope, bend, and the rate of
-            change in time — are exactly the Taylor coefficients of that curve; they are called the Greeks and are the subject of chapter C4. The one place
-            the recipe on this page needs amending is for functions of a random, jagged input, where the second-order term refuses to vanish even for tiny
-            steps; that is Itô's lemma, chapter B4.
-          </p>
-        </details>
-        <details className="prose" style={{ marginTop: "0.5rem" }}>
           <summary className="links" style={{ cursor: "pointer" }}>
             What computes the figures on this page
           </summary>
@@ -132,7 +100,7 @@ export function TaylorChapter() {
             {`// k-th Taylor coefficient of f about a
 coefficient(f, k, a) = f.deriv(k, a) / k!
 
-// degree-n polynomial at x, by Horner's rule
+// degree-n polynomial at x, evaluated from the highest power down
 taylor(f, n, a, x):
   acc = 0
   for k = n down to 0: acc = acc * (x - a) + coefficient(f, k, a)

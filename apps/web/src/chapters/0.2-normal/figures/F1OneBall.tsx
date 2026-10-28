@@ -15,7 +15,7 @@ export function F1OneBall() {
   }, [seed]);
   const sum = bits.reduce((a, b) => a + (b ? 1 : -1), 0);
   const steps = [
-    { caption: <>A smaller board: five rows. The ball starts above the first peg. At every peg it will go left (−1) or right (+1), each with probability ½.</> },
+    { caption: <>A smaller board: five rows. At every peg the ball goes left (−1) or right (+1), each with probability ½. Click Forward to watch one bounce at a time.</> },
     ...bits.map((b, i) => ({
       caption: (
         <>
@@ -27,7 +27,7 @@ export function F1OneBall() {
     {
       caption: (
         <>
-          It lands in the bucket labelled <strong>{sum > 0 ? "+" : ""}{sum}</strong> — which is nothing other than the sum of its five ±1 steps. Every bucket is a sum of coin flips; the bucket's label is the total.
+          It lands in the bucket labelled <strong>{sum > 0 ? "+" : ""}{sum}</strong> — the sum of its five ±1 steps. A bucket is a sum of coin flips, and its label is the total.
         </>
       ),
     },

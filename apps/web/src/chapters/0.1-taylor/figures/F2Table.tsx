@@ -4,7 +4,7 @@ import { M } from "../../../ui/Math";
 import { factorial } from "../../../engine/taylor";
 
 /** The derivative table: each coefficient owns exactly one derivative. */
-export function F3Table() {
+export function F2Table() {
   const terms = ["1", "x", "x^2", "x^3", "x^4"];
   // derivative expressions of x^k, order d
   const dexpr = (k: number, d: number): string => {
@@ -35,14 +35,14 @@ export function F3Table() {
     {
       caption: (
         <>
-          So the k-th derivative of the whole polynomial at 0 is cₖ·k!, and matching it to f⁽ᵏ⁾(0) gives the coefficient. This is why each knob in Figure 2 could be set independently.
+          So the k-th derivative of the whole polynomial at 0 is cₖ·k!, and matching it to f⁽ᵏ⁾(0) gives the coefficient. This is why each knob in Figure 1 could be set on its own.
         </>
       ),
     },
   ];
 
   return (
-    <Figure n="3" prompt="Why factorials: each coefficient owns exactly one derivative.">
+    <Figure n="2" prompt="Why factorials: each coefficient owns exactly one derivative.">
       <StepThrough
         steps={steps}
         render={(i) => {

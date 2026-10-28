@@ -81,7 +81,7 @@ export function F5Dice() {
     if (std) for (let k = 0; k <= 120; k++) bell.push([-4 + (8 * k) / 120, pdf(-4 + (8 * k) / 120)]);
     return (
       <div key={n}>
-        <Plot xDomain={xdom} yDomain={[0, ymax]} width={360} height={190} xTicks={std ? 5 : 6} yTicks={3} xLabel={std ? "z" : `sum of ${n}`} ariaLabel={`Distribution of the sum of ${n} dice`} margin={{ top: 10, right: 10, bottom: 30, left: 36 }}>
+        <Plot xDomain={xdom} yDomain={[0, ymax]} width={360} height={190} xTicks={std ? 5 : 6} yTicks={3} xLabel={std ? "(sum − mean) / sd" : `sum of ${n}`} ariaLabel={`Distribution of the sum of ${n} dice`} margin={{ top: 10, right: 10, bottom: 30, left: 36 }}>
           <Bars bars={bars} role={h.total > 0 || exact ? "approx" : "ghost"} opacity={h.total > 0 || exact ? 0.8 : 0.35} />
           {std && <Curve pts={bell} role="truth" />}
         </Plot>
@@ -119,8 +119,8 @@ export function F5Dice() {
           <button type="button" className="btn" onClick={() => { setSeed((s) => s + 1); setRevealed(0); }}>
             New sample
           </button>
-          <Toggle label="exact probabilities" on={exact} onChange={setExact} />
-          <Toggle label="standardise: (sum − mean) / sd" on={std} onChange={setStd} />
+          <Toggle label="exact (roll forever)" on={exact} onChange={setExact} />
+          <Toggle label="shift by the mean, squeeze by the sd" on={std} onChange={setStd} />
           <span className="readouts">
             <span>
               <span className="k">rolls shown </span>
@@ -131,10 +131,19 @@ export function F5Dice() {
       }
       observe={
         <>
-          Whatever die you drew — however lopsided — the sum of 15 or 50 of them is a hump, and once each histogram is shifted by its mean and squeezed by its
-          sd they all land on <span className="tok-truth">the same curve</span>. The one die's shape is forgotten; only its mean and variance survive, and
-          they add: the mean of a sum is the sum of the means, the variance of a sum is the sum of the variances, so the sd grows like √n. "Exact probabilities"
-          swaps the rolled frequencies for the true distribution, computed by convolution rather than luck.
+          Whatever die you drew, the sum of 15 or 50 of them is a hump — and once each pile is shifted by its mean and squeezed by its sd, they all land on{" "}
+          <span className="tok-truth">the same curve</span>. The die's shape is forgotten. Only its mean and variance survive, and those simply add up.
+          <details className="n2-more">
+            <summary>why √n, and what "exact" means</summary>
+            <p>
+              The mean of a sum is the sum of the means; the variance of a sum of independent things is the sum of the variances. So n dice have n times the variance, and the
+              sd — the square root — grows like √n.
+            </p>
+            <p>
+              "Exact" shows what the bars would be if you rolled forever — worked out by listing every combination of faces instead of trusting 3,000 rolls. (The listing
+              is called a convolution.)
+            </p>
+          </details>
         </>
       }
     >

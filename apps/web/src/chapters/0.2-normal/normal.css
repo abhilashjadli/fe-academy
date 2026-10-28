@@ -1,0 +1,101 @@
+/* Chapter 0.2 — local styles (v2 lightness pass). Nothing here touches the shared ui/ styles. */
+
+/* "more" disclosure under an observe box */
+.n2-more {
+  margin-top: 0.5rem;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+.n2-more > summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  list-style: none;
+}
+.n2-more > summary::before {
+  content: "▸ ";
+}
+.n2-more[open] > summary::before {
+  content: "▾ ";
+}
+.n2-more > p {
+  margin: 0.4em 0 0;
+}
+
+/* a strip of controls placed inside a figure body (same look as .figure-controls) */
+.n2-ctl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  padding: 0.6rem 0.5rem 0;
+  align-items: center;
+  font-size: 0.86rem;
+  font-family: var(--font-ui);
+}
+
+/* the result card inside a figure body */
+.n2-result {
+  margin: 0.5rem 0.5rem 0.25rem;
+}
+
+/* the counting game (F3): found selections as chips */
+.n2-found {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.5rem 0.5rem 0;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  align-items: center;
+}
+.n2-chip {
+  display: inline-block;
+  padding: 2px 7px;
+  border: 1px solid var(--approx);
+  border-radius: 999px;
+  color: var(--approx-text);
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  animation: result-in 0.35s ease-out;
+}
+.n2-chip.n2-chip-new {
+  background: var(--approx-soft);
+}
+.n2-found .k {
+  color: var(--ink-3);
+}
+
+/* the visible "next problem" card at the end */
+.n2-pull {
+  margin-top: 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--surface-figure);
+  font-family: var(--font-ui);
+}
+.n2-pull .n2-pull-k {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-3);
+  margin-bottom: 0.35rem;
+}
+.n2-pull p {
+  margin: 0.25em 0;
+  font-family: var(--font-prose);
+  font-size: 1rem;
+  color: var(--ink);
+}
+.n2-pull a {
+  color: var(--truth-text);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+}
+
+/* the formula being built (F6): symbols that have a slider glow in the slider colour */
+.n2-formula {
+  text-align: center;
+  padding: 0.25rem 0 0;
+}

@@ -27,11 +27,14 @@ interface Props {
   sticky?: number;
   /** per-row bias offsets added to p (for the "uneven pegs" experiment) */
   rowBias?: number[];
+  /** heavy tail: at each peg, with this probability the ball is flung `wildJump` buckets sideways (random side) */
+  wildProb?: number;
+  wildJump?: number;
   seed?: number;
   /** bucket the learner bet on, if any */
   bet?: number | null;
   onBucketClick?: (k: number) => void;
-  onCountsChange?: (counts: number[], dropped: number) => void;
+  onCountsChange?: (counts: number[], dropped: number, flung: number) => void;
   /** show the expected binomial outline over the buckets */
   showExpected?: boolean;
   height?: number;
@@ -40,6 +43,9 @@ interface Props {
 
 interface Ball {
   bits: number[];
+  /** sideways fling per row, in buckets (0 except on a wild bounce) */
+  jumps: number[];
+  wild: boolean;
   t: number; // progress in rows (0..rows+1)
   v: number; // rows per second
   color: string;
@@ -50,13 +56,14 @@ function cssVar(name: string, el: HTMLElement) {
 }
 
 export const GaltonCanvas = forwardRef<GaltonHandle, Props>(function GaltonCanvas(
-  { rows = 12, p = 0.5, orientation = 0, sticky = 0, rowBias, seed = 1, bet = null, onBucketClick, onCountsChange, showExpected = false, height = 380, ariaLabel },
+  { rows = 12, p = 0.5, orientation = 0, sticky = 0, rowBias, wildProb = 0, wildJump = 5, seed = 1, bet = null, onBucketClick, onCountsChange, showExpected = false, height = 380, ariaLabel },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const balls = useRef<Ball[]>([]);
   const counts = useRef<number[]>(new Array(rows + 1).fill(0));
   const dropped = useRef(0);
+  const flung = useRef(0);
   const queue = useRef<{ remaining: number; nextAt: number; interval: number; speed: number; total: number }>({ remaining: 0, nextAt: 0, interval: 0, speed: 0, total: 0 });
   const next = useRef(rng(seed));
   const raf = useRef(0);
@@ -81,9 +88,10 @@ export const GaltonCanvas = forwardRef<GaltonHandle, Props>(function GaltonCanva
       balls.current = [];
       counts.current = new Array(rows + 1).fill(0);
       dropped.current = 0;
+      flung.current = 0;
       queue.current.remaining = 0;
       next.current = rng(seed);
-      onCountsChange?.(counts.current.slice(), 0);
+      onCountsChange?.(counts.current.slice(), 0, 0);
       draw();
     },
     counts: () => counts.current.slice(),
@@ -93,6 +101,7 @@ export const GaltonCanvas = forwardRef<GaltonHandle, Props>(function GaltonCanva
     counts.current = new Array(rows + 1).fill(0);
     balls.current = [];
     dropped.current = 0;
+    flung.current = 0;
     next.current = rng(seed);
     draw();
     return () => {
@@ -105,10 +114,12 @@ export const GaltonCanvas = forwardRef<GaltonHandle, Props>(function GaltonCanva
   useEffect(() => {
     draw();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orientation, p, bet, showExpected, sticky, rowBias]);
+  }, [orientation, p, bet, showExpected, sticky, rowBias, wildProb]);
 
   const spawn = (speed: number) => {
     const bits: number[] = [];
+    const jumps: number[] = [];
+    let wild = false;
     let prevRight: number | null = null;
     for (let r = 0; r < rows; r++) {
       let pr = p + (rowBias?.[r] ?? 0);
@@ -116,8 +127,14 @@ export const GaltonCanvas = forwardRef<GaltonHandle, Props>(function GaltonCanva
       const right = next.current() < pr ? 1 : 0;
       bits.push(right);
       prevRight = right;
+      let j = 0;
+      if (wildProb > 0 && next.current() < wildProb) {
+        j = (next.current() < 0.5 ? -1 : 1) * wildJump;
+        wild = true;
+      }
+      jumps.push(j);
     }
-    balls.current.push({ bits, t: 0, v: speed, color: "" });
+    balls.current.push({ bits, jumps, wild, t: 0, v: speed, color: "" });
   };
 
   const tick = (now: number) => {
@@ -139,15 +156,17 @@ export const GaltonCanvas = forwardRef<GaltonHandle, Props>(function GaltonCanva
     for (const b of balls.current) {
       b.t += b.v * dt;
       if (b.t >= rows + 1.2) {
-        const k = b.bits.reduce((s, x) => s + x, 0);
+        const raw = b.bits.reduce((s, x) => s + x, 0) + b.jumps.reduce((s, x) => s + x, 0);
+        const k = Math.max(0, Math.min(rows, raw));
         counts.current[k]++;
         dropped.current++;
+        if (b.wild) flung.current++;
         changed = true;
       }
     }
     if (changed) {
       balls.current = balls.current.filter((b) => b.t < rows + 1.2);
-      onCountsChange?.(counts.current.slice(), dropped.current);
+      onCountsChange?.(counts.current.slice(), dropped.current, flung.current);
     }
     draw();
     if (balls.current.length || q.remaining > 0) raf.current = requestAnimationFrame(tick);
@@ -158,16 +177,18 @@ export const GaltonCanvas = forwardRef<GaltonHandle, Props>(function GaltonCanva
   };
 
   /** position of a ball with given bits at progress t, in board coordinates (x right, y down), unit = peg spacing */
-  const pos = (bits: number[], t: number) => {
+  const pos = (bits: number[], jumps: number[], t: number) => {
     const r = Math.floor(t);
     const f = t - r;
-    const sumTo = (m: number) => bits.slice(0, m).reduce((s, x) => s + (x ? 1 : -1), 0);
+    const half = rows / 2;
+    const clampX = (x: number) => Math.max(-half, Math.min(half, x));
+    const sumTo = (m: number) => bits.slice(0, m).reduce((s, x) => s + (x ? 1 : -1), 0) / 2 + jumps.slice(0, m).reduce((s, x) => s + x, 0);
     if (r >= rows) {
       // falling into the bucket
-      return { x: sumTo(rows) / 2, y: rows + f * 1.2 };
+      return { x: clampX(sumTo(rows)), y: rows + f * 1.2 };
     }
-    const x0 = sumTo(r) / 2;
-    const x1 = sumTo(r + 1) / 2;
+    const x0 = clampX(sumTo(r));
+    const x1 = clampX(sumTo(r + 1));
     // a little arc: ease horizontally, accelerate vertically
     const ex = f < 0.5 ? 0 : (f - 0.5) * 2;
     const x = x0 + (x1 - x0) * ex * ex;
@@ -311,8 +332,8 @@ export const GaltonCanvas = forwardRef<GaltonHandle, Props>(function GaltonCanva
 
     // balls
     for (const b of balls.current) {
-      const { x, y } = pos(b.bits, b.t);
-      ctx.fillStyle = col.ball;
+      const { x, y } = pos(b.bits, b.jumps, b.t);
+      ctx.fillStyle = b.wild ? col.expected : col.ball;
       ctx.beginPath();
       ctx.arc(X(x), Y(y), Math.max(3, s * 0.26), 0, Math.PI * 2);
       ctx.fill();

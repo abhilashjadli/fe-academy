@@ -31,20 +31,20 @@ export function F4Binomial() {
   return (
     <Figure
       n="4"
-      prompt={<>Every path is a brick; stack the bricks by bucket. Push n up and tilt the pegs with p.</>}
+      prompt={<>Every route is a brick; stack the bricks by bucket. Push n up, and tilt the pegs with p — the chance of bouncing right.</>}
       controls={
         <>
           <Slider label="rows n" value={n} min={1} max={100} step={1} onChange={setN} fmt={(v) => String(v)} />
           <Slider label="P(right) = p" value={p} min={0.05} max={0.95} step={0.01} onChange={setP} role="approx" />
-          <Toggle label="ghost n = 10" on={ghost} onChange={setGhost} />
+          <Toggle label="keep n = 10 faintly behind" on={ghost} onChange={setGhost} />
           <Toggle label="bell with the same mean and sd" on={bell} onChange={setBell} />
           <span className="readouts">
             <span>
-              <span className="k">mean np = </span>
+              <span className="k">hump at np = </span>
               <span className="v">{fmt.n(2)(mean)}</span>
             </span>
             <span>
-              <span className="k">sd √(np(1−p)) = </span>
+              <span className="k">width √(np(1−p)) = </span>
               <span className="v">{fmt.n(3)(sd)}</span>
             </span>
           </span>
@@ -52,17 +52,23 @@ export function F4Binomial() {
       }
       observe={
         <>
-          <M block tex="P(k) \;=\; \underbrace{\binom{n}{k}}_{\text{paths into }k}\;\underbrace{p^{k}(1-p)^{\,n-k}}_{\text{probability of one such path}}" />
+          <M block tex="P(k) \;=\; \underbrace{\binom{n}{k}}_{\text{routes into }k}\;\underbrace{p^{k}(1-p)^{\,n-k}}_{\text{chance of one such route}}" />
           <p style={{ margin: 0 }}>
-            With p = ½ every path has the same probability and only the count matters (Figure 2). Tilt the pegs and each path's probability depends on how
-            many rights it contains — p for each right, 1 − p for each left — but the count of paths is unchanged. Two things to watch as n grows: the hump
-            moves right like n and widens only like √n, and its shape stops caring whether p was ½ or 0.2. Switch the bell on: a curve with the same mean
-            and sd fits better and better. That curve is the subject of the rest of the page.
+            Tilt the pegs and each route's chance depends on how many rights it holds — p per right, 1 − p per left — but the route count is unchanged. Push n up: the hump
+            moves right like n and widens only like √n. Switch the bell on and it fits better and better. That bell is the rest of the page.
           </p>
+          <details className="n2-more">
+            <summary>the two readouts</summary>
+            <p>
+              The hump sits at np — n bounces, each right with chance p. Its width, measured as a standard deviation, is √(np(1−p)): each bounce adds p(1−p) of variance and
+              variances of independent things add, so the spread grows like √n while the position grows like n. This formula, routes times chances, is called the{" "}
+              <strong>binomial distribution</strong>.
+            </p>
+          </details>
         </>
       }
     >
-      <Plot xDomain={[-0.5, xmax + 0.5]} yDomain={[0, ymax]} xLabel="k = number of rights" yLabel="probability" height={320} ariaLabel="Binomial distribution bars">
+      <Plot xDomain={[-0.5, xmax + 0.5]} yDomain={[0, ymax]} xLabel="k = number of rights" yLabel="probability of bucket k" height={320} ariaLabel="Binomial distribution bars">
         {ghost && n !== 10 && <Bars bars={pmf10.map((v, k) => ({ x: k, y: v, w: 1 }))} role="ghost" opacity={0.35} />}
         <Bars bars={bars} role="approx" />
         {bell && <Curve pts={bellPts} role="truth" />}

@@ -60,7 +60,9 @@
 /* the six-stock matrix, with highlight states driven by the step */
 .a2 .a2-matrix td,
 .a2 .a2-matrix th {
-  transition: opacity 0.3s ease, outline-color 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    outline-color 0.3s ease;
 }
 .a2 .a2-matrix td.cell {
   text-align: center;
@@ -110,7 +112,25 @@
   font-weight: 500;
 }
 
+/* the step nav must not clip its Voice button in the 280px caption column */
+.a2 .steps-nav {
+  flex-wrap: wrap;
+}
+
 /* the bet sits inside the figure body: tighten its top padding */
 .a2 .figure-body > .bet {
   padding-top: var(--space-2);
+}
+
+/* the six-stock table scrolls sideways on a phone instead of being clipped */
+.a2 .a2-matrix-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 640px) {
+  .a2 .a2-matrix th,
+  .a2 .a2-matrix td {
+    padding: 3px 5px;
+    white-space: nowrap;
+  }
 }
