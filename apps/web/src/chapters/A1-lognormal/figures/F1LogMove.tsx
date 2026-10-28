@@ -148,9 +148,9 @@ export function F1LogMove() {
             <VLine at={g(centres.mode)} />
             <VLine at={g(centres.median)} />
             <VLine at={g(centres.mean)} />
-            <Label at={[g(centres.mode), ymax * 0.97]} text="most likely" dx={-4} anchor="end" />
-            <Label at={[g(centres.median), ymax * 0.9]} text="typical" dx={4} />
-            <Label at={[g(centres.mean), ymax * 0.83]} text="average" dx={4} />
+            <Label at={[g(centres.mode), ymax * 0.62]} text="most likely" dx={-5} dy={4} anchor="end" />
+            <Label at={[g(centres.median), ymax * 0.5]} text="typical" dx={5} dy={4} />
+            <Label at={[g(centres.mean), ymax * 0.38]} text="average" dx={5} dy={4} />
           </>
         )}
       </Plot>

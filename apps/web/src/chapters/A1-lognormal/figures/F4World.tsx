@@ -105,7 +105,7 @@ export function F4World() {
         </>
       }
     >
-      <div className="two" style={{ gridTemplateColumns: "minmax(0, 3fr) minmax(0, 2fr)" }}>
+      <div className="two a1-two-32">
         <Plot
           xDomain={[0, n]}
           yDomain={[-pctMax, pctMax]}
@@ -133,7 +133,7 @@ export function F4World() {
           <VLine at={-BIG / m.sd} />
           <Label at={[5.8, logScale ? -0.25 : 0.47]} text="bell" role="truth" anchor="end" />
           {showT && <Label at={[5.8, logScale ? -0.6 : 0.43]} text="t, fitted loosely" role="error" anchor="end" />}
-          <Label at={[BIG / m.sd, logScale ? -3.7 : 0.02]} text="2 %" dx={4} dy={-2} />
+          <Label at={[BIG / m.sd, logScale ? -0.35 : 0.47]} text="±2 %" dx={4} dy={0} />
         </Plot>
       </div>
       <div className="a1-days">
@@ -192,7 +192,7 @@ function BigRug({ z, big, hover }: { z: number[]; big: number[]; hover: number |
   return (
     <g>
       {big.map((i) => (
-        <line key={i} x1={x(z[i])} x2={x(z[i])} y1={y0 - (hover === i ? 16 : 9)} y2={y0} stroke="var(--error)" strokeWidth={hover === i ? 2.5 : 1.5} />
+        <line key={i} x1={x(z[i])} x2={x(z[i])} y1={y0 - (hover === i ? 22 : 14)} y2={y0} stroke="var(--error)" strokeWidth={hover === i ? 3 : 2} />
       ))}
     </g>
   );

@@ -1,11 +1,12 @@
-import { M } from "../../ui/Math";
+import "./a1.css";
+import { Who } from "../../ui/Comic";
 import { F0Story } from "./figures/F0Story";
 import { F1LogMove } from "./figures/F1LogMove";
-import { F2Derive } from "./figures/F2Derive";
-import { F3Lognormal } from "./figures/F3Lognormal";
+import { F2Ledger } from "./figures/F2Ledger";
 import { F4World } from "./figures/F4World";
 import { F5Tails } from "./figures/F5Tails";
 import { F6Break } from "./figures/F6Break";
+// F3Lognormal (the abstract lognormal curve with μ, σ sliders) is folded into Figure 1's "smooth curve" toggle; the file is kept.
 
 export function LognormalChapter() {
   return (
@@ -14,19 +15,19 @@ export function LognormalChapter() {
         <p className="chapter-id">Chapter A1 · Probability &amp; statistics for finance</p>
         <h1>Normal, lognormal and fat tails: adding slides, multiplying stretches</h1>
         <p className="standfirst">
-          Two savers, one coin, two rules. One of them ends the year on a bell; the other on a curve that leans, cannot go below zero, and quietly taxes
-          every wobble. The logarithm turns one into the other — and the real world, it turns out, obeys neither as closely as we would like.
+          Bet 1 % of your money on a fair coin every day for a year. The coin is fair — so why do you usually end the year poorer? And how often does
+          a market really have a terrible day?
         </p>
-        <p className="assumes">Assumes: logarithms and e, random variables, expectation, variance. Chapter 0.2 helps but is recapped where needed.</p>
+        <p className="assumes">Assumes: you have met logarithms, averages and the idea of a spread. That is all.</p>
       </header>
 
       <F0Story />
 
       <div className="prose">
         <p>
-          Ada's year is a sum: 100 plus 250 steps of ±1. Chapter 0.2 said that a sum of many small independent steps makes a bell, and it does. Mel's year is
-          a <em>product</em>: 100 times 250 factors of 1.01 or 0.99, and products were nowhere in that chapter. Yet her pile has a definite shape too — a
-          lean, with a long right reach and a floor at zero. The quickest way to see what that shape is, is to change the ruler we measure it with.
+          <Who name="Ada" />'s year is a sum: 100 plus 250 steps of ±1. Many small independent steps added together make a bell — the one fact we lean
+          on. <Who name="Mel" />'s year is a <em>product</em>: 100 times 250 factors of 1.01 or 0.99. Her pile has a definite shape too — a lean, a long
+          right reach, a floor at zero. To see what that shape is, change the ruler.
         </p>
       </div>
 
@@ -34,28 +35,17 @@ export function LognormalChapter() {
 
       <div className="prose">
         <p>
-          A logarithmic axis makes Mel's pile a bell and Ada's a lean: the two savers are the same story read on different rulers. That is a strong hint about
-          why — and about where Mel's missing 1.24 went. Let the derivation run.
+          On a log ruler, multiplying becomes adding, so Mel's pile is a bell there and her balance is called <strong>lognormal</strong>: a bell in the
+          log. That explains the lean. It does not yet explain why her typical year ends 1.24 below where it started. Let Mel argue her case.
         </p>
       </div>
 
-      <F2Derive />
+      <F2Ledger />
 
       <div className="prose">
         <p>
-          A product becomes a sum under a logarithm; a sum of many small independent terms is a bell; therefore the log of Mel's balance is normal and her
-          balance is <strong>lognormal</strong>. The same logarithm, expanded as in chapter 0.1, carries a second-order term that is negative whichever way
-          the coin falls — half of r² per step — and that is the <strong>volatility drag</strong> that sets Mel's typical year below her average one. Here
-          is the curve she ends on, in general.
-        </p>
-      </div>
-
-      <F3Lognormal />
-
-      <div className="prose">
-        <p>
-          Everything so far has been about the shape produced by a coin. Real daily changes are not coin tosses — but they are small, numerous and roughly
-          independent, so the argument says their logarithms should pile up as a bell. Do they?
+          Everything so far came out of a coin. Real daily changes are not coin tosses — but they are small, numerous and roughly independent, so the
+          same argument says they should pile up as a bell. Here is a real year. Do they?
         </p>
       </div>
 
@@ -63,9 +53,9 @@ export function LognormalChapter() {
 
       <div className="prose">
         <p>
-          The bell fits the middle and fails the edges, and the failure is systematic: far-out days happen hundreds of times more often than the bell
-          allows. The simplest curve that captures this is the Student-t, which looks like a bell with its shoulders pushed into its tails. The number that
-          separates the two is the kurtosis, and the practical reading of it is "how often does a k-σ day come round".
+          The bell fits the middle and misses the edges: big days come far more often than it allows. Is there a curve that fits the edges too? The
+          simplest one is the bell with some of the middle scooped out and dumped into the far ends. It is called the Student-t; its one knob, ν, sets
+          how much went to the ends. The next figure asks the only question that matters.
         </p>
       </div>
 
@@ -73,8 +63,8 @@ export function LognormalChapter() {
 
       <div className="prose">
         <p>
-          If daily changes have tails this fat, is the argument of Figure 2 still safe? Adding many of them should still make a bell — unless the tails are
-          so fat that the precondition fails.
+          If daily changes have tails this fat, is the bell still safe to lean on? Adding many steps should still make a bell — unless the steps are so
+          wild that the recipe itself breaks.
         </p>
       </div>
 
@@ -82,23 +72,19 @@ export function LognormalChapter() {
 
       <div className="ending">
         <p>
-          Adding slides and multiplying stretches; the logarithm converts one into the other, so a quantity that grows by percentages is lognormal, with its
-          mean above its median by the drag <M tex="\tfrac12\sigma^2" />. The bell that all of this rests on needs a finite variance, and real daily
-          changes have tails fat enough to make that a live question: the bell is the first draft, the t is a better second one, and "once in 7,000 years"
-          under the first is "once in a few years" under the second.
+          Adding slides, multiplying stretches, and a logarithm turns one into the other. Anything that grows by percentages ends up lognormal, its
+          typical outcome a little below its average — the price of every wobble. The bell beneath it needs a finite spread, and real markets have days wild
+          enough to question that. The bell is a first draft; the t a better second one; "once in a lifetime" becomes "once in a year".
         </p>
-        <details className="prose" style={{ marginTop: "1rem" }}>
-          <summary className="links" style={{ cursor: "pointer" }}>
-            Where you will meet this again
-          </summary>
-          <p className="footnote" style={{ marginTop: "0.6em" }}>
-            B3 takes Mel into continuous time: geometric Brownian motion, with the same −½σ² sitting in its drift. C3's Black–Scholes formula lives
-            entirely in Mel's world and assumes the bell for log-returns — which is why its prices need a correction called the smile (D2) and why its
-            risk numbers need the fat-tail corrections of E1. A5 is about the other way the bell fails: not fat tails but clustering, when the size of
-            the steps itself wanders.
+        <div className="a1-pull">
+          <div className="a1-pull-k">Where you meet this next</div>
+          <p>Mel tossed one coin a day. A stock price moves every second. What does her year look like when the steps become infinitely small and infinitely many?</p>
+          <p>
+            Her drag survives the limit intact, and becomes a term in the equation every option price is built on.{" "}
+            <a href="#/B3">B3 · Brownian motion and geometric Brownian motion →</a>
           </p>
-        </details>
-        <details className="prose" style={{ marginTop: "0.5rem" }}>
+        </div>
+        <details className="prose" style={{ marginTop: "0.75rem" }}>
           <summary className="links" style={{ cursor: "pointer" }}>
             What computes the figures on this page
           </summary>
@@ -107,10 +93,12 @@ export function LognormalChapter() {
 ada[d] = ada[d-1] + (heads ? +1 : -1)
 mel[d] = mel[d-1] * (heads ? 1.01 : 0.99)
 
-// lognormal density, Y = e^X with X ~ N(mu, sigma²)
+// Figure 1: exact year-end distribution, k heads of 250, P = C(250,k) / 2^250
+// smooth curve: lognormal density, Y = e^X with X ~ N(mu, sigma²)
 f(y) = exp(-(ln y - mu)² / 2 sigma²) / (y sigma sqrt(2π))
 mean = e^(mu + sigma²/2)   median = e^mu   mode = e^(mu - sigma²)
 
+// Figure 4: NIFTY 50 daily log-changes, ln(close_t / close_{t-1}), src/data/nifty50.json
 // Student-t tail: P(|T| > x) = I_{nu/(nu+x²)}(nu/2, 1/2)   (regularised incomplete beta)
 // once-in-N-years = 1 / (252 × P)
 // all tested against a scipy answer key`}

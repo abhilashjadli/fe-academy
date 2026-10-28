@@ -105,7 +105,7 @@ export function F0Story() {
             const histProgress = i === 4 ? u : i > 4 ? 1 : 0;
             const showStats = i >= 4 && (i > 4 || u > 0.6);
             return (
-              <div className="two" style={{ gridTemplateColumns: "minmax(0, 3fr) minmax(0, 2fr)" }}>
+              <div className="two a1-two-32">
                 <PathsStage savers={savers} day={day} showAda showMel yDomain={YD} />
                 <Plot xDomain={[0, xmaxH]} yDomain={YD} width={380} height={320} xTicks={3} yTicks={7} grid={false} margin={{ top: 10, right: 12, bottom: 26, left: 36 }} ariaLabel="End-of-year balance histograms">
                   <HBars bins={histM} progress={histProgress} role="approx" />
