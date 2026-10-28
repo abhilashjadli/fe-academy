@@ -61,3 +61,41 @@
   color: var(--truth-text);
   font-weight: 600;
 }
+.b4-apply {
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-ui);
+}
+.b4-apply .readouts {
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+.b4-approx {
+  color: var(--approx-text);
+}
+.b4-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-3) 0 var(--space-4);
+}
+@media (max-width: 760px) {
+  .b4-cards {
+    grid-template-columns: 1fr;
+  }
+}
+.b4-card {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--truth);
+  border-radius: var(--radius);
+  background: var(--surface-figure);
+  padding: var(--space-3);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.b4-card strong {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+}
