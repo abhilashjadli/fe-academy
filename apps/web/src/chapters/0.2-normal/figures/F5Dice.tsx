@@ -82,7 +82,7 @@ export function F5Dice() {
     return (
       <div key={n}>
         <Plot xDomain={xdom} yDomain={[0, ymax]} width={360} height={190} xTicks={std ? 5 : 6} yTicks={3} xLabel={std ? "(sum − mean) / sd" : `sum of ${n}`} ariaLabel={`Distribution of the sum of ${n} dice`} margin={{ top: 10, right: 10, bottom: 30, left: 36 }}>
-          <Bars bars={bars} role={h.total > 0 || exact ? "approx" : "ghost"} opacity={h.total > 0 || exact ? 0.8 : 0.35} />
+          <Bars bars={bars} role={h.total > 0 || exact ? "approx" : "ghost"} opacity={h.total > 0 || exact ? 0.8 : 0.55} />
           {std && <Curve pts={bell} role="truth" />}
         </Plot>
         <div className="readouts" style={{ padding: "0 0.4rem", fontSize: "0.78rem" }}>

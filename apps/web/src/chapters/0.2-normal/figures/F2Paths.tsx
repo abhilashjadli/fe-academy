@@ -40,7 +40,7 @@ export function F2Paths() {
           {k !== null && (
             <span className="readouts">
               <span>
-                <span className="k">paths into bucket {k}: </span>
+                <span className="k">routes into bucket {k}: </span>
                 <span className="v">{choose(n, k)}</span>
                 <span className="k"> of {2 ** n}</span>
               </span>
@@ -55,7 +55,7 @@ export function F2Paths() {
             fraction is the sum of the two above it; that rule builds <strong>Pascal's triangle</strong>, 1 · 5 · 10 · 10 · 5 · 1 on the last row.
           </p>
           {k !== null && (
-            <M block tex={`P(\\text{bucket } ${k}) = \\frac{\\text{paths into } ${k}}{\\text{all paths}} = \\frac{${choose(n, k)}}{${2 ** n}} = ${(choose(n, k) / 2 ** n).toFixed(4)}`} />
+            <M block tex={`P(\\text{bucket } ${k}) = \\frac{\\text{routes into } ${k}}{\\text{all routes}} = \\frac{${choose(n, k)}}{${2 ** n}} = ${(choose(n, k) / 2 ** n).toFixed(4)}`} />
           )}
         </>
       }

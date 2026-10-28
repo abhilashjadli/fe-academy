@@ -102,8 +102,8 @@ export function NormalChapter() {
 
       <div className="ending">
         <p>
-          A bucket on the board is a sum of coin flips. Count the routes into each bucket and you get Pascal's triangle and the binomial; rescale it — or the sum of any dice
-          with a finite spread — and the same bell appears, with probability carried by its area. The one sentence to keep: a sum of many small, independent things is a
+          A bucket on the board is a sum of coin flips. Count the routes and you get the binomial; rescale it — or any dice sum with a finite spread — and the same bell
+          appears, probability carried by its area. The one sentence to keep: a sum of many small, independent things is a
           bell — and the days that matter are the ones that are not.
         </p>
         <div className="n2-pull">

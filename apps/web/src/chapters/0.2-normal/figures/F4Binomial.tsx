@@ -55,7 +55,7 @@ export function F4Binomial() {
           <M block tex="P(k) \;=\; \underbrace{\binom{n}{k}}_{\text{routes into }k}\;\underbrace{p^{k}(1-p)^{\,n-k}}_{\text{chance of one such route}}" />
           <p style={{ margin: 0 }}>
             Tilt the pegs and each route's chance depends on how many rights it holds — p per right, 1 − p per left — but the route count is unchanged. Push n up: the hump
-            moves right like n and widens only like √n. Switch the bell on: it fits better and better. That bell is the rest of the page.
+            moves like n, widens only like √n. Switch the bell on: it fits better and better. That bell is the rest of the page.
           </p>
           <details className="n2-more">
             <summary>the two readouts</summary>

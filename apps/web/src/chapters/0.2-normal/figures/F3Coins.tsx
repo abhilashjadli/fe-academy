@@ -89,11 +89,11 @@ export function F3Coins() {
           <>
             <p style={{ margin: 0 }}>
               {done ? <strong>All ten. </strong> : <strong>Ten. </strong>}
-              Count it without clicking: 5 choices for the first head, then 4 for the second — 20 — but "coin 2 then coin 4" is the same pick as "coin 4 then coin 2", so halve it:{" "}
-              <strong>10</strong>. In general: n(n−1)…(n−k+1) ordered picks, divided by the k! orders of the same set.
+              Without clicking: 5 choices for the first head, 4 for the second — 20 — but each pair was counted twice (2 then 4, 4 then 2), so halve it: <strong>10</strong>. In
+              general, n(n−1)…(n−k+1) ordered picks over the k! orders of one set:
             </p>
             <M block tex={`\\binom{n}{k} = \\frac{n!}{k!\\,(n-k)!} \\qquad \\binom{5}{2} = \\frac{5 \\cdot 4}{2} = \\frac{${factorialSafe(5)}}{${factorialSafe(2)}\\cdot ${factorialSafe(3)}} = 10`} />
-            <p style={{ margin: "0.4em 0 0" }}>"n choose k" is the number on the peg in Figure 2 — now counted, not generated.</p>
+            <p style={{ margin: "0.4em 0 0" }}>"n choose k" — the peg number of Figure 2, counted rather than generated.</p>
           </>
         ) : (
           <>Each pick you find is a route into bucket 2. The chips above are your collection. When you are sure you have them all, you will be told.</>
