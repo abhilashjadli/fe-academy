@@ -106,6 +106,9 @@ export function F7Measure() {
         </>
       }
       observe={
+        !finished ? (
+          <>Lock in a guess and roll. The blue curve is what the bell predicts for the pile — drawn from the mean and spread alone, before a single die is rolled.</>
+        ) : (
         <>
           Most people guess far too high. A sum of a hundred things is much more tightly bunched than the things themselves: the mean grew like 100, the spread only like
           √100 = 10. So 400 is five spreads out, and five spreads out is almost never.
@@ -121,6 +124,7 @@ export function F7Measure() {
             </p>
           </details>
         </>
+        )
       }
     >
       <BetNumber question="Your guess: the chance the total beats 400 is…" unit="%" value={guess} onCommit={(v) => { setGuessStr(v === null ? null : String(v)); setRevealed(0); }} committed={guess !== null} min={0} max={100} step={0.1}>
@@ -128,10 +132,10 @@ export function F7Measure() {
           <Bars bars={bars} role="approx" opacity={0.75} gap={0} />
           <Curve pts={bell} role="truth" />
           <VLine at={400} role="error" />
-          <Label at={[400, 0.028]} text="400" role="error" dx={4} />
+          <Label at={[400, 0.028]} text="400" role="error" dx={4} dy={4} />
           <VLine at={MEAN - Z95 * SD} />
           <VLine at={MEAN + Z95 * SD} />
-          <Label at={[MEAN, 0.0285]} text="95 % band" anchor="middle" dx={0} />
+          <Label at={[MEAN, 0.0285]} text="95 % band" anchor="middle" dx={0} dy={4} />
         </Plot>
         {finished && guess !== null && actual !== null && (
           <ResultCard yours={`${guess} %`} answer={`${pct1(actual)} — ${breaches} of ${m.toLocaleString()} rolls`} verdict={verdict}>

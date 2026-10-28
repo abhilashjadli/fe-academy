@@ -79,7 +79,7 @@ export function F5Zoom() {
           <span className="readouts">
             <span>
               <span className="k">at the edge of the window the line is off by </span>
-              <span className="v tok-error">{gapAtEdge < 0.0005 ? "less than a thousandth" : gapAtEdge.toFixed(3)}</span>
+              <span className="v tok-error">{gapAtEdge < 0.0005 ? "less than a thousandth" : gapAtEdge.toFixed(2)}</span>
             </span>
           </span>
         </>
@@ -94,6 +94,7 @@ export function F5Zoom() {
               Halve the step and the one-term error drops by 4, the two-term error by 8. On axes where both the step and the error are plotted as powers of ten, each polynomial's
               error is a straight line whose steepness is one more than its number of terms — measured here: P₀ {sl[0].toFixed(2)}, P₁ {sl[1].toFixed(2)}, P₂ {sl[2].toFixed(2)}.
             </p>
+            <div style={{ maxWidth: 520 }}>
             <Plot xDomain={[-2, -0.3]} yDomain={[-8, 0.6]} xLabel="step (powers of ten)" yLabel="error (powers of ten)" width={520} height={260} xTicks={4} ariaLabel="Error versus step size on log-log axes">
               <Curve pts={e0} role="ghost" smooth={false} />
               <Curve pts={e1} role="ghost" smooth={false} dash="5 4" />
@@ -111,6 +112,7 @@ export function F5Zoom() {
               <Label at={e1[5]} text={`the line, slope ${sl[1].toFixed(1)}`} role="ghost" dx={8} dy={-8} />
               <Label at={e2[5]} text={`the bend, slope ${sl[2].toFixed(1)}`} role="approx" dx={8} dy={-8} />
             </Plot>
+            </div>
             <p>
               Exactly: the error after n terms is the (n + 1)-th derivative, taken somewhere between the centre and x, divided by (n + 1)!, times (x − a)ⁿ⁺¹. That is the next
               term with its derivative evaluated at an unknown nearby point instead of at the centre.

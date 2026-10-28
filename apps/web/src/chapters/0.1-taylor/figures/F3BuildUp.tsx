@@ -87,7 +87,7 @@ export function F3BuildUp() {
       observe={
         <>
           The shaded gap is thinnest at the centre and widens as you walk away: the polynomial knows the function <em>at one point</em>. Each new term pushes the
-          good region outward; drag the centre and the knowledge moves with it. For ln x and √(1+x) two dotted walls appear, and no number of terms crosses them.
+          good region outward; drag the centre and the knowledge moves with it. For ln x and √(1+x) two red walls appear, and no number of terms crosses them.
           <details className="t-more">
             <summary>the recipe with the centre anywhere</summary>
             <p>Nothing was special about x = 0. Measure the derivatives at a point a, and the only change is that x becomes the distance from a:</p>

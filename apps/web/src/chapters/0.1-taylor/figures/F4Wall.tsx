@@ -82,7 +82,7 @@ export function F4Wall() {
         <Marker at={[A, 0]} role="ink" r={6} />
         <Label at={[A, 0]} text="centre" dx={8} dy={16} />
         <VLine at={x} />
-        <Curve pts={dots} role={role} smooth={false} width={1} opacity={0.6} />
+        <Curve pts={dots} role={role} smooth={false} width={1.5} opacity={0.9} />
         {dots.map((p, i) => (
           <Marker key={i} at={p} role={role} r={i === dots.length - 1 ? 5 : 3.2} />
         ))}
