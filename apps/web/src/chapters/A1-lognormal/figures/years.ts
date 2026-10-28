@@ -1,6 +1,6 @@
 /** "once in …" in units a person feels: days, months, years, centuries, never scientific notation. */
 export function fmtYears(y: number): string {
-  if (!Number.isFinite(y)) return "never";
+  if (!Number.isFinite(y)) return "never (longer than the universe has existed)";
   if (y < 1 / 12) return `${Math.max(1, Math.round(y * 252))} trading days`;
   if (y < 1) return `${Math.round(y * 12)} months`;
   if (y < 10) return `${y.toFixed(1)} years`;

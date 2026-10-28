@@ -77,6 +77,7 @@ Plus the four "not rocket science" fixes the critique and engagement study agree
 8. Break-it closer and a visible pull to the next problem.
 9. Reference numbers from the books in §6 of the note, to go into the Python key.
 10. ≤ 6–8 figures; near-duplicates merged.
+11. **The four closing sections, always (sponsor, 2026-10-28, after B4):** "So what is X?" (the result stated plainly in words, one formula at most) → "Use it yourself" (one small figure where the reader applies it) → "Where it is used, every day" (three cards, each pointing at a later chapter) → "The conclusion" (a heading, the result and its consequences in words, the one sentence for a desk head). The mechanism is not the lesson; the use is.
 
 ## 7. What the built chapters need (v1 → v2), by cost
 
