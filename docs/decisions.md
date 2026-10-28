@@ -32,3 +32,4 @@ One line per decision, newest first. Product decisions in the charter are not re
 - 0.1, 0.2, A1, A2 v2 (lightness passes) deployed. GitHub Pages had been switched off since 23 Oct; sponsor re-enabled Source = GitHub Actions on 28 Oct.
 - 2026-10-28: Chapter B4 built from the approved storyboard (8 figures incl. two Manim clips) and deployed; NIFTY 2016–2026 series complete (2,679 returns, no gaps).
 - 2026-10-28: A3 storyboard approved (Bank Nifty artefact; Twins one panel; one 15-s clip for the residuals-in-time beat).
+- 2026-10-28: Chapter A3 built and deployed (bank index simulated until the NIFTY BANK file arrives; series.ts switches).

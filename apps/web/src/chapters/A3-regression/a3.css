@@ -1,0 +1,105 @@
+/* Chapter A3 — local styles */
+.a3-table {
+  max-width: 560px;
+  margin: 0.75rem 0;
+}
+.a3-truth {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.a3-dim {
+  color: var(--ink-3);
+}
+.a3-more {
+  margin: var(--space-2) var(--space-4) var(--space-3);
+  font-family: var(--font-prose);
+  color: var(--ink-2);
+}
+.a3-more summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+.a3-more p {
+  margin: 0.4em 0 0;
+}
+.b4 .prose .says {
+  max-width: 34rem;
+}
+.a3-pull {
+  margin: var(--space-6) 0 var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--surface-figure);
+  font-family: var(--font-prose);
+  font-size: 1.02rem;
+}
+.a3-pull a {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+}
+.a3-code {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+.a3-faces {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.a3-bad {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.a3-good {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.a3-apply {
+  padding: var(--space-3) var(--space-4);
+  font-family: var(--font-ui);
+}
+.a3-apply .readouts {
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+.a3-approx {
+  color: var(--approx-text);
+}
+.a3-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-3) 0 var(--space-4);
+}
+@media (max-width: 760px) {
+  .a3-cards {
+    grid-template-columns: 1fr;
+  }
+}
+.a3-card {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--truth);
+  border-radius: var(--radius);
+  background: var(--surface-figure);
+  padding: var(--space-3);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.a3-card strong {
+  display: block;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+}
+.a3-formula {
+  padding: var(--space-2) var(--space-2) 0;
+  font-size: 0.9rem;
+}

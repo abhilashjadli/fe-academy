@@ -7,6 +7,7 @@ import { NormalChapter } from "./chapters/0.2-normal/Chapter";
 import { LognormalChapter } from "./chapters/A1-lognormal/Chapter";
 import { DependenceChapter } from "./chapters/A2-dependence/Chapter";
 import { ItoChapter } from "./chapters/B4-ito/Chapter";
+import { RegressionChapter } from "./chapters/A3-regression/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
@@ -14,6 +15,7 @@ const CHAPTERS: Record<string, ComponentType> = {
   A1: LognormalChapter,
   A2: DependenceChapter,
   B4: ItoChapter,
+  A3: RegressionChapter,
   lab: Lab,
 };
 
