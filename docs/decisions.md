@@ -26,3 +26,7 @@ One line per decision, newest first. Product decisions in the charter are not re
 - Data received: NIFTY 50 daily, 23-Oct-2025 → 23-Oct-2026 (`data/nifty/`, 248 days, ann. vol 13.9 %, worst day −3.3 %); NSE NIFTY option chain screenshot 23-Oct-2026 (`data/option-chain/`, strikes 22,250–23,050 with call/put IVs — a real smile slice). Vol-surface page (tradingalgo) is JS-only and blocked from the workspace; term sheet to follow; Tsay file unavailable.
 - Antigravity: Gemini Argon not available on the sponsor's plan there. Reviewer model in Antigravity = Claude Opus 4.6 (Thinking); optionally a second pass of `reviews/summary.md` through Gemini Argon in the Gemini app.
 - Order of work accepted: style sprint → A1/A2 v2 → A3 onward with storyboard approval.
+
+## 2026-10-28 — B4 storyboard approved; v2 chapters live
+- B4 storyboard v1 approved: bet opener (puzzle in collapsed panel), coin flips throughout, break-it fan is enough money, and — sponsor's amendment — Manim clips IN ADDITION to the pressable figures (a "watch" beat before each of the two main figures).
+- 0.1, 0.2, A1, A2 v2 (lightness passes) deployed. GitHub Pages had been switched off since 23 Oct; sponsor re-enabled Source = GitHub Actions on 28 Oct.
