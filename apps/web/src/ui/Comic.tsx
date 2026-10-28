@@ -47,6 +47,10 @@ const REGISTER: Record<string, { colour: string; hair: "short" | "long" | "bun" 
   You: { colour: "var(--ink-2)", hair: "curly", skin: "#d9a97f" },
   Desk: { colour: "var(--ink-2)", hair: "bald", glasses: true, skin: "#e0b48f" },
   Lemonade: { colour: "var(--approx)", hair: "curly", skin: "#c68c5a" },
+  Funnel: { colour: "var(--error)", hair: "long", skin: "#e9c2a0" },
+  Echo: { colour: "var(--error)", hair: "short", glasses: true, skin: "#c68c5a" },
+  Twins: { colour: "var(--error)", hair: "bun", skin: "#b8743f" },
+  Drunks: { colour: "var(--error)", hair: "curly", skin: "#d9a97f" },
   Umbrella: { colour: "var(--truth)", hair: "long", skin: "#b8743f" },
 };
 const PALETTE = ["var(--truth)", "var(--approx)", "var(--error)", "var(--ink-2)"];
