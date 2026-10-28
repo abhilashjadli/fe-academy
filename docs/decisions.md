@@ -30,3 +30,4 @@ One line per decision, newest first. Product decisions in the charter are not re
 ## 2026-10-28 — B4 storyboard approved; v2 chapters live
 - B4 storyboard v1 approved: bet opener (puzzle in collapsed panel), coin flips throughout, break-it fan is enough money, and — sponsor's amendment — Manim clips IN ADDITION to the pressable figures (a "watch" beat before each of the two main figures).
 - 0.1, 0.2, A1, A2 v2 (lightness passes) deployed. GitHub Pages had been switched off since 23 Oct; sponsor re-enabled Source = GitHub Actions on 28 Oct.
+- 2026-10-28: Chapter B4 built from the approved storyboard (8 figures incl. two Manim clips) and deployed; NIFTY 2016–2026 series complete (2,679 returns, no gaps).

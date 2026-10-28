@@ -60,11 +60,11 @@ export function F5Break() {
           <Curve key={i} pts={c} role={forget ? "error" : "approx"} width={1} opacity={0.35} smooth={false} />
         ))}
         <HLine at={truth} />
-        <Label at={[T, truth]} text={`true average ${fmt.n(1)(truth)}`} anchor="end" dy={-8} />
+        <Label at={[T, truth]} text={`true average ${fmt.n(1)(truth)}`} anchor="end" dx={-8} dy={-10} />
         <Curve pts={[[0, S0], [T, gbmMedian(S0, MU, sigma, T)]]} role="ghost" dash="4 3" width={1.5} smooth={false} />
-        <Label at={[T, gbmMedian(S0, MU, sigma, T)]} text={`typical year ${fmt.n(1)(gbmMedian(S0, MU, sigma, T))}`} role="ghost" anchor="end" dy={14} />
+        <Label at={[T, gbmMedian(S0, MU, sigma, T)]} text={`typical year ${fmt.n(1)(gbmMedian(S0, MU, sigma, T))}`} role="ghost" anchor="end" dx={-8} dy={34} />
         <Curve pts={[[0, S0], [T, meanEnd]]} role={forget ? "error" : "truth"} width={2.5} smooth={false} />
-        <Label at={[T, meanEnd]} text={`simulated ${fmt.n(1)(meanEnd)}`} role={forget ? "error" : "truth"} anchor="end" dy={forget ? -22 : -8} />
+        <Label at={[T, meanEnd]} text={`simulated ${fmt.n(1)(meanEnd)}`} role={forget ? "error" : "truth"} anchor="end" dx={-8} dy={forget ? -28 : 18} />
       </Plot>
     </Figure>
   );
