@@ -1035,3 +1035,14 @@ a:hover {
   font-family: var(--font-ui);
   font-size: 0.85rem;
 }
+
+/* wide formulas scroll inside their box instead of widening the page (phones) */
+.katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 2px 0;
+}
+.katex-display > .katex {
+  white-space: nowrap;
+}

@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Figure } from "../../../ui/Figure";
+import { Bet, ResultCard, useBet } from "../../../ui/Bet";
 import { Timeline, type Segment } from "../../../ui/Timeline";
 import {
   Curve,
@@ -18,8 +19,18 @@ const DAYS = 90;
 export const LEMONADE = "Lemonade";
 export const UMBRELLA = "Umbrella";
 
-/** Two stalls, one weather: daily takings become dots, and the cloud has a direction. */
+type Pick = "high" | "low" | "none";
+
+/** Two stalls, one weather: bet first, then daily takings become dots, and the cloud has a direction. */
 export function F0Stalls() {
+  const [pick, setPick] = useBet<Pick>("A2-F0");
+  const [ended, setEnded] = useState(false);
+  const endedRef = useRef(false);
+  const markEnded = () => {
+    if (endedRef.current) return;
+    endedRef.current = true;
+    queueMicrotask(() => setEnded(true));
+  };
   const days = useMemo(() => {
     const r = rng(314);
     const out: Array<{ w: number; lemon: number; umb: number }> = [];
@@ -40,6 +51,15 @@ export function F0Stalls() {
   );
   const mx = days.reduce((s, d) => s + d.lemon, 0) / DAYS,
     my = days.reduce((s, d) => s + d.umb, 0) / DAYS;
+  // the bet's answer, read off the figure's own data: Umbrella on Lemonade's best day, against Umbrella's usual (median) day
+  const best = useMemo(() => {
+    const b = days.reduce((a, d) => (d.lemon > a.lemon ? d : a));
+    const sorted = days.map((d) => d.umb).sort((p, q) => p - q);
+    const median = (sorted[DAYS / 2 - 1] + sorted[DAYS / 2]) / 2;
+    const rank = sorted.filter((u) => u < b.umb).length;
+    return { lemon: b.lemon, umb: b.umb, median, rank, answer: (b.umb < median ? "low" : "high") as Pick };
+  }, [days]);
+  const f2 = (v: number) => v.toFixed(2);
   const dir = useMemo(() => {
     // direction of the cloud: principal axis of the 2x2 covariance
     const sx = days.reduce((s, d) => s + (d.lemon - mx) ** 2, 0) / DAYS,
@@ -89,25 +109,52 @@ export function F0Stalls() {
       n="0"
       prompt={
         <>
-          A season in the life of two stalls. Play, scrub, or switch the voice
-          on.
+          A season in the life of two stalls. Bet first; then play, scrub, or
+          switch the voice on.
         </>
       }
       observe={
+        pick && (
         <>
           Every dot is one day. <Who name={LEMONADE} mood="happy" /> sells on
           sunny days, <Who name={UMBRELLA} mood="worried" /> on wet ones, so the
           cloud leans downhill. One hidden cause, two stalls, one tilt. The
-          number for the tilt is the correlation, about {rho.toFixed(2)} here —
+          number for the tilt is the correlation, about {f2(rho).replace("-", "\u2212")} here —
           and the rest of this page is about making, reading and mistrusting
           that number.
         </>
+        )
       }
     >
+      <Bet
+        question={
+          <>
+            <Who name={LEMONADE} mood="happy" /> and{" "}
+            <Who name={UMBRELLA} mood="worried" /> share one street and one
+            weather. On Lemonade's best day of the season, is Umbrella's takings
+            high or low?
+          </>
+        }
+        options={[
+          { id: "high", label: "high" },
+          { id: "low", label: "low" },
+          { id: "none", label: "no relation" },
+        ]}
+        pick={pick}
+        onPick={(v) => {
+          setPick(v);
+          if (v === null) {
+            endedRef.current = false;
+            setEnded(false);
+          }
+        }}
+      >
       <Timeline
         segments={segments}
+        onEnd={markEnded}
         render={(_t, i, u) => {
           const n = countAt(i, u);
+          if (i === segments.length - 1 && u >= 1 - 1e-6) markEnded();
           const showDir = i >= 3 || (i === 2 && u > 0.85);
           return (
             <Plot
@@ -151,6 +198,19 @@ export function F0Stalls() {
                   dy={-6}
                 />
               )}
+              {i === segments.length - 1 && (
+                <>
+                  <Marker at={[best.lemon, best.umb]} role="error" r={6} />
+                  <Label
+                    at={[best.lemon, best.umb]}
+                    text="Lemonade's best day"
+                    role="error"
+                    dx={-9}
+                    dy={-14}
+                    anchor="end"
+                  />
+                </>
+              )}
               {i >= 1 && i < 3 && n > 0 && (
                 <Label
                   at={all[n - 1]}
@@ -174,6 +234,19 @@ export function F0Stalls() {
         </span>
         <span>one dot = one day</span>
       </div>
+      {pick && ended && (
+        <ResultCard
+          yours={pick === "high" ? "high" : pick === "low" ? "low" : "no relation"}
+          answer={`${best.answer}: Umbrella took ${f2(best.umb)} on Lemonade's best day (${f2(best.lemon)}), against a usual ${f2(best.median)}`}
+          verdict={pick === best.answer ? "right" : "miss"}
+        >
+          Same weather, opposite tills. The sun that fills Lemonade's best day
+          empties Umbrella's: that day ranks {best.rank + 1} of {DAYS} for
+          Umbrella, from the bottom. One hidden cause, two stalls, and the cloud
+          leans downhill — correlation about {f2(rho).replace("-", "\u2212")}.
+        </ResultCard>
+      )}
+      </Bet>
     </Figure>
   );
 }

@@ -99,3 +99,31 @@
   text-align: center;
   padding: 0.25rem 0 0;
 }
+
+/* F4: three boards at once (n = 10, 30, 100); stacked on a phone */
+.n2-multiples {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+  padding: 0.4rem 0.25rem 0.5rem;
+}
+.n2-panel {
+  margin: 0;
+  min-width: 0;
+}
+.n2-panel .plot .label {
+  font-size: 14px;
+  font-weight: 600;
+}
+.n2-panel figcaption {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-2);
+  padding: 0.2rem 0.25rem 0;
+  text-align: center;
+}
+@media (max-width: 640px) {
+  .n2-multiples {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

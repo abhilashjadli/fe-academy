@@ -1,102 +1,102 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Figure } from "../../../ui/Figure";
-import { Plot, Points, fmt, type Pt } from "../../../ui/Plot";
-import { Segmented } from "../../../ui/controls";
+import { Label, Plot, Points, fmt, type Pt } from "../../../ui/Plot";
 import { normalSample, rng } from "../../../engine/random";
 import { correlation } from "../../../engine/linalg";
 
-type Mode = "round" | "parabola" | "outlier";
-
-/** Break it: zero correlation with total dependence; strong correlation made by one point. */
+/** Break it: three stills side by side — zero correlation with total dependence; strong correlation made by one point. */
 export function F6Break() {
-  const [mode, setMode] = useState<Mode>("parabola");
-  const pts = useMemo(() => {
+  const cases = useMemo(() => {
     const r = rng(5);
     const base: Pt[] = Array.from({ length: 200 }, () => [
       normalSample(r),
       normalSample(r),
     ]);
-    if (mode === "round") return base;
-    if (mode === "parabola")
-      return base.map(([x]) => [x, x * x - 1 + 0.15 * normalSample(r)] as Pt);
-    return [...base.map(([x, y]) => [0.6 * x, 0.6 * y] as Pt), [7, 7] as Pt];
-  }, [mode]);
-  const rho = correlation(
-    pts.map((p) => p[0]),
-    pts.map((p) => p[1]),
-  );
+    const parabola = base.map(
+      ([x]) => [x, x * x - 1 + 0.15 * normalSample(r)] as Pt,
+    );
+    const outlier: Pt[] = [
+      ...base.map(([x, y]) => [0.6 * x, 0.6 * y] as Pt),
+      [7, 7],
+    ];
+    const rhoOf = (pts: Pt[]) =>
+      correlation(
+        pts.map((p) => p[0]),
+        pts.map((p) => p[1]),
+      );
+    return [
+      {
+        id: "round",
+        pts: base,
+        rho: rhoOf(base),
+        role: "approx" as const,
+        caption: "Independent noise: a round cloud, nothing to see.",
+      },
+      {
+        id: "parabola",
+        pts: parabola,
+        rho: rhoOf(parabola),
+        role: "approx" as const,
+        caption:
+          "Know x and you know y — yet the number reads zero. Uphill cancels downhill.",
+      },
+      {
+        id: "outlier",
+        pts: outlier,
+        rho: rhoOf(outlier),
+        role: "error" as const,
+        caption:
+          "Two hundred independent days plus one wild one, and the number says “strong”.",
+      },
+    ];
+  }, []);
+  const n2 = fmt.n(2);
   return (
     <Figure
       n="6"
       prompt={
         <>
-          Break it. One number for a whole cloud — two ways it can mislead you.
-        </>
-      }
-      controls={
-        <>
-          <Segmented
-            value={mode}
-            onChange={setMode}
-            options={[
-              { id: "round", label: "independent" },
-              { id: "parabola", label: "a parabola" },
-              { id: "outlier", label: "one outlier" },
-            ]}
-          />
-          <span className="readouts">
-            <span>
-              <span className="k">correlation </span>
-              <span className="v">{fmt.n(2)(rho)}</span>
-            </span>
-          </span>
+          Break it. One number for a whole cloud — the same ρ on the left and in
+          the middle, and one point making the right.
         </>
       }
       observe={
         <>
-          {mode === "round" && (
-            <>
-              Independent noise: a round cloud, correlation about zero, and
-              nothing to see. Now try the other two.
-            </>
-          )}
-          {mode === "parabola" && (
-            <>
-              <strong>Correlation {fmt.n(2)(rho)}, total dependence.</strong>{" "}
-              Know x and you know y almost exactly — yet the number says
-              "nothing here", because it only sees straight lines, and the
-              uphill half cancels the downhill half. "Uncorrelated" does not
-              mean "independent". It means "no straight-line relationship".
-            </>
-          )}
-          {mode === "outlier" && (
-            <>
-              <strong>One point, correlation {fmt.n(2)(rho)}.</strong> Two
-              hundred independent days plus a single wild one, and the number
-              reports a strong relationship. One huge product of deviations
-              outweighs two hundred small ones. Every correlation from market
-              data has a day like this inside it. Is it signal or noise? That is
-              always the question.
-            </>
-          )}
+          The number only sees straight lines. The middle cloud is total
+          dependence and reads ρ = {n2(cases[1].rho)}: "uncorrelated" does not
+          mean "independent". The right cloud is independence plus one day and
+          reads ρ = {n2(cases[2].rho)}. Every market correlation has a day like
+          that inside it. Ask which it is before you trust it.
         </>
       }
     >
-      <Plot
-        xDomain={[-4, 8]}
-        yDomain={[-4, 8]}
-        xLabel="x"
-        yLabel="y"
-        height={340}
-        ariaLabel="Scatter illustrating how correlation can mislead"
-      >
-        <Points
-          pts={pts}
-          role={mode === "outlier" ? "error" : "approx"}
-          r={3}
-          opacity={0.6}
-        />
-      </Plot>
+      <div className="a2-stills">
+        {cases.map((c) => (
+          <figure key={c.id} className="a2-still">
+            <Plot
+              xDomain={[-4, 8]}
+              yDomain={[-4, 8]}
+              width={300}
+              height={260}
+              margin={{ top: 10, right: 10, bottom: 26, left: 30 }}
+              xTicks={4}
+              yTicks={4}
+              ariaLabel={`${c.caption} Correlation ${n2(c.rho)}.`}
+            >
+              <Points pts={c.pts} role={c.role} r={2.6} opacity={0.6} />
+              <Label
+                at={[-3.3, 7.2]}
+                text={`ρ = ${n2(c.rho)}`}
+                anchor="start"
+                role={c.role}
+                dx={0}
+                dy={0}
+              />
+            </Plot>
+            <figcaption>{c.caption}</figcaption>
+          </figure>
+        ))}
+      </div>
     </Figure>
   );
 }

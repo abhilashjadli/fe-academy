@@ -2,8 +2,9 @@ import { useMemo, useState } from "react";
 import { npdf, onceInYears, studentT, tailTwoSidedNormal, tailTwoSidedT } from "../../../engine/distributions";
 import { Figure } from "../../../ui/Figure";
 import { Curve, Label, Marker, Plot, VLine } from "../../../ui/Plot";
-import { Slider, Toggle } from "../../../ui/controls";
+import { Slider } from "../../../ui/controls";
 import { Bet, ResultCard, useBet } from "../../../ui/Bet";
+import { IconGrid } from "../../../ui/IconGrid";
 import { fmtYears } from "./years";
 
 type Pick = "year" | "decade" | "lifetime" | "longer";
@@ -13,7 +14,7 @@ export function F5Tails() {
   const [pick, setPick] = useBet<Pick>("A1-F5");
   const [nu, setNu] = useState(4);
   const [k, setK] = useState(4);
-  const [logScale, setLog] = useState(true);
+  const logScale = true; // the log view is the one that shows a tail; the linear view is folded away
   const c = studentT.unitScale(nu);
   const tr = (v: number) => (logScale ? Math.log10(Math.max(v, 1e-12)) : v);
   const bell = useMemo(() => Array.from({ length: 321 }, (_, i) => [-10 + (20 * i) / 320, npdf(-10 + (20 * i) / 320)] as [number, number]), []);
@@ -30,6 +31,9 @@ export function F5Tails() {
   const ydom: [number, number] = logScale ? [-10, 0] : [0, 0.5];
   const bell4 = onceInYears(tailTwoSidedNormal(4));
   const t4 = onceInYears(tailTwoSidedT(4, 4));
+  // the reveal as years you can count: one square per year, the rose square is the year the 4σ day lands in
+  const bellSquares = Math.max(1, Math.round(bell4));
+  const tSquares = Math.max(1, Math.round(t4));
 
   return (
     <Figure
@@ -38,16 +42,17 @@ export function F5Tails() {
       observe={
         <>
           <p style={{ margin: 0 }}>
-            Both curves have the same usual-day size, so "a 4σ day" means the same move under each. The bell says once in {fmtYears(bell4)}; the t with
-            ν = 4 says once in about a year. Move k to 5 and the gap becomes centuries against years. Fat tails are not "more volatility" — they are
-            the same spread with the probability moved outward.
+            Both curves have the same usual-day size, so a 4σ day means the same move under each. The bell says once in {fmtYears(bell4)}; the t with
+            ν = 4 says once in {fmtYears(t4)}. Move k to 5 and the gap becomes centuries against years. Fat tails are not more volatility: the same
+            spread with probability moved outward.
           </p>
           <details className="a1-more">
             <summary>more</summary>
             <p>
               The t has one knob, ν. Small ν: fat tails, a tall spike in the middle, thin shoulders. Large ν: it turns back into the bell. The worst day of
               October 1987 was about twenty usual-day sizes under the bell, a probability so small the readout gives up. Slide ν toward 2 and the t's
-              spread heads to infinity, so "same spread" stops meaning anything — that is Figure 6.
+              spread heads to infinity, so "same spread" stops meaning anything — that is Figure 6. The plot shows log₁₀ of the density, so a
+              tail that would be invisible on a linear axis is a straight-ish line here.
             </p>
           </details>
         </>
@@ -76,9 +81,8 @@ export function F5Tails() {
           <Label at={[-9.6, ydom[1] - (logScale ? 3.0 : 0.16)]} text={`t, ν = ${nu.toFixed(1)}`} role="error" />
         </Plot>
         <div className="a1-ctl">
-          <Slider label="t's knob ν" value={nu} min={2.2} max={30} step={0.1} onChange={setNu} role="error" fmt={(v) => v.toFixed(1)} />
-          <Slider label="a k-σ day, k =" value={k} min={1} max={10} step={0.5} onChange={setK} fmt={(v) => v.toFixed(1)} />
-          <Toggle label="log-density view" on={logScale} onChange={setLog} />
+          <Slider label="t's knob ν" value={nu} min={2.2} max={30} step={0.1} onChange={setNu} role="error" fmt={(v) => v.toFixed(2)} />
+          <Slider label="a k-σ day, k =" value={k} min={1} max={10} step={0.5} onChange={setK} fmt={(v) => v.toFixed(2)} />
           <span className="readouts">
             <span>
               <span className="k">under the bell: once in </span>
@@ -99,6 +103,38 @@ export function F5Tails() {
             The bell's tail dies off faster and faster — each extra σ costs far more than the last. Real daily changes do not die off that fast: the NIFTY
             year above had a 4σ day in its first twelve months. The bell under-counts the big days by something like a lifetime to a year.
           </ResultCard>
+        )}
+        {pick && (
+          <div className="a1-grids">
+            <IconGrid
+              n={bellSquares}
+              perRow={9}
+              size={16}
+              gap={3}
+              groupEvery={3}
+              roleOf={(i) => (i === bellSquares - 1 ? "error" : "ghost")}
+              titleOf={(i) => `year ${i + 1}`}
+              label={
+                <>
+                  <strong>Under the bell:</strong> once in {fmtYears(bell4)}. One square per year; the <span className="tok-error">rose</span> one holds the 4σ
+                  day — {bellSquares} squares, 1 rose.
+                </>
+              }
+            />
+            <IconGrid
+              n={tSquares}
+              perRow={9}
+              size={16}
+              gap={3}
+              roleOf={() => "error"}
+              titleOf={() => "this year"}
+              label={
+                <>
+                  <strong>Under the t, ν = 4:</strong> once in {fmtYears(t4)}. Every year gets one — {tSquares} square, {tSquares} rose.
+                </>
+              }
+            />
+          </div>
         )}
       </Bet>
     </Figure>

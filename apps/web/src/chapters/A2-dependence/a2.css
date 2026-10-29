@@ -134,3 +134,30 @@
     white-space: nowrap;
   }
 }
+
+/* F6: three captioned stills side by side; stacked on a phone */
+.a2 .a2-stills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2) var(--space-3);
+}
+.a2 .a2-still {
+  margin: 0;
+  min-width: 0;
+}
+.a2 .a2-still .plot .label {
+  font-size: 15px;
+  font-weight: 600;
+}
+.a2 .a2-still figcaption {
+  font-family: var(--font-prose);
+  font-size: 0.92rem;
+  color: var(--ink-2);
+  padding: var(--space-1) var(--space-1) 0;
+}
+@media (max-width: 640px) {
+  .a2 .a2-stills {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

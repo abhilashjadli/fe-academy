@@ -2,78 +2,82 @@ import { useMemo, useState } from "react";
 import { binomialPmf } from "../../../engine/discrete";
 import { pdf } from "../../../engine/normal";
 import { Figure } from "../../../ui/Figure";
-import { Bars, Curve, Plot, VLine, fmt } from "../../../ui/Plot";
-import { Slider, Toggle } from "../../../ui/controls";
+import { Bars, Curve, Label, Plot, VLine, fmt } from "../../../ui/Plot";
+import { Toggle } from "../../../ui/controls";
 import { M } from "../../../ui/Math";
 
-/** The binomial as bars: n and p sliders, mean and sd live, the bell forming. */
+const NS = [10, 30, 100];
+
+/** The binomial as bricks, three boards at once: n = 10, 30, 100 with the bell of the same mean and sd drawn over each. */
 export function F4Binomial() {
-  const [n, setN] = useState(5);
-  const [p, setP] = useState(0.5);
-  const [ghost, setGhost] = useState(true);
-  const [bell, setBell] = useState(false);
-  const pmf = useMemo(() => binomialPmf(n, p), [n, p]);
-  const mean = n * p;
-  const sd = Math.sqrt(n * p * (1 - p));
-  const xmax = Math.max(12, n);
-  const ymax = Math.max(...pmf) * 1.15;
-  const bars = pmf.map((v, k) => ({ x: k, y: v, w: 1 }));
-  const pmf10 = useMemo(() => binomialPmf(10, 0.5), []);
-  const bellPts = useMemo(() => {
-    const out: Array<[number, number]> = [];
-    for (let i = 0; i <= 200; i++) {
-      const x = (xmax * i) / 200;
-      out.push([x, sd > 0 ? pdf((x - mean) / sd) / sd : 0]);
-    }
-    return out;
-  }, [mean, sd, xmax]);
+  const [tilt, setTilt] = useState(false);
+  const p = tilt ? 0.2 : 0.5;
+  const panels = useMemo(
+    () =>
+      NS.map((n) => {
+        const pmf = binomialPmf(n, p);
+        const mean = n * p;
+        const sd = Math.sqrt(n * p * (1 - p));
+        const ymax = Math.max(...pmf) * 1.2;
+        const bell: Array<[number, number]> = [];
+        for (let i = 0; i <= 200; i++) {
+          const x = (n * i) / 200;
+          bell.push([x, pdf((x - mean) / sd) / sd]);
+        }
+        return { n, pmf, mean, sd, ymax, bell, bars: pmf.map((v, k) => ({ x: k, y: v, w: 1 })) };
+      }),
+    [p],
+  );
+  const n2 = fmt.n(2);
 
   return (
     <Figure
       n="4"
-      prompt={<>Every route is a brick; stack the bricks by bucket. Push n up, and tilt the pegs with p — the chance of bouncing right.</>}
-      controls={
-        <>
-          <Slider label="rows n" value={n} min={1} max={100} step={1} onChange={setN} fmt={(v) => String(v)} />
-          <Slider label="P(right) = p" value={p} min={0.05} max={0.95} step={0.01} onChange={setP} role="approx" />
-          <Toggle label="keep n = 10 faintly behind" on={ghost} onChange={setGhost} />
-          <Toggle label="bell with the same mean and sd" on={bell} onChange={setBell} />
-          <span className="readouts">
-            <span>
-              <span className="k">hump at np = </span>
-              <span className="v">{fmt.n(2)(mean)}</span>
-            </span>
-            <span>
-              <span className="k">width √(np(1−p)) = </span>
-              <span className="v">{fmt.n(3)(sd)}</span>
-            </span>
-          </span>
-        </>
-      }
+      prompt={<>Every route is a brick; stack the bricks by bucket. Three boards, 10, 30 and 100 rows, each with the bell of the same hump and width laid over it.</>}
+      controls={<Toggle label={tilt ? "pegs tilted: p = 0.20" : "pegs fair: p = 0.50"} on={tilt} onChange={setTilt} />}
       observe={
         <>
           <M block tex="P(k) \;=\; \underbrace{\binom{n}{k}}_{\text{routes into }k}\;\underbrace{p^{k}(1-p)^{\,n-k}}_{\text{chance of one such route}}" />
           <p style={{ margin: 0 }}>
-            Tilt the pegs and each route's chance depends on how many rights it holds — p per right, 1 − p per left — but the route count is unchanged. Push n up: the hump
-            moves like n, widens only like √n. Switch the bell on: it fits better and better. That bell is the rest of the page.
+            Read left to right: the hump moves like n, the width only like √n, and the bell fits better at every step. Tilt the pegs and the pile leans at ten
+            rows but is a bell again by a hundred. Nothing in the formula mentions a bell; it appears anyway.
           </p>
           <details className="n2-more">
-            <summary>the two readouts</summary>
+            <summary>the two numbers in each panel</summary>
             <p>
-              The hump sits at np — n bounces, each right with chance p. Its width, measured as a standard deviation, is √(np(1−p)): each bounce adds p(1−p) of variance and
-              variances of independent things add, so the spread grows like √n while the position grows like n. This formula, routes times chances, is called the{" "}
-              <strong>binomial distribution</strong>.
+              The hump sits at np — n bounces, each right with chance p. Its width, measured as a standard deviation, is √(np(1−p)): each bounce adds p(1−p) of
+              variance and variances of independent things add, so the spread grows like √n while the position grows like n. This formula, routes times chances,
+              is called the <strong>binomial distribution</strong>.
             </p>
           </details>
         </>
       }
     >
-      <Plot xDomain={[-0.5, xmax + 0.5]} yDomain={[0, ymax]} xLabel="k = number of rights" yLabel="probability of bucket k" height={320} ariaLabel="Binomial distribution bars">
-        {ghost && n !== 10 && <Bars bars={pmf10.map((v, k) => ({ x: k, y: v, w: 1 }))} role="ghost" opacity={0.35} />}
-        <Bars bars={bars} role="approx" />
-        {bell && <Curve pts={bellPts} role="truth" />}
-        <VLine at={mean} />
-      </Plot>
+      <div className="n2-multiples">
+        {panels.map((q) => (
+          <figure key={q.n} className="n2-panel">
+            <Plot
+              xDomain={[-0.5, q.n + 0.5]}
+              yDomain={[0, q.ymax]}
+              width={300}
+              height={240}
+              margin={{ top: 10, right: 8, bottom: 36, left: 36 }}
+              xTicks={4}
+              yTicks={3}
+              xLabel="k = rights"
+              ariaLabel={`Binomial bars for n = ${q.n}, p = ${p}, with the matching bell`}
+            >
+              <Bars bars={q.bars} role="approx" />
+              <Curve pts={q.bell} role="truth" />
+              <VLine at={q.mean} />
+              <Label at={[-0.5, q.ymax]} text={`n = ${q.n}`} dx={6} dy={14} role="approx" />
+            </Plot>
+            <figcaption>
+              hump np = <span className="num">{n2(q.mean)}</span> · width = <span className="num">{n2(q.sd)}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
     </Figure>
   );
 }

@@ -131,3 +131,22 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* F5: the reveal as two icon grids of years, side by side; stacked on a phone */
+.a1-grids {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 0.5rem 1.5rem;
+  align-items: start;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--rule-soft);
+}
+.a1-grids .icongrid-label {
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+@media (max-width: 640px) {
+  .a1-grids {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
