@@ -46,7 +46,7 @@
 .c2-stage-col > svg.plot {
   flex: 0 0 auto;
   width: 100%;
-  max-width: 560px;
+  max-width: 480px;
   align-self: center;
 }
 .c2-under {

@@ -175,8 +175,8 @@ function SideBoard({ n }: { n: number }) {
           {paths.map((pts, i) => (
             <path key={i} d={toD(pts)} fill="none" stroke="var(--ink-2)" strokeWidth={0.8} opacity={0.45} />
           ))}
-          <text x={left + latticeW / 2} y={top + 12} textAnchor="middle" className="label" style={{ fontSize: 11, paintOrder: "stroke", stroke: "var(--surface-figure)", strokeWidth: 4 }}>
-            {fn(n)} steps — {fn((n * (n + 1)) / 2 + n + 1)} nodes, too many to draw; twelve of its paths
+          <text x={left + latticeW / 2 + 20} y={top + 28} textAnchor="middle" className="label" style={{ fontSize: 11, paintOrder: "stroke", stroke: "var(--surface-figure)", strokeWidth: 4 }}>
+            {fn(n)} steps, {fn((n * (n + 1)) / 2 + n + 1)} nodes — twelve of its paths
           </text>
         </g>
       )}

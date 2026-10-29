@@ -52,16 +52,20 @@ export function F0Trick() {
       }
       controls={<Slider label="chance it goes up" value={p} min={0.1} max={0.9} step={0.01} onChange={setP} role="approx" fmt={pct} width={160} />}
       observe={
-        <>
-          The tile does not move. Spin the dial from 10 % to 90 %: the <em>average</em> payout runs from 0.10 to 0.87, and the price stays 0.633. The price of the ticket does not depend on the odds. The next figure is how the trick is done.
-        </>
+        committed ? (
+          <>
+            The tile does not move. Spin the dial from 10 % to 90 %: the <em>average</em> payout runs from 0.10 to 0.87, and the price stays 0.633. The price of the ticket does not depend on the odds. The next figure is how the trick is done.
+          </>
+        ) : (
+          <>Set the dial to what you believe, type a price, lock it in. Then spin the dial and watch the tile.</>
+        )
       }
     >
       <div className="c2-stage">
         <MiniBoard
           rows={1}
-          width={420}
-          height={250}
+          width={380}
+          height={260}
           bits={[1]}
           progress={0}
           bucketLabels="none"

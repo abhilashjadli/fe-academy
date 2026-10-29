@@ -79,8 +79,8 @@ export function F2Prop() {
       <div className="c2-stage">
         <MiniBoard
           rows={1}
-          width={360}
-          height={230}
+          width={340}
+          height={250}
           bucketLabels="none"
           ariaLabel="The one-row board with the magician's weights, 65.2 % and 34.8 %"
           nodeLabel={(r, k) => (r === 0 ? ["20", { text: `grows to ${f3(grown)}`, plain: true }] : k === 1 ? ["22", "pays 1"] : ["18", "pays 0"])}

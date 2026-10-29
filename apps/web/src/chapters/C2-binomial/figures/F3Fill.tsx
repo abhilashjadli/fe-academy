@@ -123,8 +123,8 @@ export function F3Fill() {
             <div className="c2-stage c2-stage-col">
               <MiniBoard
                 rows={2}
-                width={520}
-                height={330}
+                width={440}
+                height={400}
                 bucketLabels="none"
                 ariaLabel="A two-row price board being filled from the right"
                 nodeLabel={(r, k) => [fS(S(r, k)), filled(r, k) ? (r === 2 ? "pays " + fS(V(r, k)) : f4(V(r, k))) : "·"]}
