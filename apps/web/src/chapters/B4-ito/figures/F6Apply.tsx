@@ -5,7 +5,7 @@ import { M } from "../../../ui/Math";
 import { Band, Curve, Label, Marker, Plot, VLine, fmt, type Pt } from "../../../ui/Plot";
 import { CURVATURE_TERM, itoDrift, itoDiffusion } from "../../../engine/ito";
 
-type Fn = "ln" | "sq" | "sqrt" | "exp";
+type Fn = "lin" | "ln" | "sq" | "sqrt" | "exp";
 
 /**
  * The four functions. `f`, `fx`, `fxx` are of the price S; `toll` is ½ f″(S) b² from the engine's CURVATURE_TERM.
@@ -15,6 +15,17 @@ const FNS: Record<
   Fn,
   { tex: string; name: string; f: (x: number) => number; fx: (x: number) => number; fxx: (x: number) => number; fxTex: string; fxxTex: string; toll: (S: number, b: number) => number; story: string }
 > = {
+  lin: {
+    tex: "2S",
+    name: "twice the price (a straight line)",
+    f: (x) => 2 * x,
+    fx: () => 2,
+    fxx: () => 0,
+    fxTex: "2",
+    fxxTex: "0",
+    toll: () => 0,
+    story: "No bend, no toll: for a straight line the chain rule is exactly right. That is the control case — the lemma only adds something when f curves.",
+  },
   ln: {
     tex: "\\ln S",
     name: "the log of the price",
@@ -142,6 +153,7 @@ export function F6Apply() {
           <Segmented
             label="f(S) ="
             options={[
+              { id: "lin", label: "2S" },
               { id: "ln", label: "ln S" },
               { id: "sq", label: "S²" },
               { id: "sqrt", label: "√S" },
