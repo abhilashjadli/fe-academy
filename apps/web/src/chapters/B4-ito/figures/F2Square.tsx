@@ -41,7 +41,7 @@ function Sticker({ x, y, crossed }: { x: number; y: number; crossed: boolean }) 
 }
 
 export function F2Square() {
-  const [mode, setMode] = useState<Mode>("still");
+  const [mode, setMode] = useState<Mode>("nudge");
   const [dtIdx, setDtIdx] = useState(0);
   const [n, setN] = useState(0); // flips so far
   const [seed, setSeed] = useState(11);
@@ -256,7 +256,6 @@ export function F2Square() {
             height={300}
             margin={{ top: 14, right: 16, bottom: 34, left: 42 }}
             xLabel="flips"
-            yLabel="running total"
             xTicks={5}
             yTicks={5}
             ariaLabel="Two running totals against the number of flips: the strips wander around zero, the corners climb the time line"
@@ -268,8 +267,8 @@ export function F2Square() {
               <>
                 <Curve pts={runs.strips} role="approx" width={1.8} smooth={false} />
                 <Curve pts={runs.corners} role="truth" width={2.2} smooth={false} />
-                <Label at={[n, strips]} text={`strips ${f2s(strips)}`} role="approx" anchor="end" dx={-4} dy={strips >= 0 ? -8 : 16} />
-                <Label at={[n, corners]} text={`corners ${f2(corners)}`} role="truth" anchor="end" dx={-4} dy={16} />
+                <Label at={[n, strips]} text={`strips ${f2s(strips)}`} role="approx" anchor={n < 0.3 * xMax ? "start" : "end"} dx={n < 0.3 * xMax ? 6 : -4} dy={strips >= 0 ? -8 : 16} />
+                <Label at={[n, corners]} text={`corners ${f2(corners)}`} role="truth" anchor={n < 0.3 * xMax ? "start" : "end"} dx={n < 0.3 * xMax ? 6 : -4} dy={16} />
               </>
             )}
           </Plot>

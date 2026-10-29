@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Figure } from "../../../ui/Figure";
 import { Segmented, Slider, Readouts } from "../../../ui/controls";
 import { M } from "../../../ui/Math";
@@ -72,10 +72,23 @@ const signed = (v: number) => {
   return s === "0.00" ? "0.00" : (v < 0 ? "−" : "+") + s;
 };
 
+/** Phone width: a narrower plot so its text stays readable, and short step labels. */
+function useNarrow() {
+  const [narrow, setNarrow] = useState(() => (typeof window !== "undefined" ? window.matchMedia("(max-width: 640px)").matches : false));
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    const on = () => setNarrow(mq.matches);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
+  }, []);
+  return narrow;
+}
+
 /** Figure 6 — use it yourself: pick a function of the price and watch the lemma assemble its drift and jitter. The curvature gap is drawn first. */
 export function F6Apply() {
   const [fn, setFn] = useState<Fn>("ln");
   const [sigma, setSigma] = useState(0.4);
+  const narrow = useNarrow();
   const F = FNS[fn];
   // dS = μS dt + σS dW  → a = μS, b = σS
   const a = MU * S,
@@ -115,7 +128,8 @@ export function F6Apply() {
     const ys = curve.map((p) => p[1]);
     const yMin = Math.min(0, ...ys),
       yMax = Math.max(0, ...ys);
-    const pad = (yMax - yMin) * 0.14 || 1;
+    // a bonus curve sits above the line, so the labels below the line need more room
+    const pad = (yMax - yMin) * (yMax > -yMin ? 0.24 : 0.14) || 1;
     return { x0, x1, curve, gapCurve, gapLine, lo, hi, g, yDomain: [yMin - pad, yMax + pad] as [number, number] };
   }, [F, step]);
 
@@ -150,11 +164,11 @@ export function F6Apply() {
         <Plot
           xDomain={[pic.x0, pic.x1]}
           yDomain={pic.yDomain}
-          width={640}
-          height={280}
-          margin={{ top: 14, right: 16, bottom: 34, left: 54 }}
+          width={narrow ? 400 : 640}
+          height={narrow ? 250 : 280}
+          margin={{ top: 14, right: 14, bottom: 34, left: narrow ? 46 : 54 }}
           xLabel="price S"
-          yLabel="f(S), with its slope line laid flat"
+          yLabel={narrow ? undefined : "the bend of f(S)"}
           xTicks={5}
           yTicks={4}
           axisX={pic.x0}
@@ -172,20 +186,23 @@ export function F6Apply() {
           <Marker at={[pic.lo, pic.g(pic.lo)]} role={bonus ? "truth" : "error"} r={4} />
           <Marker at={[pic.hi, pic.g(pic.hi)]} role={bonus ? "truth" : "error"} r={4} />
           <Label at={[pic.x1, pic.g(pic.x1)]} text="the curve f(S)" anchor="end" dx={-4} dy={bonus ? -8 : 15} />
-          <Label at={[pic.x1, 0]} text="its slope line, laid flat" role="approx" anchor="end" dx={-4} dy={bonus ? 15 : -8} />
-          <Label at={[pic.lo, pic.yDomain[0]]} text={`S − σS√Δt = ${f2(pic.lo)}`} anchor="end" dx={-4} dy={-6} />
-          <Label at={[pic.hi, pic.yDomain[0]]} text={`S + σS√Δt = ${f2(pic.hi)}`} anchor="start" dx={4} dy={-6} />
-          <Label at={[S, 0]} text={`the toll per step: ½ × bend × step² = ${signed(tollStep)}`} role={bonus ? "truth" : "error"} anchor="middle" dx={0} dy={bonus ? 22 : -14} />
+          <Label at={[narrow ? pic.x0 : pic.x1, 0]} text={narrow ? "its slope line" : "its slope line, laid flat"} role="approx" anchor={narrow ? "start" : "end"} dx={narrow ? 4 : -4} dy={bonus ? 15 : -8} />
+          {/* the step labels sit at the foot of the guides (on a phone, at the head when the curve is a bonus, where it is empty); the toll label sits on the empty side of the line */}
+          <Label at={[pic.lo, narrow && bonus ? pic.yDomain[1] : pic.yDomain[0]]} text={narrow ? f2(pic.lo) : `S − σS√Δt = ${f2(pic.lo)}`} anchor="end" dx={-4} dy={narrow && bonus ? 14 : -6} />
+          <Label at={[pic.hi, narrow && bonus ? pic.yDomain[1] : pic.yDomain[0]]} text={narrow ? f2(pic.hi) : `S + σS√Δt = ${f2(pic.hi)}`} anchor="start" dx={4} dy={narrow && bonus ? 14 : -6} />
+          <Label at={[S, 0]} text={`${narrow ? "the toll" : "the toll per step: ½ × bend × step²"} = ${signed(tollStep)}`} role={bonus ? "truth" : "error"} anchor="middle" dx={0} dy={bonus ? 20 : -12} />
         </Plot>
         <p className="footnote" style={{ margin: "0.2rem 0 0.6rem" }}>
           One step of a quarter-year: the price lands σS√Δt = {f2(step)} either side of S = 100, on the curve, not on the line. Drawn with the slope line laid
           flat so the bend shows. The sliver is {bonus ? "above the line — a bonus" : "below the line — a charge"}; averaged over steps it is worth ½ f″ b² per year.
         </p>
         <M block tex={`f = ${F.tex},\\qquad f' = ${F.fxTex},\\qquad f'' = ${F.fxxTex}`} />
+        <div style={{ fontSize: "clamp(0.68rem, 3.1vw, 1rem)" }}>
         <M
           block
           tex={`df = \\Big(\\underbrace{\\tok{approx}{\\mu S f'}}_{\\text{chain rule}} + \\underbrace{\\tok{truth}{\\tfrac12\\sigma^2 S^2 f''}}_{\\text{the toll}}\\Big)dt + \\tok{approx}{\\sigma S f'}\\,dW`}
         />
+        </div>
         <Readouts
           items={[
             [`at S = 100, μ = 10 %, σ = ${fmt.pct(0)(sigma)}: chain rule alone`, <span className="b4-approx">{f2(chain)} per year</span>],

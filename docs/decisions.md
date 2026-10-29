@@ -33,3 +33,4 @@ One line per decision, newest first. Product decisions in the charter are not re
 - 2026-10-28: Chapter B4 built from the approved storyboard (8 figures incl. two Manim clips) and deployed; NIFTY 2016–2026 series complete (2,679 returns, no gaps).
 - 2026-10-28: A3 storyboard approved (Bank Nifty artefact; Twins one panel; one 15-s clip for the residuals-in-time beat).
 - 2026-10-28: Chapter A3 built and deployed (bank index simulated until the NIFTY BANK file arrives; series.ts switches).
+- 2026-10-29: Three reviews (pattern, B4 vs world, A3 vs world) → `reviews/`. Fix pass applied to B4 and A3; style guide amended (items 11–16): closing sections optional, clips inside figures, characters earn their place, "real" means all of it, ≤2 controls/≤3 readouts, three new arc shapes. A4 will use the game-as-spine arc.

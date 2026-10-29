@@ -72,8 +72,8 @@ export function F0Bet() {
                 {/* squared time-steps, for contrast: they vanish */}
                 <Curve pts={[[0, 0], [T, p.dtSquares]]} role="ghost" width={1.5} smooth={false} />
                 <Curve pts={p.pts} role="truth" width={2} smooth={false} />
-                {i === 0 && <Label at={[0.02, 1]} text="the year = 1" role="ghost" dy={-5} />}
-                {i === 0 && <Label at={[0.02, p.dtSquares]} text="squared time-steps" role="ghost" dy={-5} />}
+                {i === 0 && <Label at={[T, 1]} text="the year = 1" role="ghost" anchor="end" dx={-4} dy={-5} />}
+                {i === 0 && <Label at={[T, p.dtSquares]} text="squared time-steps" role="ghost" anchor="end" dx={-4} dy={-5} />}
                 <Label at={[T, p.end]} text={f2(p.end)} role="truth" anchor="end" dx={-4} dy={p.end > 1.1 ? 14 : -7} />
               </Plot>
             </div>
