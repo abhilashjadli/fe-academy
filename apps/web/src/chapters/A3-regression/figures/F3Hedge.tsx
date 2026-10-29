@@ -86,10 +86,15 @@ export function F3Hedge() {
   const { levels, rets } = data;
   const honest = 2 * levels.seHAC;
   const naive = 2 * levels.se;
-  // the smallest option that contains the honest band is "right"; narrower is a miss; wider is close
-  const rightId = (OPTS.find((o) => o.v >= honest) ?? OPTS[OPTS.length - 1]).id;
-  const pickV = OPTS.find((o) => o.id === pick)?.v ?? 0;
-  const verdict = pick === rightId ? "right" : pickV < honest ? "miss" : "close";
+  // the bet is scored against the honest band: 2 × SE of the slope on daily changes, where the leftovers have no memory
+  const band = 2 * rets.se;
+  // the smallest option that contains the band is "right"; one step away is "close"; otherwise a miss
+  const rightIdx = Math.max(
+    0,
+    OPTS.findIndex((o) => o.v >= band),
+  );
+  const pickIdx = OPTS.findIndex((o) => o.id === pick);
+  const verdict: "right" | "close" | "miss" = pickIdx === rightIdx ? "right" : Math.abs(pickIdx - rightIdx) === 1 ? "close" : "miss";
   const drawn = step > 2 || prog >= 1;
   const showProg = step === 2 ? prog : 1;
   const nShown = Math.max(2, Math.floor(showProg * data.residT.length));
@@ -151,16 +156,17 @@ export function F3Hedge() {
     {
       caption: (
         <>
-          Same question on <strong>daily changes</strong> instead of levels. The memory collapses, the honest and naive errors agree — and the slope itself moves,
-          because a hedge on levels is a hedge on the trend.
+          Same question on <strong>daily changes</strong> instead of levels. The memory collapses and the honest and naive errors agree — so this is the ± you
+          can believe, and the bet is scored against it. The slope comes out different, too. Hold that thought.
         </>
       ),
     },
     {
       caption: (
         <>
-          <strong>Same line, three levels of honesty.</strong> The slope never changed; only how loudly you may say "sure". Even the last number is generous:
-          Newey–West listens four days back, and these leftovers remember for months. The honest fix was step 5 — use changes.
+          <strong>One levels line, three ways of saying "sure".</strong> The slope on levels is {n2(levels.slope)}; on changes it was {n2(rets.slope)}. A slope is
+          fine only while the relationship holds still — this one didn't: the hedge ratio drifted over the decade, and that is the finding. The three t-ratios
+          only say how loudly the levels line was allowed to lie about it.
         </>
       ),
     },
@@ -238,7 +244,7 @@ export function F3Hedge() {
       return (
         <>
           <div className="a3-row">
-            <Readouts items={[["slope", n2(levels.slope)], ["R²", n2(levels.r2)], ["lag-1 memory", n2(data.acfLevels[0])], ["Durbin–Watson", n2(levels.dw)]]} />
+            <Readouts items={[["slope", n2(levels.slope)], ["lag-1 memory", n2(data.acfLevels[0])], ["Durbin–Watson", n2(levels.dw)]]} />
             {badge("amber")}
           </div>
           <div className="two">
@@ -264,7 +270,6 @@ export function F3Hedge() {
                   ["slope on changes", n2(rets.slope)],
                   ["naive ± (2 × SE)", n3(2 * rets.se)],
                   ["honest ± (2 × Newey–West)", n3(2 * rets.seHAC)],
-                  ["R²", n2(rets.r2)],
                 ]}
               />
             )}
@@ -288,11 +293,23 @@ export function F3Hedge() {
           {changes && (
             <ResultCard
               yours={`± ${pick}`}
-              answer={`textbook ± ${n3(naive)}; honest (Newey–West) ± ${n3(honest)} on the levels line — and on daily changes the slope is ${n2(rets.slope)}, not ${n2(levels.slope)}`}
+              answer={`± ${n3(band)} — the honest band, 2 × SE of the slope on daily changes (the levels line claimed ± ${n3(naive)}; Newey–West on levels, ± ${n3(honest)}, is still too kind). Scored against the changes band: ± ${OPTS[rightIdx].id} is the smallest option that holds it.`}
               verdict={verdict}
             >
-              "How sure" is a separate claim from "how well it fits". The leftovers here are an event in time, not a fresh coin each day, so the textbook ± is the
-              one number on this page you should not believe.
+              "How sure" is a separate claim from "how well it fits". On levels the leftovers are an event in time, not a fresh coin each day, so the textbook ±
+              is the one number on this page you should not believe. And the changes slope is {n2(rets.slope)}, not {n2(levels.slope)}: the hedge ratio moved.
+              <details className="a3-details">
+                <summary>the numbers behind the card</summary>
+                <Readouts
+                  items={[
+                    ["levels: R²", n2(levels.r2)],
+                    ["levels: White ±", n3(2 * levels.seHC)],
+                    ["changes: R²", n2(rets.r2)],
+                    ["changes: White ±", n3(2 * rets.seHC)],
+                    ["changes: Durbin–Watson", n2(rets.dw)],
+                  ]}
+                />
+              </details>
             </ResultCard>
           )}
         </>
@@ -302,8 +319,8 @@ export function F3Hedge() {
         <div className="a3-three">
           {[
             { k: "textbook", v: levels.slope / levels.se, sub: "each day a fresh coin", cls: "truth" },
-            { k: "White", v: levels.slope / levels.seHC, sub: "lets the leftovers fan out", cls: "approx" },
-            { k: "Newey–West", v: levels.slope / levels.seHAC, sub: "lets them remember yesterday", cls: "error" },
+            { k: "White", v: levels.slope / levels.seHC, sub: "allows uneven leftovers — these don't fan, so it barely moves", cls: "approx" },
+            { k: "Newey–West", v: levels.slope / levels.seHAC, sub: "allows memory, four days of it — these remember for months", cls: "error" },
           ].map((t) => (
             <div key={t.k} className={"a3-tile " + t.cls}>
               <span className="k">t-ratio, {t.k}</span>
@@ -313,9 +330,9 @@ export function F3Hedge() {
           ))}
         </div>
         <div className="a3-caption">
-          Same slope <span className="num">{n2(levels.slope)}</span>, three standard errors:{" "}
-          <M tex={`t = \\tok{truth}{\\text{slope}} \\,/\\, \\tok{error}{\\text{SE}}`} /> — only the <span className="tok-error">SE</span> changes, and with it how
-          loudly you may say "sure".
+          One levels slope, <span className="num">{n2(levels.slope)}</span>, three standard errors:{" "}
+          <M tex={`t = \\tok{truth}{\\text{slope}} \\,/\\, \\tok{error}{\\text{SE}}`} /> — only the <span className="tok-error">SE</span> changes between the
+          tiles. Even the last one is generous: no amount of listening back rescues a line whose slope moved. The honest fix was step 5 — use changes.
         </div>
       </>
     );
@@ -337,8 +354,9 @@ export function F3Hedge() {
           <>Six steps. The slope is the easy half; the "how sure" is the half the leftovers decide. Bet before you look.</>
         ) : (
         <>
-          The slope was the easy half. The "how sure" assumed every day's leftover was a fresh coin; drawn in time order they wander for months, so the honest
-          error is about {n2(levels.seHAC / levels.se)}× the textbook one — and on daily changes the hedge ratio is a different number altogether.
+          The "how sure" assumed every day's leftover was a fresh coin; drawn in time order they wander for months, so even the kindest honest error is{" "}
+          {n2(levels.seHAC / levels.se)}× the textbook one. The slope is fine only while the relationship holds still — this one didn't: on daily changes the
+          hedge ratio is {n2(rets.slope)}, not {n2(levels.slope)}.
         </>
         )
       }

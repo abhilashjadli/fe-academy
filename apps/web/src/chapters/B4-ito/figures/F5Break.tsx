@@ -28,12 +28,14 @@ export function F5Break() {
   const meanEnd = useMemo(() => paths.reduce((s, W) => s + f(S0, MU, sigma, T, W[STEPS]), 0) / N, [paths, sigma, f]);
   const truth = gbmMean(S0, MU, T);
   const ratio = meanEnd / truth;
+  const median = gbmMedian(S0, MU, sigma, T);
+  const off = Math.abs(ratio - 1) > 0.005;
   const yMax = Math.max(220, Math.min(400, Math.ceil(S0 * Math.exp(MU + 2.2 * sigma) / 20) * 20));
 
   return (
     <Figure
       n="5"
-      prompt="Two thousand simulated years of one stock, the same coin flips each time. Flip the switch and forget Ada's square."
+      prompt="Two thousand simulated years of one stock, the same random draws each time. Flip the switch and forget Ada's square."
       controls={
         <>
           <Slider label="σ, the yearly wobble" value={sigma} min={0.1} max={0.6} step={0.05} onChange={setSigma} fmt={fmt.pct(0)} />
@@ -42,7 +44,7 @@ export function F5Break() {
             items={[
               ["true average after a year", fmt.n(2)(truth)],
               ["simulated average", fmt.n(2)(meanEnd)],
-              ["simulated ÷ true", <span className={ratio > 1.005 ? "b4-bad" : "b4-good"}>{fmt.n(3)(ratio)}</span>],
+              ["simulated ÷ true", <span className={off ? "b4-bad" : "b4-good"}>{fmt.n(2)(ratio)}</span>],
             ]}
           />
         </>
@@ -59,12 +61,13 @@ export function F5Break() {
         {curves.map((c, i) => (
           <Curve key={i} pts={c} role={forget ? "error" : "approx"} width={1} opacity={0.35} smooth={false} />
         ))}
+        {/* the three end lines carry short tick labels only; the numbers live in the readouts below */}
         <HLine at={truth} />
-        <Label at={[T, truth]} text={`true average ${fmt.n(1)(truth)}`} anchor="end" dx={-8} dy={-10} />
-        <Curve pts={[[0, S0], [T, gbmMedian(S0, MU, sigma, T)]]} role="ghost" dash="4 3" width={1.5} smooth={false} />
-        <Label at={[T, gbmMedian(S0, MU, sigma, T)]} text={`typical year ${fmt.n(1)(gbmMedian(S0, MU, sigma, T))}`} role="ghost" anchor="end" dx={-8} dy={34} />
+        <Label at={[0, truth]} text="true average" anchor="start" dx={8} dy={-7} />
+        <Curve pts={[[0, S0], [T, median]]} role="ghost" dash="4 3" width={1.5} smooth={false} />
+        <Label at={[T, median]} text="typical year" role="ghost" anchor="end" dx={-8} dy={16} />
         <Curve pts={[[0, S0], [T, meanEnd]]} role={forget ? "error" : "truth"} width={2.5} smooth={false} />
-        <Label at={[T, meanEnd]} text={`simulated ${fmt.n(1)(meanEnd)}`} role={forget ? "error" : "truth"} anchor="end" dx={-8} dy={forget ? -28 : 18} />
+        <Label at={[T, meanEnd]} text="simulated average" role={forget ? "error" : "truth"} anchor="end" dx={-8} dy={-8} />
       </Plot>
     </Figure>
   );

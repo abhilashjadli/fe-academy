@@ -2,16 +2,15 @@ import { useMemo, useState } from "react";
 import "./figures.css";
 import { Figure } from "../../../ui/Figure";
 import { Curve, Label, Plot, Points, fmt, type Pt } from "../../../ui/Plot";
-import { Readouts, Segmented, Slider } from "../../../ui/controls";
+import { Readouts, Segmented, Slider, Toggle } from "../../../ui/controls";
 import { IconGrid } from "../../../ui/IconGrid";
 import { diff, ols, randomWalk, type Fit } from "../../../engine/regression";
 import { normalSample, rng } from "../../../engine/random";
 import { format } from "d3-format";
 
-type Round = "days" | "catch" | "ten";
+type Round = "days" | "ten";
 type Kind = "spurious" | "real" | "noisy";
 const n2 = fmt.n(2);
-const n0 = fmt.n(0);
 const nDays = format(",d");
 const TRIALS = 200;
 const PAIR_N = 200;
@@ -47,6 +46,7 @@ function curate(): Curated[] {
   return out;
 }
 
+/** Of 200 fresh pairs of n-day coin piles, the share that pass the textbook test (|t| > 2). Measured, not asserted. */
 function fooledRate(n: number): number {
   const r = rng(9000 + n);
   let c = 0;
@@ -59,7 +59,7 @@ function fooledRate(n: number): number {
   return c / TRIALS;
 }
 
-function PairPlots({ a, b, fit, role = "error", label }: { a: number[]; b: number[]; fit: Fit; role?: "error" | "truth"; label?: string }) {
+function PairPlots({ a, b, fit, role = "error", label, unit = "level" }: { a: number[]; b: number[]; fit: Fit; role?: "error" | "truth"; label?: string; unit?: string }) {
   const span = Math.max(4, ...a.map(Math.abs), ...b.map(Math.abs));
   const n = a.length - 1;
   const stride = Math.max(1, Math.floor(n / 400));
@@ -73,7 +73,7 @@ function PairPlots({ a, b, fit, role = "error", label }: { a: number[]; b: numbe
   }
   return (
     <div className="two">
-      <Plot xDomain={[0, n]} yDomain={[-span, span]} width={440} height={260} xLabel="day" yLabel="level" xTicks={5} yTicks={5} ariaLabel="Two series over time">
+      <Plot xDomain={[0, n]} yDomain={[-span, span]} width={440} height={260} xLabel="day" yLabel={unit} xTicks={5} yTicks={5} ariaLabel="Two series over time">
         <Curve pts={lineA} role="truth" width={1.6} smooth={false} />
         <Curve pts={lineB} role="approx" width={1.6} smooth={false} />
         <Label at={[n, a[n]]} text="A" role="truth" anchor="end" dx={-4} />
@@ -88,26 +88,26 @@ function PairPlots({ a, b, fit, role = "error", label }: { a: number[]; b: numbe
   );
 }
 
-/** Figure 4 — game rounds 2–4: more days won't save you; the detector; spurious or real, ten times. */
+/** Figure 4 — fool it, then catch it: more days won't save you, one readout catches it (one body); then the ten-pair game. */
 export function F4Fool() {
   const [round, setRound] = useState<Round>("days");
   const [days, setDays] = useState(50);
-  const [seed, setSeed] = useState(21);
   const [differenced, setDifferenced] = useState(false);
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<boolean[]>([]);
   const [answered, setAnswered] = useState<Kind | null>(null);
 
   const walks = useMemo(() => {
-    const r = rng(seed);
+    const r = rng(21 + days);
     const a = randomWalk(days, r);
     const b = randomWalk(days, r);
     return { a, b, fit: ols(a, b), dfit: ols(diff(a), diff(b)) };
-  }, [seed, days]);
+  }, [days]);
   const fooled = useMemo(() => fooledRate(days), [days]);
   const pairs = useMemo(curate, []);
 
   const tAbs = Math.abs(walks.fit.slope / walks.fit.se);
+  const dtAbs = Math.abs(walks.dfit.slope / walks.dfit.se);
   const suspect = walks.fit.r2 > walks.fit.dw;
   const fooledN = Math.round(fooled * 100);
 
@@ -136,7 +136,7 @@ export function F4Fool() {
         ? "Most of the fakes fooled nobody. The ones that did are why you difference first."
         : score >= 5
           ? "Half right is what R² alone gets you. The differenced row is the one to read."
-          : "The levels fit lied to you ten times. Read Durbin–Watson and the differenced R² before the slope.";
+          : "The levels fit lied to you ten times. Read Durbin–Watson and the differenced |t| before the slope.";
 
   const diffWalks = { a: diff(walks.a), b: diff(walks.b) };
 
@@ -145,38 +145,31 @@ export function F4Fool() {
       n="4"
       prompt={
         <>
-          Round 2: give the coin piles more days and see if the lie fades. Round 3: learn the one readout that catches it. Round 4: ten pairs — which are
-          real?
+          Give the coin piles more days and see if the lie fades; then switch to daily changes and watch it go. Then play: ten pairs, which are real?
         </>
       }
       controls={
         <>
           <Segmented
             options={[
-              { id: "days", label: "round 2 · more days" },
-              { id: "catch", label: "round 3 · catch it" },
-              { id: "ten", label: "round 4 · spurious or real?" },
+              { id: "days", label: "more days, then catch it" },
+              { id: "ten", label: "the ten-pair game" },
             ]}
             value={round}
             onChange={setRound}
           />
-          {round !== "ten" && (
+          {round === "days" && (
             <>
               <Slider label="days" value={days} min={50} max={2000} step={50} onChange={setDays} fmt={nDays} />
-              <button type="button" className="btn" onClick={() => setSeed(seed + 1)}>
-                new walks
-              </button>
-            </>
-          )}
-          {round === "days" && <Readouts items={[["R²", n2(walks.fit.r2)], ["|t|", n2(tAbs)], ["fooled", `${n0(fooled * 100)} % of the time`]]} />}
-          {round === "catch" && (
-            <>
-              <Readouts items={[["R²", n2(walks.fit.r2)], ["Durbin–Watson", n2(walks.fit.dw)]]} />
-              <span className={"a3-badge " + (suspect ? "a3-badge-red" : "a3-badge-green")}>{suspect ? "R² > DW → suspect" : "R² < DW → fine"}</span>
-              <button type="button" className={"btn " + (differenced ? "toggled" : "")} aria-pressed={differenced} onClick={() => setDifferenced(!differenced)}>
-                difference the series
-              </button>
-              {differenced && <Readouts items={[["R² of the changes", n2(walks.dfit.r2)], ["|t| of the changes", n2(Math.abs(walks.dfit.slope / walks.dfit.se))]]} />}
+              <Toggle label="use daily changes" on={differenced} onChange={setDifferenced} />
+              {differenced ? (
+                <Readouts items={[["R² of the changes", n2(walks.dfit.r2)], ["|t| of the changes", n2(dtAbs)], ["Durbin–Watson", n2(walks.dfit.dw)]]} />
+              ) : (
+                <Readouts items={[["R²", n2(walks.fit.r2)], ["|t|", n2(tAbs)], ["Durbin–Watson", n2(walks.fit.dw)]]} />
+              )}
+              <span className={"a3-badge " + (differenced ? (dtAbs > 2 ? "a3-badge-amber" : "a3-badge-green") : suspect ? "a3-badge-red" : "a3-badge-green")}>
+                {differenced ? (dtAbs > 2 ? "changes: |t| > 2 — the 1-in-20 fluke" : "changes: nothing survives") : suspect ? "R² > DW → suspect" : "R² < DW → fine"}
+              </span>
             </>
           )}
         </>
@@ -184,13 +177,9 @@ export function F4Fool() {
       observe={
         round === "days" ? (
           <>
-            More days make the t-ratio grow and the score sit where it was. Sample size does not save you: a coin-pile regression gets more confident, not more
-            right.
-          </>
-        ) : round === "catch" ? (
-          <>
-            Durbin–Watson near 2 means the leftovers forget yesterday; near 0 means they remember everything. The habit: R² above DW, suspect it. Difference
-            the series and see what survives.
+            More days make |t| grow and the lie stays: {fooledN} in every 100 pairs of {nDays(days)}-day piles pass the test. Sample size does not save you.
+            Durbin–Watson near 2 means the leftovers forget yesterday; near 0, they remember everything. The habit: R² above DW, suspect it — difference the
+            series and see what survives.
           </>
         ) : (
           <>
@@ -202,29 +191,29 @@ export function F4Fool() {
     >
       {round === "days" && (
         <>
-          <PairPlots a={walks.a} b={walks.b} fit={walks.fit} label={`R² ${n2(walks.fit.r2)}, |t| ${n2(tAbs)}`} />
+          {differenced ? (
+            <PairPlots a={diffWalks.a} b={diffWalks.b} fit={walks.dfit} role="truth" unit="daily change" label={`changes: R² ${n2(walks.dfit.r2)}, |t| ${n2(dtAbs)}`} />
+          ) : (
+            <PairPlots a={walks.a} b={walks.b} fit={walks.fit} label={`levels: R² ${n2(walks.fit.r2)}, |t| ${n2(tAbs)}, DW ${n2(walks.fit.dw)}`} />
+          )}
           <div className="a3-row">
-            <IconGrid n={100} roleOf={(i) => (i < fooledN ? "error" : "ghost")} size={11} gap={2} label={<>{fooledN} in every 100 coin-pile pairs of {nDays(days)} days pass the textbook test (|t| &gt; 2)</>} />
+            <IconGrid n={100} roleOf={(i) => (i < fooledN ? "error" : "ghost")} size={11} gap={2} label={<>{fooledN} in every 100 coin-pile pairs of {nDays(days)} days pass the textbook test (|t| &gt; 2) — measured over {TRIALS} fresh pairs</>} />
           </div>
         </>
       )}
-      {round === "catch" &&
-        (differenced ? (
-          <PairPlots a={diffWalks.a} b={diffWalks.b} fit={walks.dfit} role="truth" label={`changes: R² ${n2(walks.dfit.r2)}`} />
-        ) : (
-          <PairPlots a={walks.a} b={walks.b} fit={walks.fit} label={`levels: R² ${n2(walks.fit.r2)}, DW ${n2(walks.fit.dw)}`} />
-        ))}
       {round === "ten" && (
         <>
-          <PairPlots a={cur.a} b={cur.b} fit={cur.fit} role={answered ? (cur.kind === "spurious" ? "error" : "truth") : "error"} label={`R² ${n2(cur.fit.r2)}`} />
           <div className="a3-game">
-            <span>
-              pair {Math.min(idx + 1, pairs.length)} of {pairs.length}
-            </span>
+            <strong>
+              score {score} of {answers.length}
+            </strong>
             <span className="a3-score" aria-label={`score ${score} of ${answers.length}`}>
               {pairs.map((_, i) => (
                 <i key={i} className={i < answers.length ? (answers[i] ? "hit" : "miss") : ""} />
               ))}
+            </span>
+            <span>
+              pair {Math.min(idx + 1, pairs.length)} of {pairs.length}
             </span>
             {!finished && (
               <>
@@ -247,14 +236,13 @@ export function F4Fool() {
               </button>
             )}
           </div>
+          <PairPlots a={cur.a} b={cur.b} fit={cur.fit} role={answered ? (cur.kind === "spurious" ? "error" : "truth") : "error"} label={`R² ${n2(cur.fit.r2)}`} />
           {answered && (
             <div className={"a3-verdict " + (answers[answers.length - 1] ? "hit" : "miss")}>
               <Readouts
                 items={[
                   ["it was", cur.kind === "noisy" ? "real, but noisy" : cur.kind],
-                  ["R²", n2(cur.fit.r2)],
                   ["Durbin–Watson", n2(cur.fit.dw)],
-                  ["R² after differencing", n2(cur.dfit.r2)],
                   ["|t| after differencing", n2(Math.abs(cur.dfit.slope / cur.dfit.se))],
                 ]}
               />
@@ -265,6 +253,10 @@ export function F4Fool() {
                     ? "B really follows A. Difference them and the slope survives."
                     : "B follows A under a lot of noise. The differenced R² is small — but its t-ratio still clears 2."}
               </div>
+              <details className="a3-details">
+                <summary>the rest of the card</summary>
+                <Readouts items={[["levels R²", n2(cur.fit.r2)], ["R² after differencing", n2(cur.dfit.r2)]]} />
+              </details>
             </div>
           )}
           {finished && (

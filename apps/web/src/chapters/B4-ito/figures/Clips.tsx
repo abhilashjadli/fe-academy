@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Figure } from "../../../ui/Figure";
 import { Clip } from "../../../ui/Clip";
 
 /** Light or dark, following the page's theme attribute and the OS preference. */
@@ -34,7 +33,7 @@ function src(name: string, dark: boolean) {
 export function ClipSquare() {
   const s = src("square", useDark());
   return (
-    <Figure n="2a" prompt="Watch first (22 seconds). Then you get the coin.">
+    <div className="clip-inside">
       <Clip
         src={{ mp4: s.mp4, webm: s.webm }}
         poster={s.poster}
@@ -47,7 +46,7 @@ export function ClipSquare() {
           { at: 18.0, caption: "Smaller steps, more of them: the strips are as random as before; the corners still add up to the time that passed. Cross out the sticker." },
         ]}
       />
-    </Figure>
+    </div>
   );
 }
 
@@ -55,7 +54,7 @@ export function ClipSquare() {
 export function ClipTiles() {
   const s = src("tiles", useDark());
   return (
-    <Figure n="3a" prompt="Watch first (19 seconds): every term is a tile whose area is its size.">
+    <div className="clip-inside">
       <Clip
         src={{ mp4: s.mp4, webm: s.webm }}
         poster={s.poster}
@@ -67,6 +66,6 @@ export function ClipTiles() {
           { at: 14.0, caption: "Everything that shrank faster than the bar is gone. Two tiles remain, and one of them is a square." },
         ]}
       />
-    </Figure>
+    </div>
   );
 }

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Figure } from "../../../ui/Figure";
 import { Clip } from "../../../ui/Clip";
 
 function useDark() {
@@ -28,18 +27,18 @@ function useDark() {
 export function ClipLeftovers() {
   const base = import.meta.env.BASE_URL + "clips/A3/leftovers_" + (useDark() ? "dark" : "light");
   return (
-    <Figure n="3a" prompt="Watch first (15 seconds): the fit says 'certain'. Then look at its leftovers in the order they happened.">
+    <div className="clip-inside">
       <Clip
         src={{ mp4: base + ".mp4", webm: base + ".webm" }}
         poster={base + ".png"}
         ariaLabel="Residuals of a regression drawn in time order, wandering on one side for months; the certainty badge turns amber"
         beats={[
-          { at: 0, caption: "The fit says certain: R² high, the ± tiny. A green badge." },
+          { at: 0, caption: "The fit says certain: R² high, the ± tiny. A green badge. (The bank index here is a simulated stand-in whose hedge ratio drifts; NIFTY is real.)" },
           { at: 3.0, caption: "Now draw the leftovers in the order they happened, one trading day at a time." },
           { at: 9.0, caption: "They stay on one side for months at a time. The textbook formula assumed a fresh coin every day." },
           { at: 12.0, caption: "The badge turns amber. Same line — the how-sure was a lie, by a factor of about two." },
         ]}
       />
-    </Figure>
+    </div>
   );
 }

@@ -8,27 +8,42 @@ import { ols, randomWalk } from "../../../engine/regression";
 import { rng } from "../../../engine/random";
 
 const DAYS = 50;
-type Pick = "under" | "about" | "over";
+const TRIALS = 400;
+type Pick = "no" | "rare" | "often";
 const n2 = fmt.n(2);
 
-/** How often a pair of 50-day coin piles beats R² = 0.8 — measured, not asserted (2,000 pairs). */
-function rateOver(threshold: number): number {
-  const r = rng(808);
+/** The textbook test: |t| = |slope / SE| > 2 says "related". */
+const passes = (slope: number, se: number) => Math.abs(slope / se) > 2;
+
+/** How often two 50-day coin piles that never met pass the textbook test — measured over 400 pairs, not asserted. */
+function passRate(): number {
+  const r = rng(50);
   let c = 0;
-  const trials = 2000;
-  for (let t = 0; t < trials; t++) {
+  for (let t = 0; t < TRIALS; t++) {
     const a = randomWalk(DAYS, r);
     const b = randomWalk(DAYS, r);
-    if (ols(a, b).r2 > threshold) c++;
+    const f = ols(a, b);
+    if (passes(f.slope, f.se)) c++;
   }
-  return c / trials;
+  return c / TRIALS;
 }
 
-/** Figure 0 — game round 1: two coin piles. Bet, then flip until pure noise scores. */
+/** Which option a measured rate belongs to: "no" (≤ 2 %), "1 in 20" (≤ 15 %), "more often than not" (> 50 %); in between, nobody is right. */
+function bandOf(p: number): Pick | null {
+  if (p <= 0.02) return "no";
+  if (p <= 0.15) return "rare";
+  if (p > 0.5) return "often";
+  return null;
+}
+const ORDER: Pick[] = ["no", "rare", "often"];
+const LABEL: Record<Pick, string> = { no: "no — they're unrelated", rare: "yes, about 1 time in 20", often: "yes, more often than not" };
+
+/** Figure 0 — game round 1: two coin piles that never met. Bet on the textbook test, then flip and count. */
 export function F0Piles() {
   const [pick, setPick] = useBet<Pick>("A3-F0");
   const [seed, setSeed] = useState(0); // 0 = not flipped yet
   const [rolls, setRolls] = useState(0);
+  const [passed, setPassed] = useState(0);
   const [best, setBest] = useState(0);
 
   const piles = useMemo(() => {
@@ -38,18 +53,19 @@ export function F0Piles() {
     const b = randomWalk(DAYS, r);
     return { a, b, fit: ols(a, b) };
   }, [seed]);
-  const p80 = useMemo(() => rateOver(0.8), []);
-  const p50 = useMemo(() => rateOver(0.5), []);
+  const rate = useMemo(passRate, []);
+  const band = bandOf(rate);
 
   const roll = () => {
     const s = (Date.now() % 100000) + rolls * 7919 + 1;
     const r = rng(s);
     const a = randomWalk(DAYS, r);
     const b = randomWalk(DAYS, r);
-    const r2 = ols(a, b).r2;
+    const f = ols(a, b);
     setSeed(s);
     setRolls(rolls + 1);
-    if (r2 > best) setBest(r2);
+    if (passes(f.slope, f.se)) setPassed(passed + 1);
+    if (f.r2 > best) setBest(f.r2);
   };
 
   const lineA: Pt[] = piles ? piles.a.map((v, i) => [i, v]) : [];
@@ -58,35 +74,33 @@ export function F0Piles() {
   const span = piles ? Math.max(8, ...piles.a.map(Math.abs), ...piles.b.map(Math.abs)) : 8;
   const fitLine: Pt[] = piles ? [[-span, piles.fit.intercept - piles.fit.slope * span], [span, piles.fit.intercept + piles.fit.slope * span]] : [];
   const tAbs = piles ? Math.abs(piles.fit.slope / piles.fit.se) : 0;
-  const done = rolls >= 3 || best > 0.8;
-  const onePer = p80 > 0 ? Math.round(1 / p80) : 0;
-  const onePer50 = p50 > 0 ? Math.round(1 / p50) : 0;
+  const pass = piles ? passes(piles.fit.slope, piles.fit.se) : false;
+  const done = rolls >= 3;
+  const pct = Math.round(rate * 100);
+  // verdict: right only when the pick is the band the measured rate falls in; close when one step away; miss otherwise
+  const verdict: "right" | "close" | "miss" = !pick || !band ? "miss" : pick === band ? "right" : Math.abs(ORDER.indexOf(pick) - ORDER.indexOf(band)) === 1 ? "close" : "miss";
 
   return (
     <Figure
       n="0"
       prompt={
         <>
-          Two piles of coins, one flipped each day: heads adds a coin, tails takes one. The piles have never met. Fit a line through "pile B against pile A" and read
-          the score, R². Bet first.
+          Two piles of coins, one flipped each day: heads adds a coin, tails takes one. The piles have never met. Fit a line through "pile B against pile A"
+          and ask the textbook test — is |t| above 2? Bet first.
         </>
       }
       observe={
         pick && (
           <>
-            Two coin piles share nothing, yet the score climbs with every re-roll and the line looks like it means something. Hold on to that feeling: the fit is
-            real, the relationship is not. The rest of this chapter is about telling the two apart.
+            Two coin piles share nothing, yet the textbook test calls them related in {pct} pairs out of 100. Hold on to that feeling: the fit is real, the
+            relationship is not. The rest of this chapter is about telling the two apart.
           </>
         )
       }
     >
       <Bet
-        question="How high can R² go between two coin piles that have never met?"
-        options={[
-          { id: "under", label: "under 0.1 — it's noise" },
-          { id: "about", label: "about 0.5" },
-          { id: "over", label: "over 0.8" },
-        ]}
+        question="Two piles of coins that have never met. Will the textbook test say they are related?"
+        options={ORDER.map((id) => ({ id, label: LABEL[id] }))}
         pick={pick}
         onPick={setPick}
       >
@@ -94,9 +108,14 @@ export function F0Piles() {
           <button type="button" className="btn primary" onClick={roll}>
             {rolls === 0 ? "flip 50 days" : "new piles"}
           </button>
-          <Readouts items={[["R²", piles ? n2(piles.fit.r2) : "—"], ["|t|", piles ? n2(tAbs) : "—"], ["pile-pairs so far", String(rolls)]]} />
+          <Readouts
+            items={[
+              ["|t|", piles ? <span className={pass ? "tok-error" : undefined}>{`${n2(tAbs)} — ${pass ? "related" : "not related"}`}</span> : "—"],
+              ["passed the test", rolls ? `${passed} of ${rolls} pairs` : "—"],
+            ]}
+          />
           <span className="a3-tiles">
-            <span className={"a3-tile " + (best > 0.8 ? "best" : "")}>
+            <span className="a3-tile">
               <span className="k">best R² so far</span>
               <span className="v">{rolls ? n2(best) : "—"}</span>
             </span>
@@ -118,20 +137,21 @@ export function F0Piles() {
           <Plot xDomain={[-span, span]} yDomain={[-span, span]} width={440} height={300} xLabel="pile A" yLabel="pile B" xTicks={5} yTicks={5} ariaLabel="Pile B against pile A with the fitted line">
             {piles && (
               <>
-                <Curve pts={fitLine} role="error" width={2} smooth={false} />
+                <Curve pts={fitLine} role={pass ? "error" : "ghost"} width={2} smooth={false} />
                 <Points pts={cloud} role="ink" r={3.2} opacity={0.75} />
-                <Label at={[span, span]} text={`R² = ${n2(piles.fit.r2)}`} role="error" anchor="end" dx={-8} dy={16} />
+                <Label at={[span, span]} text={`R² = ${n2(piles.fit.r2)}, |t| = ${n2(tAbs)}`} role={pass ? "error" : "ghost"} anchor="end" dx={-8} dy={16} />
               </>
             )}
           </Plot>
         </div>
         {done && (
           <ResultCard
-            yours={pick === "under" ? "under 0.1" : pick === "about" ? "about 0.5" : "over 0.8"}
-            answer={`best so far R² = ${n2(best)} after ${rolls} pile-pairs. Nothing caps it: over 0.5 turns up about one pair in ${onePer50}, over 0.8 one in ${onePer}`}
-            verdict={pick === "over" ? "right" : pick === "about" ? "close" : "miss"}
+            yours={pick ? LABEL[pick] : "—"}
+            answer={`yes, ${pct} times in 100 — measured over ${TRIALS} fresh pairs of 50-day piles; ${passed} of your ${rolls} passed`}
+            verdict={verdict}
           >
-            Two piles that have never met. The fit is real; the relationship is not — and the chapter is about telling them apart.
+            Two piles that have never met, and the textbook test says "related" more often than not. The fit is real; the relationship is not — and the chapter
+            is about telling them apart.
           </ResultCard>
         )}
       </Bet>
