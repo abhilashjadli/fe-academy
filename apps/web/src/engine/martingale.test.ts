@@ -179,14 +179,14 @@ describe("B2 the meter that will not move (Monte Carlo)", () => {
     customRule((h) => (h.streak < 0 ? 2 : h.w > 10 ? 0 : 1), "bet 2 after a loss, leave at +10"),
     habitRule(1, 3, 8, 12),
   ];
-  for (const s of strategies) {
+  strategies.forEach((s, i) => {
     it(`${s.name}: mean of ${n} players over ${T} tosses within 2 standard errors of 0`, () => {
-      const r = simulatePlayers(s, n, T, rng(s.name.length * 1000 + 17));
+      const r = simulatePlayers(s, n, T, rng(1000 + i));
       expect(Math.abs(r.mean)).toBeLessThanOrEqual(2 * r.se);
       expect(optionalStoppingCheck(r, 2).ok).toBe(true);
       expect(r.finals.length).toBe(n);
     });
-  }
+  });
 
   it("fixed bet: the fan's spread after 200 tosses ≈ √200 = 14.1 and matches the numpy replay", () => {
     const r = simulatePlayers(fixedBet(1), n, T, rng(200));
