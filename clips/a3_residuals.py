@@ -25,6 +25,9 @@ class Leftovers(Scene):
         lim = float(np.max(np.abs(res))) * 1.05
         title = Text("The leftovers, in time order", font_size=34).to_edge(UP, buff=0.35)
         self.play(FadeIn(title), run_time=0.5)
+        if not D.get("real", False):
+            tag = Text("NIFTY 50: real (NSE).  Bank index: simulated stand-in, hedge ratio drifts by construction.", font_size=18, color=GHOST).to_edge(DOWN, buff=0.12)
+            self.add(tag)
 
         # badge
         badge = RoundedRectangle(corner_radius=0.15, width=4.6, height=1.1, stroke_color=TRUTH, fill_color=TRUTH, fill_opacity=0.12).to_corner(UR, buff=0.5).shift(DOWN * 0.9)
