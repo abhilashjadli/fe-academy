@@ -38,7 +38,6 @@ export function F1Honest() {
             <Points pts={x.map((v, i) => [v, f.resid[i]] as Pt)} role="error" r={4} opacity={0.9} />
           </Plot>
           <div className="a3-formula">
-            <M block tex="\text{slope} = \frac{\operatorname{cov}(x,y)}{\operatorname{var}(x)},\qquad \text{how-sure} \approx \pm 2\,\frac{\text{spread of leftovers}}{\sqrt{n}\cdot\text{spread of }x}" />
             <M block tex="\text{slope} = \frac{\operatorname{cov}(x,y)}{\operatorname{var}(x)}" />
             <M block tex="\text{how-sure} \approx \pm\, 2\,\frac{\text{spread of leftovers}}{\sqrt{n}\,\text{spread of }x}" />
           </div>

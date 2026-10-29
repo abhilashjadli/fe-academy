@@ -326,8 +326,10 @@ export function F3Hedge() {
       n="3"
       prompt={
         <>
-          Real artefact: {pair.aName} daily closes from the NSE, 2016 to today, against {pair.bName}
-          {pair.real ? "" : " — the real NIFTY BANK file replaces it when it arrives"}. Step through: drag, bet, then watch the leftovers.
+          {pair.real
+            ? `Real: ${pair.aName} and ${pair.bName}, daily closes from the NSE, 2016 to today.`
+            : `Half real: ${pair.aName} is the NSE's; ${pair.bName} is made up — built to follow NIFTY with a hedge ratio that slowly drifts, because that is what real bank indices do. The real NIFTY BANK file replaces it when it arrives, and the lesson will be whatever the data says.`}{" "}
+          Step through: drag, bet, then watch the leftovers.
         </>
       }
       observe={
