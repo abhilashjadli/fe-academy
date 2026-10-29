@@ -77,7 +77,12 @@ Plus the four "not rocket science" fixes the critique and engagement study agree
 8. Break-it closer and a visible pull to the next problem.
 9. Reference numbers from the books in §6 of the note, to go into the Python key.
 10. ≤ 6–8 figures; near-duplicates merged.
-11. **The four closing sections, always (sponsor, 2026-10-28, after B4):** "So what is X?" (the result stated plainly in words, one formula at most) → "Use it yourself" (one small figure where the reader applies it) → "Where it is used, every day" (three cards, each pointing at a later chapter) → "The conclusion" (a heading, the result and its consequences in words, the one sentence for a desk head). The mechanism is not the lesson; the use is.
+11. **Closing (amended 2026-10-29 after the pattern review):** one plain "So what is X?" paragraph after the mechanism, one formula at most — mandatory. The rest is optional: "Use it yourself" only when the use is a different object from earlier figures; "Where it is used" is three sentences naming at most one later chapter; each chapter writes its own last line and its own pull, neither with a formula, and no two chapters share a closing label.
+12. **A clip never duplicates the figure that follows it**: it is the opener's reveal, a "watch / do" tab inside the figure it belongs to, or a morph beat.
+13. **Characters earn their place per chapter.** No interstitial dialogue unless the line states a belief the reader could hold and the next figure breaks it; Mel is right at least once in the library; faces are legend swatches inside figures.
+14. **The reveal is a picture, and "real" means all of it.** Result cards sit under drawings; "real"/"artefact" only when every series is real; a revealed lesson is never a parameter the author typed in.
+15. **≤ 2 controls and ≤ 3 readouts per figure.**
+16. **Arc shapes** (don't reuse one twice in a row): bet-led (0.2, A1, B4); artefact-first-rebuild (C1, C4, D2, H2); game-as-spine (B2, D1, A4); two-pictures-one-clock (B3, B6, C2, F1); pure illustrated text (C5).
 
 ## 7. What the built chapters need (v1 → v2), by cost
 
