@@ -1,0 +1,251 @@
+/* Chapter C2 — figure-local styles (imported by each figure; Chapter.tsx owns c2.css) */
+
+.c2-truth {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.c2-approx {
+  color: var(--approx-text);
+  font-weight: 600;
+}
+.c2-error {
+  color: var(--error-text);
+  font-weight: 600;
+}
+
+/* a board beside its readouts / ledger */
+.c2-stage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: center;
+}
+.c2-stage > svg.plot {
+  flex: 1 1 260px;
+  max-width: 520px;
+  min-width: 0;
+}
+.c2-stage-wide {
+  align-items: flex-start;
+}
+.c2-board {
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 560px;
+}
+.c2-saw {
+  flex: 1 1 260px;
+  min-width: 0;
+  max-width: 420px;
+}
+.c2-stage-col {
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--space-2) 0 0;
+}
+.c2-stage-col > svg.plot {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 560px;
+  align-self: center;
+}
+.c2-under {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: baseline;
+  padding: 0 var(--space-2) var(--space-2);
+}
+.c2-under .readouts {
+  flex: 1 1 260px;
+}
+.c2-under .c2-footnote {
+  flex: 1 1 200px;
+  max-width: 100%;
+}
+.c2-side {
+  flex: 1 1 200px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.c2-side .readouts {
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.c2-ledger {
+  flex: 2 1 320px;
+  min-width: 0;
+}
+.c2-ledger .ledger-table {
+  width: 100%;
+}
+.c2-footnote {
+  max-width: 34ch;
+}
+
+/* the two price tiles of Figure 0 */
+.c2-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  flex: 1 1 200px;
+  min-width: 0;
+}
+.c2-tile {
+  flex: 1 1 10rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  font-family: var(--font-ui);
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+.c2-tile .k {
+  font-size: 0.74rem;
+  color: var(--ink-3);
+}
+.c2-tile .v {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.c2-tile.frozen {
+  border: 2px solid var(--truth);
+  background: var(--truth-soft);
+}
+.c2-tile.frozen .v {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.c2-tile.approx .v {
+  color: var(--approx-text);
+}
+
+/* the two meters of Figure 1 */
+.c2-meters {
+  display: grid;
+  gap: var(--space-2);
+  flex: 1 1 280px;
+  min-width: 0;
+  max-width: 560px;
+  padding: var(--space-2) 0;
+  font-family: var(--font-ui);
+}
+.c2-meter {
+  display: grid;
+  grid-template-columns: minmax(9rem, 12rem) 1fr 4.5rem;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.86rem;
+}
+.c2-meter-k {
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.c2-meter-bar {
+  display: block;
+  height: 18px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+.c2-meter-fill {
+  display: block;
+  height: 100%;
+  background: var(--approx);
+  opacity: 0.8;
+  transition: width 0.12s linear;
+}
+.c2-meter.lit .c2-meter-fill {
+  background: var(--truth);
+  opacity: 0.9;
+}
+.c2-meter-v {
+  text-align: right;
+  font-size: 1.05rem;
+  color: var(--ink);
+}
+.c2-meter.lit .c2-meter-v {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.c2-agree {
+  font-size: 0.86rem;
+  color: var(--ink-3);
+  padding-left: 2px;
+}
+.c2-agree.yes {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+@media (max-width: 480px) {
+  .c2-meter {
+    grid-template-columns: 1fr 4.5rem;
+  }
+  .c2-meter-k {
+    grid-column: 1 / -1;
+  }
+}
+
+/* a panel that opens under the meters: the pricing, or the break-it */
+.c2-panel {
+  margin: var(--space-2) 0 var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  max-width: 560px;
+  font-family: var(--font-prose);
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+.c2-panel p {
+  margin: 0.2em 0 0.4em;
+}
+.c2-panel .footnote {
+  margin-top: var(--space-1);
+}
+.c2-break {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+.c2-sum {
+  margin: 0;
+}
+.c2-sum td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* collapsed "more" */
+.c2-more {
+  margin: var(--space-2) var(--space-1) var(--space-2);
+  font-family: var(--font-prose);
+  color: var(--ink-2);
+}
+.c2-more summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+.c2-more p {
+  margin: 0.4em 0 0;
+  font-size: 0.95rem;
+}
+
+.c2 .clip-inside {
+  padding: var(--space-2) 0;
+}
+
+/* the sawtooth: even step counts in grey */
+.c2-saw .plot .marker.ghost {
+  fill: var(--ghost);
+}

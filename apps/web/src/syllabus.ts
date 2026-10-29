@@ -45,8 +45,8 @@ export const SYLLABUS: Track[] = [
     id: "C",
     title: "Options",
     chapters: [
-      { id: "C1", title: "Mechanics, bounds, put-call parity" },
-      { id: "C2", title: "Binomial model → Black-Scholes" },
+      { id: "C1", title: "Options: read the chain", built: true },
+      { id: "C2", title: "Binomial to Black–Scholes: pick any probability", built: true },
       { id: "C3", title: "Black-Scholes in detail" },
       { id: "C4", title: "Greeks I" },
       { id: "C5", title: "Greeks II: vanna, volga, charm…" },
