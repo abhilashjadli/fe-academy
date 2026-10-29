@@ -13,9 +13,9 @@ export interface Leg {
   kind: OptionKind | "underlying" | "forward";
   /** +n long, −n short */
   qty: number;
-  /** strike (options) or the price at which the underlying/forward was bought (so its payoff is S_T − K) */
+  /** strike (options) or the forward price (so a forward's payoff is S_T − K); for the underlying, its price today */
   K: number;
-  /** premium paid today per unit, positive (an option); the underlying's premium is its price, a forward's is 0 */
+  /** premium paid today per unit, positive (an option); the underlying's premium is its price (its payoff is S_T), a forward's is 0 */
   premium?: number;
 }
 
@@ -36,6 +36,9 @@ export function legPayoff(leg: Leg, ST: number): number {
       return leg.qty * callPayoff(ST, leg.K);
     case "put":
       return leg.qty * putPayoff(ST, leg.K);
+    case "underlying":
+      // the stock itself is worth S_T; what was paid for it is its premium
+      return leg.qty * ST;
     default:
       return leg.qty * (ST - leg.K);
   }
