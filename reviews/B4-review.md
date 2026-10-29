@@ -13,7 +13,7 @@ Read: charter §2–3, the research note, the storyboard, all chapter source, bo
 - *The name.* F1 panel 4 says "That number has a name" and the chapter never gives it. "Quadratic variation" and "realised variance" do not occur in the source. A fresher googling later has nothing to type.
 - *The f″ = 0 case* (Vasicek/linear: no correction) — a one-line addition to F6's function picker; cheap and clarifying.
 
-**Over-weighted.** The −½σ² story is told five times: F4 ledger, F5 toggle, F6 ln footnote, card 1, the conclusion's "one sentence to say to a desk head". Meanwhile the hedge (card 2), the thing the note calls "the first P&L explain a fresher reads", gets 70 words with no picture. The two Manim clips duplicate the two explorables that follow them (storyboard decision 4 said "none — every beat here is something the reader should press, not watch"; the build added two anyway, each a preview of the next figure).
+**Over-weighted.** The −½σ² story is told five times (F4, F5, F6 footnote, card 1, the desk-head sentence). The hedge — what the note calls "the first P&L explain a fresher reads" — gets 70 words and no picture. The two Manim clips duplicate the explorables that follow them, against storyboard decision 4 ("none — every beat here is something the reader should press, not watch").
 
 ## 2. Figure by figure
 
@@ -64,7 +64,7 @@ What is genuinely light and good: F0's three options; the Ada/Mel exchanges ("Ea
 | osyuksel numerical | Naive vs Itô scheme on the same paths; gap = ½f″ exactly | F5 toggle (same idea, interactive, 2,000 paths) | We win on form; add a SD band to win on rigour |
 | d'Annibale Wiener simulators | Sliders, MSD log-log slope ≈ 1 | F0 table | Tie — neither plots Σ(ΔW)² against n |
 
-Net: on *form* this chapter beats everything opened; nothing else has a coin on a square, a tile race, or a break-it toggle. On *content* it misses three things the books and riskhub do well: the per-term randomness, the drawn curvature gap, and non-anticipating.
+Net: on *form* we beat everything opened. On *content* we miss three things the books and riskhub do well: per-term randomness, the drawn curvature gap, non-anticipating.
 
 ## 5. Ten changes, ranked by impact
 
