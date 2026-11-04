@@ -19,7 +19,7 @@ const SIGMA = KEY.atm.iv;
 const LOT = ROW.lot;
 const PREMIUM = LOT * ROW.call;
 const MAX_TICKS = 10; // one day per tick; the last tick leaves a day to expiry
-const SEED = 2603;
+const SEED = 23;
 const X_RANGE: [number, number] = [22000, 23200];
 
 /** A fixed sequence of index moves, ±60–180 points, from the engine's seeded generator (same every visit). */
@@ -154,7 +154,8 @@ export function F3Raj() {
   const ticks = useMemo(() => simulate(), []);
   const now = ticks[n];
   const shown = ticks.slice(0, n + 1);
-  const yMax = useMemo(() => Math.max(1500, ...ticks.map((t) => Math.max(Math.abs(t.hedged - PREMIUM), Math.abs(t.naked - PREMIUM)))) * 1.1, [ticks]);
+  const yMax = useMemo(() => Math.ceil((Math.max(1500, ...ticks.map((t) => Math.max(Math.abs(t.hedged - PREMIUM), Math.abs(t.naked - PREMIUM)))) * 1.15) / 1000), [ticks]); // ₹ thousand
+  const k = (v: number) => (v - PREMIUM) / 1000;
   const done = n >= MAX_TICKS;
 
   return (
@@ -196,16 +197,16 @@ export function F3Raj() {
             </Says>
           }
         >
-          <Plot xDomain={X_RANGE} yDomain={[0, 650]} width={300} height={190} margin={{ top: 10, right: 12, bottom: 26, left: 36 }} xTicks={0} yTicks={0} grid={false} axisY={0} ariaLabel="The call's payoff ramp at expiry and its smooth curve today, with a slope triangle at the forward reading 0.51">
+          <Plot xDomain={X_RANGE} yDomain={[0, 720]} width={300} height={190} margin={{ top: 10, right: 12, bottom: 26, left: 36 }} xTicks={0} yTicks={0} grid={false} axisY={0} ariaLabel="The call's payoff ramp at expiry and its smooth curve today, with a slope triangle at the forward reading 0.51">
             <Curve pts={ramp} role="ghost" smooth={false} width={1.5} />
             <Curve pts={curve} role="truth" />
             <SlopeTriangle at={[ROW.F, g.price]} slope={g.delta} run={200} />
             <Marker at={[ROW.F, g.price]} role="truth" r={3.5} />
-            <Label at={[X_RANGE[0], 0]} text={n0(X_RANGE[0])} dx={0} dy={14} anchor="start" />
-            <Label at={[X_RANGE[1], 0]} text={n0(X_RANGE[1])} dx={0} dy={14} anchor="end" />
-            <Label at={[ROW.K, 0]} text={`strike ${n0(ROW.K)}`} dx={0} dy={14} anchor="middle" />
-            <Label at={[X_RANGE[1], X_RANGE[1] - ROW.K]} text="payoff at expiry" dx={-4} dy={14} anchor="end" />
-            <Label at={[X_RANGE[0] + 60, black76({ ...BASE, F: X_RANGE[0] + 60, sigma: SIGMA })]} text="today's curve" role="truth" dx={0} dy={-8} />
+            <Label at={[X_RANGE[0], 0]} text={n0(X_RANGE[0])} dx={4} dy={-5} anchor="start" />
+            <Label at={[X_RANGE[1], 0]} text={n0(X_RANGE[1])} dx={-4} dy={-5} anchor="end" />
+            <Label at={[ROW.K, 0]} text={`strike ${n0(ROW.K)}`} dx={0} dy={-5} anchor="middle" />
+            <Label at={[X_RANGE[1], X_RANGE[1] - ROW.K]} text="payoff at expiry" dx={-4} dy={22} anchor="end" />
+            <Label at={[22850, black76({ ...BASE, F: 22850, sigma: SIGMA })]} text="today's curve" role="truth" dx={0} dy={22} anchor="middle" />
           </Plot>
         </Panel>
         <Panel
@@ -237,15 +238,15 @@ export function F3Raj() {
               yTicks={5}
               ariaLabel="Raj's book over the days, in rupees against the premium: the hedged book near flat, the naked book swinging, the bank line growing slowly"
             >
-              <Curve pts={shown.map((t) => [t.t, t.naked - PREMIUM])} role="error" width={1.5} opacity={0.6} smooth={false} />
-              <Curve pts={shown.map((t) => [t.t, t.bank - PREMIUM])} role="ghost" dash="4 3" smooth={false} />
-              <Curve pts={shown.map((t) => [t.t, t.hedged - PREMIUM])} role="truth" width={2.4} smooth={false} />
-              <Marker at={[now.t, now.hedged - PREMIUM]} role="truth" r={4} />
-              {n > 0 && <Marker at={[now.t, now.naked - PREMIUM]} role="error" r={3.5} />}
-              <Label at={[0, yMax]} text="₹ above or below the premium" dx={4} dy={12} />
-              {n > 0 && <Label at={[now.t, now.hedged - PREMIUM]} text="hedged" role="truth" dx={-6} dy={-10} anchor="end" />}
-              {n > 0 && <Label at={[now.t, now.naked - PREMIUM]} text="naked" role="error" dx={-6} dy={14} anchor="end" />}
-              {n >= 3 && <Label at={[now.t, now.bank - PREMIUM]} text={`bank, ${s2(now.bank - PREMIUM)}`} dx={-6} dy={-6} anchor="end" />}
+              <Curve pts={shown.map((t) => [t.t, k(t.naked)])} role="error" width={1.5} opacity={0.6} smooth={false} />
+              <Curve pts={shown.map((t) => [t.t, k(t.bank)])} role="ghost" dash="4 3" smooth={false} />
+              <Curve pts={shown.map((t) => [t.t, k(t.hedged)])} role="truth" width={2.4} smooth={false} />
+              <Marker at={[now.t, k(now.hedged)]} role="truth" r={4} />
+              {n > 0 && <Marker at={[now.t, k(now.naked)]} role="error" r={3.5} />}
+              <Label at={[0, yMax]} text="₹ thousand above or below the premium" dx={4} dy={12} />
+              {n > 0 && <Label at={[now.t, k(now.hedged)]} text={`hedged ${s2(now.hedged - PREMIUM)}`} role="truth" dx={-6} dy={k(now.naked) > k(now.hedged) ? 16 : -10} anchor="end" />}
+              {n > 0 && <Label at={[now.t, k(now.naked)]} text={`naked ${s2(now.naked - PREMIUM)}`} role="error" dx={-6} dy={k(now.naked) > k(now.hedged) ? -10 : 16} anchor="end" />}
+              {n >= 3 && <Label at={[1, k(ticks[1].bank)]} text={`the premium in the bank, +${f2(now.bank - PREMIUM)} by now`} dx={0} dy={k(now.naked) > 0 ? 14 : -8} />}
             </Plot>
             <Readouts
               items={[

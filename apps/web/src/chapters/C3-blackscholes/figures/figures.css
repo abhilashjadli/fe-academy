@@ -45,6 +45,12 @@
   max-width: 640px;
   align-self: center;
 }
+.c3-stage-col > .c3-machine {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
+}
 .c3-stage-col > .readouts {
   padding: 0 var(--space-1) var(--space-2);
 }
@@ -90,8 +96,8 @@
   outline-offset: -2px;
 }
 .c3-strip-row .c3-strip-iv {
-  color: var(--ghost);
-  text-decoration: underline dotted;
+  color: var(--ink-3);
+  font-weight: 500;
 }
 
 /* ---- the machine (Figures 0 and 4) ---- */
@@ -138,17 +144,6 @@
   background: var(--surface);
   color: var(--ink-3);
   position: relative;
-}
-.c3-lock::after {
-  content: "locked";
-  position: absolute;
-  right: 6px;
-  top: 4px;
-  font-size: 0.6rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-3);
-  opacity: 0.7;
 }
 .c3-lock .k {
   font-size: 0.7rem;
@@ -259,22 +254,34 @@
   stroke: var(--grid);
   stroke-width: 1;
 }
+.plot .label.c3-ticklabel {
+  font-size: 10.5px;
+  fill: var(--ink-3);
+}
 
 /* ---- Figure 2: tiles that switch on one step at a time ---- */
 .c3-steps-stage {
+  flex-direction: column;
   align-items: stretch;
+  padding: var(--space-2) var(--space-2) var(--space-3);
 }
 .c3-steps-stage > svg.plot {
-  flex: 3 1 320px;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 600px;
+  align-self: center;
 }
 .c3-step-tiles {
-  flex: 1 1 180px;
-  min-width: 0;
-  max-width: 260px;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: var(--space-2);
-  padding-bottom: var(--space-2);
+}
+.c3-step-tile {
+  flex: 1 1 7.5rem;
+  padding: var(--space-1) var(--space-2);
+}
+.c3-step-tile .v {
+  font-size: 1.15rem;
 }
 .c3-step-tile.off {
   opacity: 0.18;
@@ -297,19 +304,6 @@
 }
 .c3-step-tile.on.ghost {
   border-color: var(--ink);
-}
-@media (max-width: 640px) {
-  .c3-step-tiles {
-    flex-direction: row;
-    flex-wrap: wrap;
-    max-width: none;
-  }
-  .c3-step-tile {
-    flex: 1 1 40%;
-  }
-  .c3-step-tile .v {
-    font-size: 1.15rem;
-  }
 }
 .c3-steps-stage + .steps-caption .math-block {
   margin: var(--space-2) 0 0;
@@ -431,9 +425,14 @@
 }
 .c3-fdial-track {
   position: relative;
-  flex: 1 1 220px;
+  flex: 1 1 180px;
   min-width: 0;
   padding-bottom: 2.4rem;
+}
+@media (max-width: 560px) {
+  .c3-fdial .ctl-label {
+    flex: 1 1 100%;
+  }
 }
 .c3-fdial-track input[type="range"] {
   width: 100%;

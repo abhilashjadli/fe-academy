@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { Figure } from "../../../ui/Figure";
 import { Readouts } from "../../../ui/controls";
-import { Curve, Label, Marker, Plot, usePlot, type Pt } from "../../../ui/Plot";
+import { Curve, Label, Marker, Plot, type Pt } from "../../../ui/Plot";
+import { XTicksInside, YTicksInside } from "./Cloud";
 import { impliedVolFwd } from "../../../engine/bs";
 import { KEY, NSE, NSE_CALL_IV, NSE_FORWARD, NSE_PUT_IV, ROW, n0, pct1, pct2 } from "./c3";
 import "./figures.css";
@@ -25,24 +26,6 @@ function solve(F: number) {
   const calls = NSE.strikes.map((K, i) => impliedVolFwd(NSE.calls[i], { F, K, r: ROW.r, T: ROW.T }, "call", 0.2).sigma);
   const puts = NSE.strikes.map((K, i) => impliedVolFwd(NSE.puts[i], { F, K, r: ROW.r, T: ROW.T }, "put", 0.2).sigma);
   return { calls, puts };
-}
-
-function StrikeTicks() {
-  const { x, y, inner } = usePlot();
-  return (
-    <g className="axis">
-      {[22250, 22450, 22650, 22850, 23050].map((K) => (
-        <text key={K} x={x(K)} y={inner.top + inner.height + 16} textAnchor="middle">
-          {n0(K)}
-        </text>
-      ))}
-      {[0.12, 0.14, 0.16, 0.18, 0.2].map((v) => (
-        <text key={v} x={inner.left - 8} y={y(v) + 4} textAnchor="end">
-          {pct1(v).replace(".0", "")}
-        </text>
-      ))}
-    </g>
-  );
 }
 
 /** The one dial, with two marks on its track. */
@@ -117,8 +100,9 @@ export function F5Column() {
       }
     >
       <div className="c3-stage c3-stage-col">
-        <Plot xDomain={[22200, 23100]} yDomain={Y} width={640} height={330} margin={{ top: 14, right: 16, bottom: 34, left: 48 }} xLabel="strike" yLabel="wobble that prints the real last price" xTicks={0} yTicks={0} axisY={Y[0]} axisX={22200} grid={false} ariaLabel="Implied volatility against strike for the 17 real rows: the call curve and the put curve re-solved at the fed forward, with NSE's printed columns as ghost dots">
-          <StrikeTicks />
+        <Plot xDomain={[22200, 23100]} yDomain={Y} width={640} height={330} margin={{ top: 14, right: 16, bottom: 34, left: 16 }} xLabel="strike" yLabel="wobble that prints the real last price" xTicks={0} yTicks={0} axisY={Y[0]} axisX={22200} grid={false} ariaLabel="Implied volatility against strike for the 17 real rows: the call curve and the put curve re-solved at the fed forward, with NSE's printed columns as ghost dots">
+          <XTicksInside at={[22250, 22450, 22650, 22850, 23050]} fmt={n0} />
+          <YTicksInside at={[0.12, 0.14, 0.16, 0.18]} fmt={(v) => pct1(v).replace(".0", "")} />
           {NSE.strikes.map((K, i) => (
             <Marker key={"gc" + K} at={[K, NSE_CALL_IV[i] / 100]} role="ghost" r={3} />
           ))}

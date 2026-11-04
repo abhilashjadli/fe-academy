@@ -5,6 +5,7 @@ import { Curve, Label, Marker, Plot, usePlot, type Pt } from "../../../ui/Plot";
 import { bisectionPath, black76, black76Greeks, impliedVolFwd, type Kind } from "../../../engine/bs";
 import { BASE, DIAL, KEY, NSE, ROW, SNAP_RUPEES, f2, n0, n2, pct1, pct2, s2 } from "./c3";
 import { Machine, detent, modelPrice, type Target } from "./Machine";
+import { XTicksInside, YTicksInside } from "./Cloud";
 import "./figures.css";
 
 /**
@@ -51,7 +52,8 @@ function NewtonInset({ K, screen, frame }: { K: number; screen: number; frame: n
       <div className="c3-inset-head">
         <strong>the computer's turn</strong> · call at {n0(K)}, screen {n2(screen)} · Newton from 30 %
       </div>
-      <Plot xDomain={[0.08, 0.34]} yDomain={[yLo - 10, yHi + 10]} width={420} height={200} margin={{ top: 10, right: 12, bottom: 30, left: 50 }} xLabel="wobble" xTicks={6} yTicks={4} axisY={yLo - 10} axisX={0.08} ariaLabel="The model price against the wobble for this strike, the screen's price as a horizontal line, and the tangent steps of Newton's method from 30 %">
+      <Plot xDomain={[0.08, 0.34]} yDomain={[yLo - 10, yHi + 10]} width={420} height={200} margin={{ top: 10, right: 12, bottom: 30, left: 50 }} xLabel="wobble" xTicks={0} yTicks={4} axisY={yLo - 10} axisX={0.08} ariaLabel="The model price against the wobble for this strike, the screen's price as a horizontal line, and the tangent steps of Newton's method from 30 %">
+        <XTicksInside at={[0.1, 0.15, 0.2, 0.25, 0.3]} fmt={(v) => pct1(v).replace(".0", "")} />
         <Curve pts={curve} role="truth" />
         <Curve pts={[[0.08, screen], [0.34, screen]]} role="ghost" dash="4 3" smooth={false} />
         <Label at={[0.08, screen]} text={`screen ${n2(screen)}`} dx={6} dy={-5} />
@@ -203,10 +205,9 @@ export function F4Game() {
     >
       <div className="c3-stage c3-stage-col">
         {phase === "rounds" ? <Machine target={target} sigma={sigma} sealed /> : phase === "auto" ? <NewtonInset K={REST[autoRow].K} screen={REST[autoRow].screen} frame={frame} /> : null}
-        <Plot xDomain={STRIP_X} yDomain={STRIP_Y} width={640} height={230} margin={{ top: 14, right: 16, bottom: 34, left: 54 }} xLabel="strike" yLabel="wobble that prints the screen's price" xTicks={0} yTicks={6} axisY={STRIP_Y[0]} axisX={STRIP_X[0]} ariaLabel="A strip of the wobble found for each strike: your dots, the 22,600 call from Figure 0, the computer's dots, and a line through all seventeen calls">
-          {[22250, 22500, 22600, 22800, 23050].map((K) => (
-            <Label key={K} at={[K, STRIP_Y[0]]} text={n0(K)} dx={0} dy={16} anchor="middle" />
-          ))}
+        <Plot xDomain={STRIP_X} yDomain={STRIP_Y} width={640} height={230} margin={{ top: 14, right: 16, bottom: 34, left: 16 }} xLabel="strike" yLabel="wobble that prints the screen's price" xTicks={0} yTicks={0} grid={false} axisY={STRIP_Y[0]} axisX={STRIP_X[0]} ariaLabel="A strip of the wobble found for each strike: your dots, the 22,600 call from Figure 0, the computer's dots, and a line through all seventeen calls">
+          <XTicksInside at={[22250, 22500, 22600, 22800, 23050]} fmt={n0} />
+          <YTicksInside at={[0.155, 0.16, 0.165, 0.17]} fmt={pct1} />
           <Curve pts={[[ROW.F, STRIP_Y[0]], [ROW.F, STRIP_Y[1]]]} role="ghost" dash="3 3" width={1} smooth={false} />
           <Label at={[ROW.F, STRIP_Y[1]]} text="forward" dx={4} dy={12} />
           {skewLine.length > 1 && <Curve pts={skewLine} role="ink" width={1.2} opacity={0.5} smooth={false} />}

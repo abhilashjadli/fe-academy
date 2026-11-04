@@ -10,7 +10,7 @@ import { ROW, n0 } from "./c3";
 
 export const PRICE: [number, number] = [21600, 23600];
 export const DAYS_AXIS: [number, number] = [0, 16];
-const BIN = 20;
+const BIN = 25;
 
 export interface Dot {
   i: number;
@@ -31,18 +31,46 @@ export function layoutCloud(futures: number[]): { dots: Dot[]; maxCount: number 
   return { dots, maxCount: Math.max(1, ...counts) };
 }
 
-/** Price ticks with thousands separators (the Plot's own ticks print 22600). */
+/** Price ticks with thousands separators, drawn inside the frame (Plot children are clipped to it; its own ticks would print 22600). */
 export function PriceTicks({ at }: { at: number[] }) {
-  const { x, y, inner } = usePlot();
+  const { y, inner } = usePlot();
   return (
-    <g className="axis">
+    <g>
       {at.map((p) => (
         <g key={p}>
           <line x1={inner.left} x2={inner.left + inner.width} y1={y(p)} y2={y(p)} className="c3-tick" />
-          <text x={x(DAYS_AXIS[0]) - 6} y={y(p) + 4} textAnchor="end">
+          <text className="label c3-ticklabel" x={inner.left + 4} y={y(p) - 3}>
             {n0(p)}
           </text>
         </g>
+      ))}
+    </g>
+  );
+}
+
+/** Y ticks drawn inside the frame, formatted (Plot children are clipped to the frame, so an outside label would vanish). */
+export function YTicksInside({ at, fmt }: { at: number[]; fmt: (v: number) => string }) {
+  const { y, inner } = usePlot();
+  return (
+    <g>
+      {at.map((v) => (
+        <text key={v} className="label c3-ticklabel" x={inner.left + 4} y={y(v) - 3}>
+          {fmt(v)}
+        </text>
+      ))}
+    </g>
+  );
+}
+
+/** X ticks drawn inside the frame, just above the bottom edge. */
+export function XTicksInside({ at, fmt }: { at: number[]; fmt: (v: number) => string }) {
+  const { x, inner } = usePlot();
+  return (
+    <g>
+      {at.map((v) => (
+        <text key={v} className="label c3-ticklabel" x={x(v)} y={inner.top + inner.height - 5} textAnchor="middle">
+          {fmt(v)}
+        </text>
       ))}
     </g>
   );
@@ -53,7 +81,7 @@ export function Dots({ dots, maxCount, K, kind = "call", lit = "approx", dim = t
   const pxPerDay = x(1) - x(0);
   const avail = (DAYS_AXIS[1] - ROW.days - 0.4) * pxPerDay;
   const pitch = Math.min(4.4, avail / maxCount);
-  const r = Math.max(0.9, Math.min(2.1, pitch * 0.42));
+  const r = Math.max(0.9, Math.min(1.7, pitch * 0.4));
   const x0 = x(ROW.days) + 3;
   return (
     <g className="c3-dots">
@@ -80,7 +108,7 @@ export function StrikeLine({ K, draggable, label }: { K: number; draggable?: boo
           <line x1={x(ROW.days) - 21} x2={x(ROW.days) - 9} y1={yy + 3} y2={yy + 3} />
         </g>
       )}
-      <text className="label" x={inner.left + 6} y={yy - 6}>
+      <text className="label" x={x(6)} y={yy - 6} textAnchor="middle">
         {label ?? `strike ${n0(K)}`}
       </text>
     </g>
@@ -95,7 +123,7 @@ export function CloudPlot({ futures, K, kind = "call", onDragK, children, height
       yDomain={PRICE}
       width={640}
       height={height}
-      margin={{ top: 14, right: 12, bottom: 34, left: 54 }}
+      margin={{ top: 14, right: 12, bottom: 34, left: 16 }}
       xLabel="days from now"
       xTicks={8}
       yTicks={0}
@@ -107,7 +135,7 @@ export function CloudPlot({ futures, K, kind = "call", onDragK, children, height
       <PriceTicks at={[21800, 22200, 22600, 23000, 23400]} />
       <Curve pts={[[0, ROW.F], [ROW.days, ROW.F]]} role="ghost" dash="4 4" width={1.2} smooth={false} />
       <Marker at={[0, ROW.F]} role="ink" r={4} />
-      <Label at={[0, ROW.F]} text={`today: forward ${n0(ROW.F)}`} dx={8} dy={-8} />
+      <Label at={[0, ROW.F]} text={`today: forward ${n0(ROW.F)}`} dx={8} dy={16} />
       <Curve pts={[[ROW.days, PRICE[0]], [ROW.days, PRICE[1]]]} role="ink" width={1} smooth={false} />
       <Label at={[ROW.days, PRICE[1]]} text={`expiry, ${ROW.days} days`} dx={-6} dy={12} anchor="end" />
       <Dots dots={lay.dots} maxCount={lay.maxCount} K={K} kind={kind} lit={lit} dim={dim} />

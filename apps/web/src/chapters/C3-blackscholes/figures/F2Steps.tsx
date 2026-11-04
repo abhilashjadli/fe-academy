@@ -42,8 +42,8 @@ function Tile({ k, v, role, note, on }: { k: string; v: string; role?: "approx" 
   return (
     <div className={"c3-tile c3-step-tile " + (role ?? "") + (on ? " on" : " off")} aria-hidden={!on}>
       <span className="k">{k}</span>
-      <span className="v">{v}</span>
-      {note && <span className="k">{note}</span>}
+      <span className="v">{on ? v : "·"}</span>
+      {note && <span className="k">{on ? note : " "}</span>}
     </div>
   );
 }
@@ -96,7 +96,10 @@ export function F2Steps() {
       caption: (
         <>
           <strong>Shrink by {ROW.days} days of interest.</strong> {n2(undiscounted)} × {f3(D)} = <strong>{n2(g.price)}</strong> — the screen's price, from Figure 0's dial. Written once:
-          <M block tex={`c \\;=\\; e^{-rT}\\big[\\,\\tok{truth}{F\\,N(d_1)} \\;-\\; \\tok{approx}{K\\,N(d_2)}\\,\\big] \\;=\\; ${f3(D)}\\,[\\,\\tok{truth}{${n2(FNd1)}} - \\tok{approx}{${n2(KNd2)}}\\,] \\;=\\; ${n2(g.price)}`} />
+          <M
+            block
+            tex={`\\begin{aligned} c &= e^{-rT}\\big[\\,\\tok{truth}{F\\,N(d_1)} - \\tok{approx}{K\\,N(d_2)}\\,\\big] \\\\ &= ${f3(D)}\\,[\\,\\tok{truth}{${n2(FNd1)}} - \\tok{approx}{${n2(KNd2)}}\\,] \\\\ &= ${n2(g.price)} \\end{aligned}`}
+          />
         </>
       ),
     },
