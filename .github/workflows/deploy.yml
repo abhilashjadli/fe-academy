@@ -23,8 +23,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-        with:
-          enablement: true   # re-enable Pages if it was switched off (public repo; token has pages:write)
       - uses: actions/setup-node@v4
         with:
           node-version: 22
