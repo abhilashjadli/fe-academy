@@ -35,3 +35,8 @@ One line per decision, newest first. Product decisions in the charter are not re
 - 2026-10-28: Chapter A3 built and deployed (bank index simulated until the NIFTY BANK file arrives; series.ts switches).
 - 2026-10-29: Three reviews (pattern, B4 vs world, A3 vs world) → `reviews/`. Fix pass applied to B4 and A3; style guide amended (items 11–16): closing sections optional, clips inside figures, characters earn their place, "real" means all of it, ≤2 controls/≤3 readouts, three new arc shapes. A4 will use the game-as-spine arc.
 - 2026-10-29 (evening): storyboards approved as drafted (all "my pick"s): **B5** (70 %, exact quantiles for the 2,000 dots, keep the range toggle), **B6** (trinomial grid, clip in price, keep the step-too-far toggle), **C1** (bounds as thin lines + collapsed Hull tables, one strike 22,600 on the shelf, free-typed put in the break-it), **C2** (typed guess + dial, mini board for F0–F3 and the full Galton component in F4, sawtooth observe-only). Build order: C1, C2, B5, B6. A4, A5, B1, B2, B3 still awaiting review.
+
+## 2026-11-04
+- B5 and B6 built and pushed (routes `#/B5`, `#/B6`). All storyboard decisions for B5, B6, C1, C2 were approved as the author's picks (see the storyboards' "Decisions" sections). Built set now: 0.1, 0.2, A1, A2, A3, B4, B5, B6, C1, C2.
+- Clip posters are cut at a moment when no caption is mid-transform (B6 poster was garbled at t≈0.5 s; now t = 2.6 s). Rule for `clips/README.md`: pick the poster time by eye.
+- Next in the queue while A4/A5/B1/B2/B3 await review: storyboard C3 (showcase level — "very interactive, easy and addictive"), then C4 (3-D), C5, D1, D2.
