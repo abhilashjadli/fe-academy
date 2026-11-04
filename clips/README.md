@@ -51,3 +51,9 @@ Output lands in `clips/media/` (git-ignored). Copy finished files to `apps/web/p
 - No numbers in a clip that are not produced by the engine's answer key (CLAUDE.md: no LLM arithmetic).
   Clip scripts compute their own curves from the same formulas the engines use; add a line to the
   chapter's Python key when a clip shows a number.
+
+## Poster frames
+Cut the poster (`<name>_<theme>.png`) at a moment when no caption is mid-transform — look at it. `ffmpeg -ss <t> -i x.webm -frames:v 1 x.png`; t ≈ 2–4 s usually works (B6's poster at 0.5 s was garbled text).
+
+## Rendered so far
+`b4_square.py`, `b4_tiles.py` (B4), `a3_residuals.py` (A3), `c2_refine.py` (C2 F4), `b6_heatrod.py` (B6 F1), `c3_areas.py` (C3 F2, "two areas, one price", 20 s). Outputs in `apps/web/public/clips/<ID>/`.
