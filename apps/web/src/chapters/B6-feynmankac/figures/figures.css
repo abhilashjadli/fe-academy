@@ -1,0 +1,307 @@
+/* Chapter B6 — figure-local styles (imported by each figure; Chapter.tsx owns b6.css) */
+
+.b6-truth {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.b6-approx {
+  color: var(--approx-text);
+  font-weight: 600;
+}
+.b6-error {
+  color: var(--error-text);
+  font-weight: 600;
+}
+
+/* ---------- Figure 0: the pub crawl ---------- */
+.b6-crawl .comic {
+  padding-left: 0;
+  padding-right: 0;
+}
+@media (max-width: 760px) {
+  .b6-crawl .comic {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b6-crawl .panel-art svg {
+  width: 100%;
+  max-width: 300px;
+}
+.b6-reveal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: flex-start;
+  padding: var(--space-2) 0 var(--space-2);
+}
+.b6-reveal-art {
+  flex: 1 1 280px;
+  min-width: 0;
+  max-width: 420px;
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  background: var(--surface-raised);
+  padding: var(--space-2);
+}
+.b6-reveal-art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.b6-reveal .result {
+  flex: 1 1 260px;
+  min-width: 0;
+  margin: 0;
+}
+
+/* ---------- Figure 1: two pictures, one clock ---------- */
+.b6-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .b6-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b6-pane {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.b6-pane-head {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  padding: 0 var(--space-1);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+.b6-pane-head strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+.b6-pane .watchdo-tabs {
+  padding: 0 var(--space-1) var(--space-1);
+}
+.b6-pane .clip-inside {
+  padding: 0;
+}
+.b6-field {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+}
+/* the walkers' pile under the left plot */
+.b6-pile {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* the one number box both panels write to */
+.b6-box {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: var(--space-3) 0 var(--space-1);
+  font-family: var(--font-ui);
+}
+@media (max-width: 480px) {
+  .b6-box {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b6-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  min-width: 0;
+}
+.b6-cell .k {
+  font-size: 0.74rem;
+  color: var(--ink-3);
+}
+.b6-cell .v {
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.b6-cell .v small {
+  font-size: 0.8rem;
+  color: var(--ink-2);
+}
+.b6-cell.approx {
+  border-color: var(--approx);
+}
+.b6-cell.approx .v {
+  color: var(--approx-text);
+}
+.b6-cell.truth {
+  border-color: var(--truth);
+}
+.b6-cell.truth .v {
+  color: var(--truth-text);
+}
+.b6-cell.waiting .v {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+.b6-cell.agree {
+  background: var(--truth-soft);
+}
+.b6-tick {
+  font-size: 0.8rem;
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.b6-tick.no {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+/* ---------- Figure 2: three stills ---------- */
+.b6-stills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+}
+@media (max-width: 760px) {
+  .b6-stills {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b6-still {
+  min-width: 0;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  display: flex;
+  flex-direction: column;
+}
+.b6-still-cap {
+  font-family: var(--font-prose);
+  font-size: 0.92rem;
+  line-height: 1.35;
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  border-top: 1px dashed var(--rule);
+  color: var(--ink);
+}
+.b6-still-cap .b6-term {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--truth-text);
+}
+.b6-still .plot .arrow {
+  stroke: var(--truth);
+  stroke-width: 1.8;
+  fill: none;
+}
+.b6-still .plot .arrowhead {
+  fill: var(--truth);
+}
+.b6-still .plot .arc {
+  stroke: var(--surface-figure);
+  stroke-width: 4;
+  fill: none;
+  opacity: 0.95;
+}
+.b6-still .plot .arc-ink {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  fill: none;
+}
+
+/* ---------- Figure 3: the drag ---------- */
+.b6-drag {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: flex-start;
+}
+.b6-drag > svg.plot {
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 600px;
+  cursor: crosshair;
+}
+.b6-drag-side {
+  flex: 1 1 200px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.b6-drag-side .b6-box {
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+}
+.b6-meter {
+  display: block;
+  height: 10px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  overflow: hidden;
+}
+.b6-meter-fill {
+  display: block;
+  height: 100%;
+  background: var(--approx);
+  opacity: 0.8;
+}
+
+/* ---------- Figure 4: the x² check ---------- */
+.b6-check {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: flex-start;
+}
+.b6-check > svg.plot {
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 560px;
+}
+.b6-check-side {
+  flex: 1 1 220px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.b6-check-side .b6-box {
+  grid-template-columns: minmax(0, 1fr);
+  margin: 0;
+}
+.b6-hand {
+  font-family: var(--font-prose);
+  font-size: 0.95rem;
+  color: var(--ink);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+}
+.b6-hand.broken {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+.b6-hand .num {
+  font-weight: 500;
+}

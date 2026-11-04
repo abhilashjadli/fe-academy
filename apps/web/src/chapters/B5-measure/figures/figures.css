@@ -1,0 +1,334 @@
+/* Chapter B5 — figure-local styles (imported by each figure; Chapter.tsx owns b5.css).
+   Priya wears --truth (what she expects); Raj wears --error (what it costs). */
+
+.b5-priya {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.b5-raj {
+  color: var(--error-text);
+  font-weight: 600;
+}
+
+/* a drawing beside its words */
+.b5-stage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: center;
+}
+.b5-stage > svg.plot {
+  flex: 1 1 260px;
+  max-width: 460px;
+  min-width: 0;
+}
+.b5-stage-col {
+  flex-direction: column;
+  align-items: stretch;
+}
+.b5-stage.b5-stage-col > * {
+  flex: 0 0 auto;
+}
+.b5-stage-col > svg.plot {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
+}
+.b5-side {
+  flex: 1 1 220px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.b5-side .says {
+  margin: 0;
+}
+.b5-side .readouts {
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.b5-side-row .readouts {
+  flex-direction: row;
+}
+.b5-stage-col .says {
+  max-width: 48ch;
+}
+.b5-stage-col .b5-ruler {
+  align-self: center;
+  width: 100%;
+}
+
+/* Raj's drawing: two columns that end at the same height */
+.b5-drawing {
+  flex: 1 1 280px;
+  min-width: 0;
+  max-width: 440px;
+}
+.b5-drawing > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-ui);
+}
+.b5-drawing .lbl {
+  font-size: 11px;
+  fill: var(--ink-2);
+  paint-order: stroke;
+  stroke: var(--surface-figure);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.b5-drawing .lbl.raj {
+  fill: var(--error-text);
+  font-weight: 600;
+}
+.b5-drawing .lbl.ink {
+  fill: var(--ink);
+  font-weight: 500;
+  font-size: 12px;
+}
+
+/* Figure 1: one ruler, two needles */
+.b5-ruler {
+  flex: 1 1 320px;
+  min-width: 0;
+  max-width: 560px;
+}
+.b5-ruler > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-ui);
+}
+.b5-ruler .tick {
+  stroke: var(--axis);
+  stroke-width: 1;
+}
+.b5-ruler .tick-lbl {
+  font-size: 12px;
+  fill: var(--ink-3);
+}
+.b5-ruler .bar {
+  stroke: var(--axis);
+  stroke-width: 1.5;
+}
+.b5-ruler .needle {
+  transition: transform 0.12s linear;
+}
+.b5-ruler .needle-lbl {
+  font-size: 13px;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--surface-figure);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.b5-ruler .needle-lbl.priya {
+  fill: var(--truth-text);
+}
+.b5-ruler .needle-lbl.raj {
+  fill: var(--error-text);
+}
+.b5-note {
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  color: var(--ink-3);
+}
+.b5-note.lit {
+  color: var(--error-text);
+  font-weight: 600;
+}
+
+/* Figure 2: two coins and a ledger */
+.b5-coins {
+  flex: 1 1 200px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: center;
+}
+.b5-coin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 7.5rem;
+  padding: var(--space-2) var(--space-2) var(--space-3);
+  border-radius: 50% / 40%;
+  border: 1.5px solid var(--rule);
+  background: var(--surface-raised);
+  font-family: var(--font-ui);
+}
+.b5-coin.priya {
+  border-color: var(--truth);
+  background: var(--truth-soft);
+}
+.b5-coin.raj {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+.b5-coin .k {
+  font-size: 0.72rem;
+  color: var(--ink-3);
+  text-align: center;
+  line-height: 1.2;
+}
+.b5-coin .v {
+  font-size: 1.35rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+.b5-coin.priya .v {
+  color: var(--truth-text);
+}
+.b5-coin.raj .v {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.b5-ledger {
+  flex: 2 1 340px;
+  min-width: 0;
+}
+.b5-ledger .ledger-table {
+  width: 100%;
+}
+/* Priya's row: true, and greyed */
+.b5-ledger .ledger-table tr.role-approx td {
+  opacity: 0.65;
+}
+.b5-aside {
+  margin: var(--space-2) var(--space-1) var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-left: 2px solid var(--rule);
+  font-family: var(--font-prose);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  max-width: 68ch;
+}
+
+/* Figure 3: the dot histogram */
+.b5-dots .dot {
+  fill: var(--ink-2);
+  stroke: none;
+  transition: opacity 0.1s linear;
+}
+.b5-dots .dot.low {
+  fill: var(--error);
+}
+.b5-dots .outline {
+  fill: none;
+  stroke: var(--error);
+  stroke-width: 1.5;
+}
+.b5-dots .needle-line {
+  stroke: var(--error);
+  stroke-width: 2.5;
+}
+.b5-dots .needle-line.priya {
+  stroke: var(--truth);
+}
+.b5-dots .par {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+.b5-who-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  padding: var(--space-1) var(--space-2) 0;
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  color: var(--ink-3);
+}
+.b5-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  opacity: 0.5;
+  transition: opacity 0.15s ease;
+}
+.b5-chip.on {
+  opacity: 1;
+}
+
+/* Figure 4: twenty paths, twice */
+.b5-twice {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  padding: var(--space-2) 0 0;
+}
+@media (max-width: 560px) {
+  .b5-twice {
+    grid-template-columns: 1fr;
+  }
+}
+.b5-twice .pane-head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  color: var(--ink-2);
+  padding: 0 var(--space-1) var(--space-1);
+}
+.b5-twice .pane-head .num {
+  color: var(--ink);
+}
+.b5-paths .path {
+  fill: none;
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+}
+.b5-paths .path.priya {
+  stroke: var(--truth);
+}
+.b5-paths .path.raj {
+  stroke: var(--error);
+}
+.b5-caption {
+  margin: var(--space-3) var(--space-1) var(--space-1);
+  font-family: var(--font-prose);
+  font-size: 1rem;
+  color: var(--ink);
+  max-width: 68ch;
+}
+.b5-caption .src {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+.b5-break {
+  margin: var(--space-2) var(--space-1) var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  background: var(--error-soft);
+  max-width: 68ch;
+}
+.b5-break .says {
+  margin: var(--space-1) 0;
+}
+
+/* collapsed "more" */
+.b5-more {
+  margin: var(--space-2) var(--space-1) var(--space-2);
+  font-family: var(--font-prose);
+  color: var(--ink-2);
+}
+.b5-more summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+.b5-more p {
+  margin: 0.4em 0 0;
+  font-size: 0.95rem;
+}

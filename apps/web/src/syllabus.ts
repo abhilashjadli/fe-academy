@@ -37,8 +37,8 @@ export const SYLLABUS: Track[] = [
       { id: "B2", title: "Martingales" },
       { id: "B3", title: "Brownian motion, GBM, quadratic variation" },
       { id: "B4", title: "Itô's lemma: the square that would not vanish", built: true },
-      { id: "B5", title: "Risk-neutral measure, Girsanov" },
-      { id: "B6", title: "Feynman-Kac: PDE ↔ expectation" },
+      { id: "B5", title: "The risk-neutral measure: the odds are not the price", built: true },
+      { id: "B6", title: "Feynman–Kac: two ways to get the same number", built: true },
     ],
   },
   {

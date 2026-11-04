@@ -47,7 +47,7 @@ class Refine(Scene):
 
         # left: the terminal distribution of the tree as bars; right: the price vs n with the BS line
         left_origin = LEFT * 6.2 + DOWN * 2.2
-        ax_r = Axes(x_range=[0, 9, 1], y_range=[10.0, 12.5, 0.5], x_length=5.2, y_length=3.6,
+        ax_r = Axes(x_range=[0, 9, 1], y_range=[9.5, 12.5, 0.5], x_length=5.2, y_length=3.6,
                     axis_config={"color": GHOST, "include_tip": False, "stroke_width": 2},
                     y_axis_config={"include_numbers": True, "font_size": 22, "decimal_number_config": {"num_decimal_places": 1, "color": INK}}).shift(RIGHT * 3.9 + DOWN * 0.6)
         xl = Text("steps: 1 · 2 · 3 · 5 · 10 · 20 · 50 · 100 · 500", font_size=20, color=INK).next_to(ax_r, DOWN, buff=0.15)

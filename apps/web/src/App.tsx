@@ -10,6 +10,8 @@ import { ItoChapter } from "./chapters/B4-ito/Chapter";
 import { RegressionChapter } from "./chapters/A3-regression/Chapter";
 import { OptionsChapter } from "./chapters/C1-options/Chapter";
 import { BinomialChapter } from "./chapters/C2-binomial/Chapter";
+import { MeasureChapter } from "./chapters/B5-measure/Chapter";
+import { FeynmanKacChapter } from "./chapters/B6-feynmankac/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
@@ -20,6 +22,8 @@ const CHAPTERS: Record<string, ComponentType> = {
   A3: RegressionChapter,
   C1: OptionsChapter,
   C2: BinomialChapter,
+  B5: MeasureChapter,
+  B6: FeynmanKacChapter,
   lab: Lab,
 };
 
