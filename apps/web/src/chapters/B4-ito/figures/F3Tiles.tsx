@@ -8,7 +8,6 @@ import { M } from "../../../ui/Math";
 
 const A = 0.1,
   B = 0.3; // engine key values
-const DX0 = 0.4; // step 1: starting Δx (f′ = 1, ½f″ = 1, ⅙f‴ = 1 so areas are Δx, Δx², Δx³)
 const K = 70000; // px² per unit of area — one scale for every tile on the page; every tile is a square of side √(area·K)
 
 const f2 = format(".2f");
@@ -172,39 +171,27 @@ function BoxTable() {
 
 export function F3Tiles() {
   const [step, setStep] = useState(0);
-  const [hx, setHx] = useState(0); // "halve Δx" presses, step 1 (max 3)
-  const [ht, setHt] = useState(0); // "halve Δt" presses, step 3 (max 4)
+  const [ht, setHt] = useState(0); // "halve Δt" presses, step 2 (max 4)
   const narrow = useNarrow();
   const fs = narrow ? 1.6 : 1; // text scale inside the SVGs
 
-  const dx = DX0 / Math.pow(2, hx);
   const dt = 1 / Math.pow(2, ht);
   const T = tilesAt(dt);
   const T0 = tilesAt(1);
 
   const onStep = (i: number) => {
     setStep(i);
-    if (i === 0) {
-      setHx(0);
-      setHt(0);
-    }
+    if (i === 0) setHt(0);
   };
 
-  const stickersOn = step >= 3 ? ht >= 4 || step >= 4 : false;
+  const stickersOn = step >= 2 ? ht >= 4 || step >= 3 : false;
   const base = 196;
 
   const steps = [
     {
       caption: (
         <>
-          Ordinary calculus, three tiles: <span className="tok-approx">f′Δx</span>, <span className="tok-truth">½f″Δx²</span>, a sliver. Press "halve Δx" three times: the second tile shrinks four times faster than the first.
-        </>
-      ),
-    },
-    {
-      caption: (
-        <>
-          Now the step is a jitter: Δx = <span className="tok-approx">aΔt</span> + <span className="tok-approx">bΔW</span>. Squaring it multiplies the tiles out into Δt², Δt·ΔW and (ΔW)². The ΔW tile carries a coin.
+          In 0.1 the second tile died four times faster than the first. Now the step is a jitter: Δx = <span className="tok-approx">aΔt</span> + <span className="tok-approx">bΔW</span>. Squaring it multiplies the tiles out into Δt², Δt·ΔW and (ΔW)². The ΔW tile carries a coin.
         </>
       ),
     },
@@ -234,8 +221,7 @@ export function F3Tiles() {
     },
   ];
 
-  const halveDx = step === 0;
-  const halveDt = step === 2;
+  const halveDt = step === 1;
 
   return (
     <Figure
@@ -243,15 +229,6 @@ export function F3Tiles() {
       prompt="Every term of the expansion is a tile whose area is its size. Shrink the step and watch which tiles survive."
       controls={
         <>
-          <span className={"ctl " + (halveDx ? "" : "locked")}>
-            <button type="button" className="btn" disabled={!halveDx || hx >= 3} onClick={() => setHx((v) => Math.min(3, v + 1))}>
-              halve Δx
-            </button>
-            <span className="readout" style={{ minWidth: "5ch" }}>
-              Δx = {f4(dx).replace(/0+$/, "").replace(/\.$/, "")}
-            </span>
-            <span className="footnote">{hx}/3</span>
-          </span>
           <span className={"ctl " + (halveDt ? "" : "locked")}>
             <button type="button" className="btn" disabled={!halveDt || ht >= 4} onClick={() => setHt((v) => Math.min(4, v + 1))}>
               halve Δt
@@ -275,38 +252,27 @@ export function F3Tiles() {
         onStep={onStep}
         render={(i) => (
           <>
-            {i === 0 && (
-              <svg viewBox={narrow ? "0 0 640 300" : "0 0 640 260"} className="plot" role="img" aria-label="Three Taylor tiles: bar, square, sliver" style={{ touchAction: "auto" }}>
-                <line x1={20} x2={620} y1={base} y2={base} stroke="var(--axis)" />
-                <Tile cx={140} base={base} area={dx} role="approx" label="f′Δx" value={fv(dx)} fs={fs} />
-                <Tile cx={330} base={base} area={dx * dx} role="truth" label="½f″Δx²" value={fv(dx * dx)} sticker={hx >= 3} fs={fs} />
-                <Tile cx={500} base={base} area={dx * dx * dx} role="ghost" label="⅙f‴Δx³" value={fv(dx * dx * dx)} fs={fs} />
-                <text x={620} y={22} textAnchor="end" fontSize={11 * fs} fill="var(--ink-3)" fontFamily="var(--font-ui)">
-                  first ÷ {Math.pow(2, hx)} · second ÷ {Math.pow(4, hx)} · third ÷ {Math.pow(8, hx)}
-                </text>
-              </svg>
-            )}
-            {i >= 1 && i <= 3 && (
+            {i <= 2 && (
               <svg viewBox={narrow ? "0 0 640 300" : "0 0 640 260"} className="plot" role="img" aria-label="The five tiles of the expansion with a jittering step" style={{ touchAction: "auto" }}>
                 <line x1={20} x2={620} y1={base} y2={base} stroke="var(--axis)" />
                 <Tile cx={84} base={base} area={T.aDt} role="approx" label="aΔt" value={fv(T.aDt)} fs={fs} />
                 <Tile cx={210} base={base} area={T.bDW} role="approx" label="bΔW" value={fv(T.bDW)} coin fs={fs} />
                 <Tile cx={330} base={base} area={T.a2Dt2} role="ghost" label="a²Δt²" value={fv(T.a2Dt2)} sticker={stickersOn} fs={fs} />
                 <Tile cx={446} base={base} area={T.abDtDW} role="ghost" label="2ab Δt·ΔW" value={fv(T.abDtDW)} sticker={stickersOn} fs={fs} />
-                <Tile cx={566} base={base} area={T.b2DW2} role="truth" label="b²(ΔW)²" value={fv(T.b2DW2)} note={i >= 3 ? "= b²Δt on average" : undefined} fs={fs} />
+                <Tile cx={566} base={base} area={T.b2DW2} role="truth" label="b²(ΔW)²" value={fv(T.b2DW2)} note={i >= 2 ? "= b²Δt on average" : undefined} fs={fs} />
                 <text x={620} y={22} textAnchor="end" fontSize={11 * fs} fill="var(--ink-3)" fontFamily="var(--font-ui)">
                   expected areas at Δt = {ht === 0 ? "1" : "1/" + Math.pow(2, ht)} · every tile a square, one scale
                 </text>
               </svg>
             )}
-            {i >= 1 && i <= 3 && (
+            {i <= 2 && (
               <details className="footnote" style={{ margin: "0 0.5rem 0.4rem" }}>
                 <summary style={{ cursor: "pointer" }}>what sets the areas</summary>
                 a = {A}, b = {B}; f′ and ½f″ set to 1 so a tile's area is its increment. The ΔW tile is drawn at its average size, E|ΔW| = √(2Δt/π); the (ΔW)² tile at
                 E(ΔW)² = Δt.
               </details>
             )}
-            {i === 2 && (
+            {i === 1 && (
               <table className="table" style={{ maxWidth: 560, margin: "0 auto 0.4rem" }}>
                 <thead>
                   <tr>
@@ -357,7 +323,7 @@ export function F3Tiles() {
                 </tbody>
               </table>
             )}
-            {i === 4 && (
+            {i === 3 && (
               <div style={{ padding: "1.2rem 0.5rem 0.6rem" }}>
                 <BoxTable />
                 <div className="footnote" style={{ textAlign: "center" }}>
@@ -365,7 +331,7 @@ export function F3Tiles() {
                 </div>
               </div>
             )}
-            {i === 5 && (
+            {i === 4 && (
               <div style={{ padding: "0.6rem 0.5rem 0.4rem" }}>
                 <M block tex="df = \big(\tok{approx}{f_t + a f_x} + \tok{truth}{\tfrac12 b^2 f_{xx}}\big)\,dt + \tok{approx}{b f_x}\,dW" />
                 <div className="footnote" style={{ textAlign: "center", marginBottom: "0.6rem" }}>

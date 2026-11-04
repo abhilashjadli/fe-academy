@@ -25,11 +25,16 @@ export function F5Break() {
     () => paths.slice(0, SHOWN).map((W) => W.map((w, i) => [(i / STEPS) * T, f(S0, MU, sigma, (i / STEPS) * T, w)] as Pt)),
     [paths, sigma, f],
   );
-  const meanEnd = useMemo(() => paths.reduce((s, W) => s + f(S0, MU, sigma, T, W[STEPS]), 0) / N, [paths, sigma, f]);
+  const { meanEnd, se } = useMemo(() => {
+    const ends = paths.map((W) => f(S0, MU, sigma, T, W[STEPS]));
+    const m = ends.reduce((a, b) => a + b, 0) / N;
+    const v = ends.reduce((a, b) => a + (b - m) * (b - m), 0) / (N - 1);
+    return { meanEnd: m, se: Math.sqrt(v / N) }; // standard error of the simulated average
+  }, [paths, sigma, f]);
   const truth = gbmMean(S0, MU, T);
   const ratio = meanEnd / truth;
   const median = gbmMedian(S0, MU, sigma, T);
-  const off = Math.abs(ratio - 1) > 0.005;
+  const off = Math.abs(meanEnd - truth) > 2 * se; // outside two standard errors: the gap is real, not noise
   const yMax = Math.max(220, Math.min(400, Math.ceil(S0 * Math.exp(MU + 2.2 * sigma) / 20) * 20));
 
   return (
@@ -44,14 +49,20 @@ export function F5Break() {
             items={[
               ["true average after a year", fmt.n(2)(truth)],
               ["simulated average", fmt.n(2)(meanEnd)],
-              ["simulated ÷ true", <span className={off ? "b4-bad" : "b4-good"}>{fmt.n(2)(ratio)}</span>],
+              [
+                "simulated ÷ true",
+                <span className={off ? "b4-bad" : "b4-good"}>
+                  {fmt.n(2)(ratio)} ± {fmt.n(2)((2 * se) / truth)}
+                </span>,
+              ],
             ]}
           />
         </>
       }
       observe={
         <>
-          With the square in the books the simulated average sits on the true one, whatever σ you choose. Forget it, and the ratio climbs with σ — 2 % at
+          With the square in the books the simulated average sits on the true one to within its ± band (two standard errors of 2,000 draws), whatever σ you choose.
+          Forget it, and the ratio climbs with σ, far outside the band — 2 % at
           20 %, 8 % at 40 %, 20 % at 60 %. Every option priced off that simulation is too expensive. A fresher can write this bug in week two; now you can
           spot it.
         </>
