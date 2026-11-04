@@ -12,6 +12,7 @@ import { OptionsChapter } from "./chapters/C1-options/Chapter";
 import { BinomialChapter } from "./chapters/C2-binomial/Chapter";
 import { MeasureChapter } from "./chapters/B5-measure/Chapter";
 import { FeynmanKacChapter } from "./chapters/B6-feynmankac/Chapter";
+import { BlackScholesChapter } from "./chapters/C3-blackscholes/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
@@ -24,6 +25,7 @@ const CHAPTERS: Record<string, ComponentType> = {
   C2: BinomialChapter,
   B5: MeasureChapter,
   B6: FeynmanKacChapter,
+  C3: BlackScholesChapter,
   lab: Lab,
 };
 

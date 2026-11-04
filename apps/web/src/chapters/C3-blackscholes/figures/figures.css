@@ -1,0 +1,510 @@
+/* Chapter C3 — figure-local styles (imported by each figure). House tokens only.
+   Roles: lit futures / the share N(d₂) / the dial wear --approx; the price-weighted area, the model price when it agrees,
+   and Raj's hedge wear --truth; the sold call and the put curve wear --error; the screen's printed IVs are ghosts. */
+
+.c3-truth {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.c3-approx {
+  color: var(--approx-text);
+  font-weight: 600;
+}
+.c3-error {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.c3-ghost {
+  color: var(--ink-3);
+  font-weight: 600;
+}
+.c3-dim {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+
+/* a drawing beside its words; stacked on phones */
+.c3-stage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: flex-start;
+}
+.c3-stage > svg.plot {
+  flex: 1 1 280px;
+  min-width: 0;
+  max-width: 640px;
+}
+.c3-stage-col {
+  flex-direction: column;
+  align-items: stretch;
+}
+.c3-stage-col > svg.plot {
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
+}
+.c3-stage-col > .readouts {
+  padding: 0 var(--space-1) var(--space-2);
+}
+
+/* ---- the real row, zoomed (Figure 0) ---- */
+.c3-strip {
+  flex: 1 1 260px;
+  min-width: 0;
+  max-width: 420px;
+  font-family: var(--font-ui);
+}
+.c3-strip-head {
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  padding: 2px 0 4px;
+}
+.c3-strip-table {
+  border: 1px solid var(--rule);
+  background: var(--surface-raised);
+  font-size: 0.84rem;
+}
+.c3-strip-table th,
+.c3-strip-table td {
+  padding: 3px 8px;
+  text-align: right;
+}
+.c3-strip-table th:first-child,
+.c3-strip-table td:first-child {
+  text-align: right;
+}
+.c3-strip-ghost td {
+  color: var(--ink-3);
+  opacity: 0.6;
+}
+.c3-strip-row td {
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+}
+.c3-strip-row .c3-strip-ltp {
+  color: var(--ink);
+  outline: 2px solid var(--ink);
+  outline-offset: -2px;
+}
+.c3-strip-row .c3-strip-iv {
+  color: var(--ghost);
+  text-decoration: underline dotted;
+}
+
+/* ---- the machine (Figures 0 and 4) ---- */
+.c3-machine {
+  flex: 2 1 320px;
+  min-width: 0;
+  max-width: 560px;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  padding: var(--space-2) var(--space-3) var(--space-3);
+  font-family: var(--font-ui);
+  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.c3-machine.snapped {
+  border-color: var(--truth);
+  box-shadow: 0 0 0 3px var(--truth-soft);
+}
+.c3-machine-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  align-items: baseline;
+  font-size: 0.82rem;
+  color: var(--ink-3);
+  padding-bottom: var(--space-2);
+}
+.c3-machine-head strong {
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+.c3-locks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+.c3-lock {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 4px 8px;
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink-3);
+  position: relative;
+}
+.c3-lock::after {
+  content: "locked";
+  position: absolute;
+  right: 6px;
+  top: 4px;
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  opacity: 0.7;
+}
+.c3-lock .k {
+  font-size: 0.7rem;
+}
+.c3-lock .v {
+  font-size: 0.98rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+@media (max-width: 480px) {
+  .c3-locks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.c3-out {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+@media (max-width: 560px) {
+  .c3-out {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .c3-out .c3-tile-gap {
+    grid-column: 1 / -1;
+  }
+}
+
+/* a tile: small caption, big number, small note */
+.c3-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  font-family: var(--font-ui);
+  transition: border-color 0.4s ease, background 0.4s ease, opacity 0.4s ease;
+}
+.c3-tile .k {
+  font-size: 0.72rem;
+  color: var(--ink-3);
+  line-height: 1.25;
+}
+.c3-tile .v {
+  font-size: 1.45rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.c3-tile-gap.good {
+  border-color: var(--truth);
+  background: var(--truth-soft);
+}
+.c3-tile-gap.good .v {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.c3-gap {
+  display: block;
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  margin-top: 2px;
+}
+
+/* ---- the cloud (Figures 1 and 2) ---- */
+.c3-dots circle {
+  stroke: none;
+}
+.c3-dots circle.ghost {
+  fill: var(--ghost);
+  opacity: 0.35;
+}
+.c3-dots circle.plain {
+  fill: var(--ink-3);
+  opacity: 0.6;
+}
+.c3-dots circle.lit.approx {
+  fill: var(--approx);
+  opacity: 0.9;
+}
+.c3-dots circle.lit.truth {
+  fill: var(--truth);
+  opacity: 0.9;
+}
+.c3-strike line {
+  stroke: var(--ink);
+  stroke-width: 1.8;
+}
+.c3-strike .label {
+  font-weight: 600;
+  fill: var(--ink);
+}
+.c3-grip {
+  fill: var(--surface-raised);
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.c3-grip-lines line {
+  stroke: var(--ink-3);
+  stroke-width: 1.2;
+}
+.c3-tick {
+  stroke: var(--grid);
+  stroke-width: 1;
+}
+
+/* ---- Figure 2: tiles that switch on one step at a time ---- */
+.c3-steps-stage {
+  align-items: stretch;
+}
+.c3-steps-stage > svg.plot {
+  flex: 3 1 320px;
+}
+.c3-step-tiles {
+  flex: 1 1 180px;
+  min-width: 0;
+  max-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.c3-step-tile.off {
+  opacity: 0.18;
+  filter: grayscale(1);
+}
+.c3-step-tile.approx .v {
+  color: var(--approx-text);
+}
+.c3-step-tile.truth .v {
+  color: var(--truth-text);
+}
+.c3-step-tile.ghost .v {
+  color: var(--ink);
+}
+.c3-step-tile.on.approx {
+  border-color: var(--approx);
+}
+.c3-step-tile.on.truth {
+  border-color: var(--truth);
+}
+.c3-step-tile.on.ghost {
+  border-color: var(--ink);
+}
+@media (max-width: 640px) {
+  .c3-step-tiles {
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: none;
+  }
+  .c3-step-tile {
+    flex: 1 1 40%;
+  }
+  .c3-step-tile .v {
+    font-size: 1.15rem;
+  }
+}
+.c3-steps-stage + .steps-caption .math-block {
+  margin: var(--space-2) 0 0;
+}
+.steps .step-text .math-block {
+  margin: var(--space-2) 0 0;
+  padding: 0;
+}
+.clip-inside {
+  padding: var(--space-2) 0;
+}
+
+/* ---- Figure 3: Raj ---- */
+.c3-live {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.c3-live .plot {
+  width: 100%;
+  max-width: 560px;
+  align-self: center;
+}
+.c3-board {
+  width: 100%;
+  padding: var(--space-3) var(--space-2);
+  text-align: center;
+}
+.c3-board-line {
+  font-family: var(--font-prose);
+  font-size: 1.25rem;
+  line-height: 1.5;
+  color: var(--ink);
+  padding: var(--space-2) var(--space-3);
+  border: 1.5px solid var(--ink);
+  border-radius: 3px;
+  background: var(--surface-figure);
+  display: inline-block;
+  max-width: 100%;
+}
+.c3-board-line .c3-eq {
+  padding: 0 0.3em;
+  font-weight: 600;
+}
+.c3-board-note {
+  margin-top: var(--space-2);
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  color: var(--ink-2);
+}
+.c3 .comic .panel-art {
+  padding: var(--space-2);
+}
+.c3 .comic .says {
+  margin: 0;
+}
+.c3 .comic .panel-wide {
+  grid-column: 1 / -1;
+}
+
+/* ---- Figure 4: the computer's inset, the strip, the bisection ---- */
+.c3-inset {
+  width: 100%;
+  max-width: 560px;
+  align-self: center;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  padding: var(--space-2) var(--space-2) 0;
+  font-family: var(--font-ui);
+}
+.c3-inset-head {
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  padding: 0 var(--space-1) var(--space-1);
+}
+.c3-inset-head strong {
+  color: var(--ink);
+}
+.c3-inset .plot {
+  width: 100%;
+}
+.c3-more {
+  margin: var(--space-2) var(--space-2) var(--space-3);
+  font-family: var(--font-prose);
+  color: var(--ink-2);
+  font-size: 0.95rem;
+}
+.c3-more summary {
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+.c3-more p {
+  margin: 0.5em 0 0;
+}
+.c3-bisect {
+  max-width: 460px;
+  margin: 0.5rem 0;
+}
+.c3-bisect td:last-child,
+.c3-bisect th:last-child {
+  text-align: left;
+}
+
+/* ---- Figure 5: the forward dial with two marks on its track ---- */
+.c3-fdial {
+  width: 100%;
+  max-width: 600px;
+}
+.c3-fdial .ctl {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: flex-start;
+}
+.c3-fdial-track {
+  position: relative;
+  flex: 1 1 220px;
+  min-width: 0;
+  padding-bottom: 2.4rem;
+}
+.c3-fdial-track input[type="range"] {
+  width: 100%;
+  display: block;
+}
+.c3-fdial-marks {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 1.1rem;
+  height: 2.2rem;
+  pointer-events: none;
+}
+.c3-fdial-mark {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.c3-fdial-mark i {
+  display: block;
+  width: 2px;
+  height: 9px;
+  background: var(--ink-2);
+}
+.c3-fdial-mark.alt i {
+  background: var(--error);
+}
+.c3-fdial-mark b {
+  font-weight: 500;
+}
+.c3-fdial-mark.alt b {
+  color: var(--error-text);
+}
+.c3-fdial-mark[aria-pressed="true"] b {
+  font-weight: 700;
+  color: var(--ink);
+}
+.c3-fdial-mark.alt {
+  transform: translateX(-50%);
+}
+/* the two labels would overlap on a narrow track: stagger them */
+.c3-fdial-mark.alt b {
+  padding-top: 1rem;
+}
+@media (max-width: 480px) {
+  .c3-fdial-mark {
+    font-size: 0.66rem;
+  }
+  .c3-fdial-mark:not(.alt) {
+    transform: translateX(-20%);
+  }
+  .c3-fdial-mark:not(.alt) i {
+    margin-left: -60%;
+  }
+  .c3-fdial-mark.alt {
+    transform: translateX(-80%);
+  }
+  .c3-fdial-mark.alt i {
+    margin-left: 60%;
+  }
+}
