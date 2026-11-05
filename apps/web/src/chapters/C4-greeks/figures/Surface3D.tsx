@@ -47,7 +47,7 @@ function readPalette(): Palette {
 
 /** camera on a ring around the surface: azimuth about the y axis, in radians */
 const CAM = { front: { az: 0.42, el: 0.5, r: 5.8 }, side: { az: 0.42 + (80 * Math.PI) / 180, el: 0.3, r: 5.4 } };
-const TARGET = [0.05, 0.38, 0] as const;
+const TARGET = [0.18, 0.38, 0] as const;
 
 interface LabelDef {
   text: string;
@@ -86,7 +86,8 @@ export function Surface3D({ probe, onProbe, alongTime, height = 400 }: Props) {
       const target = new THREE.Vector3(...TARGET);
       const cam = { ...CAM.front };
       const placeCamera = () => {
-        camera.position.set(target.x + cam.r * Math.cos(cam.el) * Math.sin(cam.az), target.y + cam.r * Math.sin(cam.el), target.z + cam.r * Math.cos(cam.el) * Math.cos(cam.az));
+        const r = cam.r * (camera.aspect < 1.1 ? 1.32 : 1); // a narrow (phone) canvas needs to stand further back
+        camera.position.set(target.x + r * Math.cos(cam.el) * Math.sin(cam.az), target.y + r * Math.sin(cam.el), target.z + r * Math.cos(cam.el) * Math.cos(cam.az));
         camera.lookAt(target);
       };
       placeCamera();
@@ -287,10 +288,10 @@ export function Surface3D({ probe, onProbe, alongTime, height = 400 }: Props) {
         { text: "22,600", at: [toX(22600), 0, toZ(D_MAX) + 0.1] },
         { text: "23,000", at: [toX(23000), 0, toZ(D_MAX) + 0.1] },
         { text: "index →", at: [toX(F_MAX) + 0.02, 0, toZ(D_MAX) + 0.1], cls: "ax" },
-        { text: "11 d", at: [toX(F_MAX) + 0.1, 0, toZ(11)] },
-        { text: "5 d", at: [toX(F_MAX) + 0.1, 0, toZ(5)] },
-        { text: "expiry", at: [toX(F_MAX) + 0.1, 0, toZ(0)] },
-        { text: "days left", at: [toX(F_MAX) + 0.12, 0.09, toZ(5.5)], cls: "ax" },
+        { text: "11 d", at: [toX(F_MAX) + 0.07, 0, toZ(11)] },
+        { text: "5 d", at: [toX(F_MAX) + 0.07, 0, toZ(5)] },
+        { text: "expiry", at: [toX(F_MAX) + 0.07, 0, toZ(0)] },
+        { text: "days left", at: [toX(F_MAX) + 0.08, 0.1, toZ(7.5)], cls: "ax" },
         { text: "price", at: [toX(F_MIN) - 0.16, toY(900), toZ(0)], cls: "ax" },
         { text: "400", at: [toX(F_MIN) - 0.12, toY(400), toZ(0)] },
         { text: "800", at: [toX(F_MIN) - 0.12, toY(800), toZ(0)] },

@@ -82,7 +82,7 @@ export function F5Dial() {
             <Label at={[be, 0]} text={`+${n0(be)}`} dx={4} dy={-6} role="ghost" />
             <Label at={[-be, 0]} text={`−${n0(be)}`} dx={4} dy={-6} role="ghost" />
             <Marker at={[move, bend]} role="approx" r={5} />
-            <Label at={[move, bend]} text={`the bend pays ${rs(bend, 2)}`} role="approx" dx={move > 80 ? -10 : 10} dy={-10} anchor={move > 80 ? "end" : "start"} />
+            <Label at={[move, bend]} text={`the bend pays ${rs(bend, 2)}`} role="approx" dx={move > 80 ? -10 : 10} dy={bend > 24 ? 18 : -10} anchor={move > 80 ? "end" : "start"} />
           </Plot>
           <div className="c4-bars">
             <Bar label="the bend pays" value={bend} max={barMax} cls="approx" text={rs(bend, 2) + " a unit"} />

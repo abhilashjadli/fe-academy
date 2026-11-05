@@ -208,7 +208,7 @@ export function F3Raj() {
             <Label at={[X_RANGE[0], 0]} text={n0(X_RANGE[0])} dx={4} dy={-5} anchor="start" />
             <Label at={[X_RANGE[1], 0]} text={n0(X_RANGE[1])} dx={-4} dy={-5} anchor="end" />
             <Label at={[ROW.K, 0]} text={`strike ${n0(ROW.K)}`} dx={0} dy={-5} anchor="middle" />
-            <Label at={[22780, 22780 - ROW.K]} text="payoff at expiry" dx={8} dy={4} anchor="start" />
+            <Label at={[22700, 22700 - ROW.K]} text="payoff at expiry" dx={8} dy={6} anchor="start" />
             <Label at={[22850, black76({ ...BASE, F: 22850, sigma: SIGMA })]} text="today's curve" role="truth" dx={0} dy={22} anchor="middle" />
           </Plot>
         </Panel>

@@ -337,7 +337,7 @@ export function F1Clock() {
               {N > drawn ? ` (${drawn} drawn)` : ""}
             </span>
           </div>
-          <Plot xDomain={[0, MONTHS]} yDomain={PRICE} width={RW} height={300} xLabel="months" yLabel="price" axisY={PRICE[0]} xTicks={6} ariaLabel="Walkers' price paths from 42, drawn up to the clock; at six months their endpoints are coloured by whether they pay">
+          <Plot xDomain={[-0.12, MONTHS]} yDomain={PRICE} width={RW} height={300} xLabel="months" yLabel="price" axisY={PRICE[0]} axisX={-0.12} xTicks={6} ariaLabel="Walkers' price paths from 42, drawn up to the clock; at six months their endpoints are coloured by whether they pay">
             <Curve pts={[[0, P.K], [MONTHS, P.K]]} role="error" width={1.2} dash="4 3" smooth={false} />
             <Label at={[MONTHS, P.K]} text="strike 40" role="error" anchor="end" dx={-4} dy={-5} />
             {visible.map((pts, i) => (

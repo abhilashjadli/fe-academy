@@ -169,8 +169,8 @@ export function F4Ledger() {
             <Label at={[ROW.F, G0.price]} text={`Fri ${n1(G0.price)}`} dx={-8} dy={-8} anchor="end" />
             {monday && <Marker at={[Fm, Vm]} role="error" r={4.5} />}
             {monday && <Label at={[Fm, Vm]} text={`Mon ${n1(Vm)}`} role="error" dx={8} dy={-8} />}
-            <Label at={[23000, (monday ? mon : fri)[(monday ? mon : fri).length - 1][1]]} text={monday ? "8 d" : "11 d"} dx={-4} dy={16} anchor="end" role="truth" />
-            {monday && <Label at={[23000, fri[fri.length - 1][1]]} text="11 d" dx={-4} dy={-6} anchor="end" role="ghost" />}
+            <Label at={[22900, price(22900, monday ? ROW.days - REAL_DAY.days : ROW.days)]} text={monday ? "8 d" : "11 d"} dx={4} dy={16} role="truth" />
+            {monday && <Label at={[22900, price(22900, ROW.days)]} text="11 d" dx={-6} dy={-6} anchor="end" role="ghost" />}
           </Plot>
         </div>
         <div className="c4-ledger-rows">

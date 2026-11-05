@@ -92,7 +92,7 @@ export function F1Comic() {
         </>
       }
     >
-      <div ref={root}>
+      <div ref={root} className="c4-comic">
         <Comic cols={4}>
           <Panel n={1} caption={<>Naked. If the index expires anywhere above 22,600, Raj pays — the cloud reaches ₹40 lakh at {n0(ROW.K + 40e5 / -ROW.units)} and keeps going.</>}>
             <div className="c4-naked">

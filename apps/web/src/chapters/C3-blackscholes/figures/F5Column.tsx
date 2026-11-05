@@ -100,7 +100,7 @@ export function F5Column() {
       }
     >
       <div className="c3-stage c3-stage-col">
-        <Plot xDomain={[22200, 23100]} yDomain={Y} width={640} height={330} margin={{ top: 14, right: 16, bottom: 34, left: 16 }} xLabel="strike" yLabel="wobble that prints the real last price" xTicks={0} yTicks={0} axisY={Y[0]} axisX={22200} grid={false} ariaLabel="Implied volatility against strike for the 17 real rows: the call curve and the put curve re-solved at the fed forward, with NSE's printed columns as ghost dots">
+        <Plot xDomain={[22200, 23100]} yDomain={Y} width={560} height={360} margin={{ top: 14, right: 16, bottom: 34, left: 16 }} xLabel="strike" yLabel="wobble that prints the real last price" xTicks={0} yTicks={0} axisY={Y[0]} axisX={22200} grid={false} ariaLabel="Implied volatility against strike for the 17 real rows: the call curve and the put curve re-solved at the fed forward, with NSE's printed columns as ghost dots">
           <XTicksInside at={[22250, 22450, 22650, 22850, 23050]} fmt={n0} />
           <YTicksInside at={[0.12, 0.14, 0.16, 0.18]} fmt={(v) => pct1(v).replace(".0", "")} />
           {NSE.strikes.map((K, i) => (

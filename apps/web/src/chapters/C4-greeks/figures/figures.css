@@ -206,7 +206,7 @@
   padding: 0 var(--space-3) var(--space-2);
   max-width: 520px;
 }
-.c4 .comic .panel-art {
+.c4-comic .panel-art {
   padding: var(--space-2);
 }
 
@@ -496,4 +496,14 @@
 }
 .c4-net.income strong {
   color: var(--truth-text);
+}
+
+/* phones: one panel per row so the small plots stay readable */
+@media (max-width: 480px) {
+  .c4-comic .comic {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .c4-comic .panel {
+    min-height: 0;
+  }
 }
