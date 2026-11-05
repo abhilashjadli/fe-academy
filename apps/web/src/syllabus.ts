@@ -56,7 +56,7 @@ export const SYLLABUS: Track[] = [
     id: "D",
     title: "Hedging & volatility",
     chapters: [
-      { id: "D1", title: "Delta hedging and P&L attribution" },
+      { id: "D1", title: "Delta hedging: theta pays for gamma", built: true },
       { id: "D2", title: "Implied vol, smile, skew, surface" },
       { id: "D3", title: "Beyond Black-Scholes: local vol, Heston, SABR, jumps" },
     ],

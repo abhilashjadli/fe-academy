@@ -1,0 +1,370 @@
+/* Chapter D1 — figure-local styles. House tokens only. */
+
+.d1-truth {
+  color: var(--truth-text);
+  font-weight: 500;
+}
+.d1-approx {
+  color: var(--approx-text);
+  font-weight: 500;
+}
+.d1-err {
+  color: var(--error-text);
+  font-weight: 500;
+}
+.d1-quiet {
+  color: var(--ink-3);
+  font-size: 0.82rem;
+}
+.d1 .plot .marker.ghost {
+  fill: var(--ghost);
+}
+.d1 .plot .label.ghost {
+  fill: var(--ink-3);
+}
+
+/* ---- Figure 0: the comic ---- */
+.d1-comic .comic {
+  --comic-cols: 3;
+}
+@media (max-width: 760px) {
+  .d1-comic .comic {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .d1-comic .panel {
+    min-height: 0;
+  }
+}
+.d1-comic .panel-art {
+  padding: var(--space-2);
+  align-items: flex-start;
+}
+.d1 .seg button {
+  white-space: nowrap;
+}
+/* the desk's terminal: dark in both themes */
+.d1-screen {
+  width: 100%;
+  border-radius: 3px;
+  background: #10151c;
+  color: #d6dde6;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  padding: 8px 10px;
+  border: 1px solid #2b333e;
+}
+.d1-screen-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: #8a95a5;
+  font-size: 0.64rem;
+  letter-spacing: 0.04em;
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid #2b333e;
+}
+.d1-screen-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-variant-numeric: tabular-nums;
+}
+.d1-screen-row .k {
+  color: #8a95a5;
+}
+.d1-screen-row .v {
+  color: #e6eaf0;
+  white-space: nowrap;
+}
+.d1-screen-row .v.up {
+  color: #7fd1a0;
+}
+.d1-screen-row .v.dn {
+  color: #ff8aa6;
+}
+.d1-screen-big {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e6eaf0;
+  padding: 2px 0 4px;
+}
+.d1-screen-big small {
+  font-size: 0.72rem;
+  font-weight: 400;
+  color: #7fd1a0;
+  margin-left: 6px;
+}
+.d1-screen-sep {
+  border-top: 1px dashed #2b333e;
+  margin: 4px 0;
+}
+.d1-race {
+  width: 100%;
+  display: block;
+}
+.d1-race .lane {
+  fill: var(--surface);
+  stroke: var(--rule);
+}
+.d1-race .lane-t {
+  font: 600 13px var(--font-ui);
+}
+.d1-race .lane-s {
+  font: 10.5px var(--font-ui);
+  fill: var(--ink-2);
+}
+.d1-race .runner {
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.d1-race .card {
+  fill: var(--surface-raised);
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.d1-race .card-t {
+  font: 600 12px var(--font-ui);
+  fill: var(--ink);
+}
+.d1-race .card-s {
+  font: 9px var(--font-ui);
+  fill: var(--ink-3);
+}
+.d1-bet-held {
+  margin-top: var(--space-3);
+  font-family: var(--font-prose);
+  color: var(--ink-2);
+}
+.d1-f0-bet {
+  padding: 0 var(--space-3) var(--space-2);
+}
+
+/* ---- Figure 1: the ledger game ---- */
+.d1-game {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+.d1-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.d1-ledger {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+}
+.d1-ledger th,
+.d1-ledger td {
+  padding: 5px 8px;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.d1-ledger th {
+  font-weight: 500;
+  color: var(--ink-3);
+  font-size: 0.74rem;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  vertical-align: bottom;
+}
+.d1-ledger th small {
+  font-size: 0.66rem;
+  font-weight: 400;
+}
+.d1-ledger th:first-child,
+.d1-ledger td:first-child {
+  text-align: left;
+  padding-left: 4px;
+}
+.d1-ledger tr.hl td {
+  background: var(--surface-raised);
+  color: var(--ink);
+  font-weight: 500;
+}
+.d1-ledger tr.sim td {
+  color: var(--ink-3);
+  font-style: italic;
+}
+.d1-ledger tr.sim td:first-child::after {
+  content: " sim";
+  font-style: normal;
+  font-size: 0.64rem;
+  color: var(--ink-3);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 0 4px;
+  margin-left: 4px;
+}
+.d1-ledger .pos {
+  color: var(--truth-text);
+}
+.d1-ledger .neg {
+  color: var(--error-text);
+}
+.d1-ledger tr.total td {
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 0;
+  color: var(--ink);
+  font-weight: 500;
+}
+@media (max-width: 520px) {
+  .d1-ledger {
+    font-size: 0.74rem;
+  }
+  .d1-ledger th,
+  .d1-ledger td {
+    padding: 4px 3px;
+  }
+  .d1-ledger th {
+    font-size: 0.68rem;
+  }
+  .d1 .ctl input[type="range"] {
+    width: 110px;
+  }
+}
+.d1-narr {
+  min-height: 2.6em;
+  font-family: var(--font-prose);
+  font-size: 0.98rem;
+  color: var(--ink);
+  padding: 0 var(--space-1);
+}
+.d1-narr .d1-quiet {
+  display: block;
+}
+.d1-simnote {
+  display: inline-block;
+  margin: var(--space-2) 0 0;
+  padding: 2px 8px;
+  border: 1px dashed var(--ink-3);
+  border-radius: var(--radius);
+  color: var(--ink-3);
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+}
+.d1-bars {
+  width: 100%;
+}
+.d1-bars > svg.plot {
+  width: 100%;
+  max-width: 720px;
+  display: block;
+}
+.d1-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-2);
+  padding: 2px var(--space-1) 0;
+}
+.d1-legend i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 5px;
+  vertical-align: -1px;
+}
+.d1-legend .sw-truth {
+  background: var(--truth);
+}
+.d1-legend .sw-approx {
+  background: var(--approx);
+}
+.d1-legend .sw-ghost {
+  background: var(--ghost);
+}
+.d1-legend .sw-error {
+  background: var(--error);
+}
+.d1-result {
+  padding: 0 0 var(--space-2);
+}
+
+/* ---- Figure 2: the referee's card ---- */
+.d1-ref {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+  padding-bottom: var(--space-2);
+}
+@media (max-width: 760px) {
+  .d1-ref {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.d1-ref-pic > svg {
+  width: 100%;
+  max-width: 480px;
+  display: block;
+  font-family: var(--font-ui);
+}
+.d1-ref-pic .bar-t {
+  font-size: 11.5px;
+  fill: var(--ink-2);
+}
+.d1-ref-pic .bar-v {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.d1-ref-pic .axis-t {
+  font-size: 10.5px;
+  fill: var(--ink-3);
+}
+.d1-ref-pic .track {
+  stroke: var(--axis);
+  stroke-width: 2;
+}
+.d1-ref-pic .tick {
+  stroke: var(--axis);
+  stroke-width: 1;
+}
+.d1-ref-pic .mark-t {
+  font-size: 11px;
+  font-weight: 500;
+}
+.d1-ref-pic .edge-t {
+  font-size: 12px;
+  font-weight: 600;
+}
+.d1-ref-text {
+  font-family: var(--font-prose);
+  font-size: 0.98rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+.d1-ref-text p {
+  margin: 0 0 0.6em;
+}
+.d1-ref-text .says {
+  margin: var(--space-2) 0;
+}
+
+/* ---- Figure 3: the thousand weeks ---- */
+.d1-hist > svg.plot {
+  width: 100%;
+  max-width: 760px;
+  display: block;
+}
+.d1-hist-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  padding: 2px var(--space-1) var(--space-2);
+}
