@@ -106,7 +106,7 @@ export function F3Fill() {
       }
       observe={
         <>
-          Backward induction is "average your children, step left". The hedge changes at every node — 0.5064 shares at the root, 0.7273 or 0 one step later — so the copy is rebuilt as the price moves. An American ticket is the same fill with one extra question per node: is cashing in now worth more than waiting?
+          Backward induction is "average your children, step left". The hedge changes at every node — for {american ? "the American put" : which === "call" ? "the call" : "the put"}, {f4(D(0, 0))} shares at the root, then {f4(D(1, 1))} after an up move or {f4(D(1, 0))} after a down move{which === "put" ? " (negative: sold short)" : ""} — so the copy is rebuilt as the price moves. An American ticket is the same fill with one extra question per node: is cashing in now worth more than waiting?
         </>
       }
     >
@@ -139,10 +139,13 @@ export function F3Fill() {
                     ["shares to hold there", <span className="num">{lp ? f4(D(lp[0], lp[1])) : "—"}</span>],
                   ]}
                 />
-                <div className="footnote c2-footnote">
-                  Weight {f4(t.p)} = (e^({input.r} × {input.dt}) − {input.d}) / ({input.u} − {input.d}). {which === "call" ? "The book rounds along the way and prints 2.0257 and 1.2823." : american ? "The book prints 12 at the red node and 5.0894 at the root." : "The book prints 1.4147, 9.4636 and 4.1923."}
-                  {" "}K = {K}.
-                </div>
+                <details className="c2-more c2-footnote-details">
+                  <summary className="footnote">where the weight {f4(t.p)} comes from, and what the book prints</summary>
+                  <div className="footnote c2-footnote">
+                    Weight {f4(t.p)} = (e^({input.r} × {input.dt}) − {input.d}) / ({input.u} − {input.d}) — Figure 2's row 1 for this board. {which === "call" ? "The book rounds along the way and prints 2.0257 and 1.2823." : american ? "The book prints 12 at the red node and 5.0894 at the root." : "The book prints 1.4147, 9.4636 and 4.1923."}
+                    {" "}K = {K}.
+                  </div>
+                </details>
               </div>
             </div>
           );

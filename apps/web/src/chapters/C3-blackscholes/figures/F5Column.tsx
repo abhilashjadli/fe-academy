@@ -113,8 +113,8 @@ export function F5Column() {
           <Curve pts={callPts} role="truth" width={2} smooth={false} />
           <Marker at={[ROW.K, cAtm]} role="truth" r={4.5} />
           <Marker at={[ROW.K, pAtm]} role="error" r={4.5} />
-          <Label at={[NSE.strikes[16], sol.calls[16]]} text="calls" role="truth" dx={-6} dy={gapAtm > 0 ? -8 : 16} anchor="end" />
-          <Label at={[NSE.strikes[16], sol.puts[16]]} text="puts" role="error" dx={-6} dy={gapAtm > 0 ? 16 : -8} anchor="end" />
+          <Label at={[NSE.strikes[16], sol.calls[16]]} text="calls" role="truth" dx={-6} dy={sol.calls[16] >= sol.puts[16] ? -9 : 17} anchor="end" />
+          <Label at={[NSE.strikes[16], sol.puts[16]]} text="puts" role="error" dx={-6} dy={sol.calls[16] >= sol.puts[16] ? 17 : -9} anchor="end" />
           <Label at={[NSE.strikes[0], NSE_PUT_IV[0] / 100]} text="NSE's printed put IVs" dx={6} dy={-8} />
           <Label at={[NSE.strikes[0], NSE_CALL_IV[0] / 100]} text="NSE's printed call IVs" dx={6} dy={16} />
         </Plot>

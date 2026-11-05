@@ -85,11 +85,18 @@ function Body({ i, S }: { i: number; S: number }) {
   const xp = pi > 0 ? S : S + BAR_W * 1.2;
   const floorAt = K + 350 <= X1 ? ([K + 350, callPayoff(K + 350, K)] as Pt) : ([K - 350, putPayoff(K - 350, K)] as Pt);
   const floorOnCall = K + 350 <= X1;
+  // label placement: the labels that hug the index line (call when it has something in it, put likewise, the near-strike label)
+  // take their own heights, and the "index ≈" label picks the first free height so no two sit on the line together
+  const nearStrike = Math.abs(K - S) < 90;
+  const taken = [xc === S ? r.call : NaN, xp === S ? r.put : NaN, nearStrike ? 575 : NaN].filter(Number.isFinite);
+  const barTop = Math.max(xc === S ? r.call : 0, xp === S ? r.put : 0); // a bar standing on the index line covers the label up to its top
+  const indexY = [520, 390, 330, 460, 580].find((yy) => yy > barTop + 15 && taken.every((t) => Math.abs(t - yy) >= 45)) ?? 580;
   return (
     <div>
       <Plot xDomain={[X0, X1]} yDomain={[0, Y1]} width={480} height={290} xLabel="index on expiry day · per unit" xTicks={5} yTicks={4} ariaLabel="Call and put payoff lines at the current strike, with the two price bars split at the lines">
         <Curve pts={[[X0, Y1 - 6], [X1, Y1 - 6]]} role="ghost" width={1} dash="2 4" smooth={false} />
-        <Label at={[X0, Y1 - 6]} text={`ceiling = the index itself (${n0(S)}), far above this scale`} dx={6} dy={14} />
+        <Label at={[X0, Y1 - 6]} text={`ceiling = the index itself (${n0(S)}),`} dx={6} dy={14} />
+        <Label at={[X0, Y1 - 6]} text="far above this scale" dx={6} dy={27} />
         <VLine at={S} />
         <Curve pts={putLine} role="error" width={1.5} dash="5 4" smooth={false} />
         <Curve pts={callLine} role="truth" width={2.5} smooth={false} />
@@ -99,8 +106,8 @@ function Body({ i, S }: { i: number; S: number }) {
         <Bars bars={[{ x: xp, y: r.put, y0: pi, w: BAR_W }]} role="error" opacity={0.3} />
         <Label at={[xc, r.call]} text={`call ${n2(r.call)}`} role="truth" anchor="end" dx={-4} dy={-6} />
         <Label at={[xp, r.put]} text={`put ${n2(r.put)}`} role="error" anchor="start" dx={4} dy={-6} />
-        {Math.abs(K - S) < 90 ? <Label at={[K, 548]} text={`strike ${n0(K)}`} anchor="middle" dx={0} dy={0} /> : <Label at={[K, 0]} text={`strike ${n0(K)}`} anchor="middle" dx={0} dy={-8} />}
-        <Label at={[S, 440]} text={`index ≈ ${n0(S)}`} dx={6} dy={0} />
+        {nearStrike ? <Label at={[K, 575]} text={`strike ${n0(K)}`} anchor="start" dx={6} dy={0} /> : <Label at={[K, 0]} text={`strike ${n0(K)}`} anchor="middle" dx={0} dy={-8} />}
+        <Label at={[S, indexY]} text={`index ≈ ${n0(S)}`} dx={6} dy={0} />
         <Label at={floorAt} text="floor = payoff line" role={floorOnCall ? "truth" : "error"} anchor={floorOnCall ? "start" : "end"} dx={floorOnCall ? 8 : -8} dy={14} />
       </Plot>
       <div className="c1-split">

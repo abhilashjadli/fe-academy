@@ -7,6 +7,9 @@ import { conversionLedger, maxPutGap, predictedPuts } from "../../../engine/opti
 import { BREAK_IT, LOT, SPOT_INFERRED, n0, n2, rowAt, rows, rs, s2 } from "./chain";
 
 const CHECK = [22000, 22600, 23200];
+/** the 22,800 put's bid / ask as printed on the artefact (the last trade, 361.95, printed 1.25 above the ask) */
+const BID = 348.0;
+const ASK = 360.7;
 
 /** Figure 5 — rebuild the put column from the call column at one forward; then type a wrong put and watch the ledger lock the difference. */
 export function F5Rebuild() {
@@ -29,6 +32,10 @@ export function F5Rebuild() {
   const lock = sign * led.perUnit;
   const lockLot = sign * led.perLot;
   const broke = Math.abs(myPut - breakRow.put) > 1e-9;
+  // No lock while the typed put is a price the screen actually showed: inside the bid–ask, or the real last trade.
+  // The prediction (355.55) sits inside that spread, so dealing there is not free money whatever the ledger's arithmetic says.
+  const insideSpread = myPut >= BID - 1e-9 && myPut <= ASK + 1e-9;
+  const noLock = !broke || insideSpread;
 
   const predPts: Pt[] = rows.map((r, i) => [r.K, pred[i]]);
   const realPts: Pt[] = rows.map((r) => [r.K, r.put]);
@@ -52,8 +59,8 @@ export function F5Rebuild() {
           <Readouts
             items={[
               ["worst gap over 17 rows", n2(worst)],
-              ["locked per unit", s2(lock)],
-              ["per lot", rs(lockLot)],
+              ["locked per unit", noLock ? "—" : s2(lock)],
+              ["per lot", noLock ? "—" : rs(lockLot)],
             ]}
           />
         </>
@@ -101,9 +108,14 @@ export function F5Rebuild() {
             </table>
           </div>
         </div>
-        <div className={"c1-conv " + (broke ? "broke" : "")}>
+        <div className={"c1-conv " + (broke && !noLock ? "broke" : "")}>
           <div className="c1-conv-head">
-            {broke ? (
+            {broke && insideSpread ? (
+              <>
+                The {n0(breakRow.K)} put at {n2(myPut)} — the call column says {n2(pred[rows.indexOf(breakRow)])}, and the screen's bid–ask is{" "}
+                {n2(BID)} / {n2(ASK)}. Inside the spread — nothing to lock. Type a price outside it.
+              </>
+            ) : broke ? (
               <>
                 The {n0(breakRow.K)} put at {n2(myPut)} — the call column says {n2(pred[rows.indexOf(breakRow)])}. {flip ? "Too dear." : "Too cheap."}
               </>
@@ -119,23 +131,23 @@ export function F5Rebuild() {
               {trades.map((t, i) => (
                 <tr key={i}>
                   <td>{t.what}</td>
-                  <td className="num">{t.cash === 0 ? "—" : s2(t.cash)}</td>
+                  <td className="num">{noLock || t.cash === 0 ? "—" : s2(t.cash)}</td>
                 </tr>
               ))}
               <tr className="c1-conv-total">
-                <td>locked, whatever happens</td>
-                <td className="num">{s2(lock)} a unit</td>
+                <td>{noLock ? "inside the spread — nothing to lock" : "locked, whatever happens"}</td>
+                <td className="num">{noLock ? "—" : `${s2(lock)} a unit`}</td>
               </tr>
               <tr>
                 <td>× {LOT} a lot</td>
-                <td className="num">{rs(lockLot)}</td>
+                <td className="num">{noLock ? "—" : rs(lockLot)}</td>
               </tr>
             </tbody>
           </table>
           <div className="c1-conv-check">
             {CHECK.map((s) => (
               <span key={s}>
-                index at {n0(s)} → <strong className="num">{s2(sign * led.atExpiry(s))}</strong>
+                index at {n0(s)} → <strong className="num">{noLock ? "—" : s2(sign * led.atExpiry(s))}</strong>
               </span>
             ))}
           </div>

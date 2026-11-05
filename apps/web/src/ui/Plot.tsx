@@ -40,7 +40,10 @@ interface PlotProps {
   axisY?: number;
 }
 
-const fmtTick = format("~g");
+const fmtSmall = format("~g");
+const fmtBig = format(",");
+/** tick labels: as before for everything under 10,000 (years, probabilities, 0.00x values); thousands separators from 10,000 up (22,600, not 22600) */
+const fmtTick = (t: number) => (Math.abs(t) >= 10000 ? fmtBig(t) : fmtSmall(t));
 
 export function Plot({
   xDomain,

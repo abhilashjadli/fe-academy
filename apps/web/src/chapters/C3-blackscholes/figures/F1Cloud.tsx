@@ -52,7 +52,10 @@ export function F1Cloud() {
         </>
       }
       controls={
-        <Slider label={pick ? "wobble" : "wobble (place your bet first)"} value={sigma} min={DIAL.min} max={DIAL.max} step={DIAL.step} onChange={setSigma} role="approx" fmt={pct1} width={200} locked={!pick} />
+        <>
+          <Slider label="wobble" value={sigma} min={DIAL.min} max={DIAL.max} step={DIAL.step} onChange={setSigma} role="approx" fmt={pct1} width={200} locked={!pick} />
+          {!pick && <span className="c3-hint">locked until you have placed the bet</span>}
+        </>
       }
       observe={
         pick ? (

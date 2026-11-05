@@ -92,7 +92,7 @@ function token(name: string, fallback: [number, number, number]): [number, numbe
  * linear price axis), stretched over the plot. Columns right of the frontier are filled.
  */
 const FIELD_ROWS = 160;
-function useFieldImage(g: Grid, kFront: number, dark: boolean): { href: string } {
+function useFieldImage(g: Grid, kFront: number, dark: boolean): { href: string; payoffHref: string } {
   return useMemo(() => {
     const n = N_GRID;
     const rows = FIELD_ROWS;
@@ -100,7 +100,7 @@ function useFieldImage(g: Grid, kFront: number, dark: boolean): { href: string }
     canvas.width = n + 1;
     canvas.height = rows;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return { href: "" };
+    if (!ctx) return { href: "", payoffHref: "" };
     const img = ctx.createImageData(n + 1, rows);
     const base = token("--surface-raised", dark ? [28, 34, 43] : [255, 255, 255]);
     const empty = token("--rule-soft", dark ? [34, 41, 50] : [231, 234, 239]);
@@ -128,8 +128,40 @@ function useFieldImage(g: Grid, kFront: number, dark: boolean): { href: string }
       }
     }
     ctx.putImageData(img, 0, 0);
-    return { href: canvas.toDataURL() };
+    const href = canvas.toDataURL();
+    // the last column alone — the payoff, the grid's boundary condition — drawn as a visible strip at the right edge from the first frame
+    const strip = document.createElement("canvas");
+    strip.width = 1;
+    strip.height = rows;
+    const sctx = strip.getContext("2d");
+    if (!sctx) return { href, payoffHref: "" };
+    const simg = sctx.createImageData(1, rows);
+    for (let row = 0; row < rows; row++) {
+      const i = row * 4;
+      const src = (row * (n + 1) + n) * 4;
+      simg.data[i] = img.data[src];
+      simg.data[i + 1] = img.data[src + 1];
+      simg.data[i + 2] = img.data[src + 2];
+      simg.data[i + 3] = 255;
+    }
+    sctx.putImageData(simg, 0, 0);
+    return { href, payoffHref: strip.toDataURL() };
   }, [g, kFront, dark]);
+}
+
+/** The payoff column as a strip just right of the grid: visible at clock 0, before any column is filled. */
+function PayoffStrip({ href }: { href: string }) {
+  const { x, y } = usePlot();
+  const yTop = y(PRICE[1]);
+  const yBot = y(PRICE[0]);
+  const w = 10;
+  const x0 = x(MONTHS) - w; // the plot clips to its inner box, so the strip sits just inside the right edge, over the last two columns
+  return (
+    <g>
+      <image href={href} x={x0} y={yTop} width={w} height={yBot - yTop} preserveAspectRatio="none" style={{ imageRendering: "pixelated" }} />
+      <rect x={x0} y={yTop} width={w} height={yBot - yTop} fill="none" stroke="var(--ink-3)" strokeWidth={0.8} />
+    </g>
+  );
 }
 
 function FieldImage({ href }: { href: string }) {
@@ -217,7 +249,8 @@ export function F1Clock() {
   }, [N]);
   const drawn = walkers.paths.length;
   const arrived = clock >= 1;
-  const agree = arrived && insideBracket(mc, gridNow);
+  // the rail draws mc.lo … mc.hi, which is ±1 SE; the tick tests the same band, so what is drawn and what is ticked never disagree
+  const agree = arrived && N > 1 && insideBracket(mc, gridNow, 1);
 
   // paths up to the clock
   const visible = useMemo(() => {
@@ -287,7 +320,7 @@ export function F1Clock() {
             <>One future is one number — {f2(mc.mean)} this time — and it tells you nothing. Add walkers: the pile levels into a bar, and the bracket shrinks like 1/√N.</>
           ) : (
             <>
-              Both panels wrote to the box. The grid's {f2(gridNow)} sits inside the walkers' bracket; the formula agrees to the second decimal. Cooling backwards and averaging forwards are the same number, and the grid never simulated anything.
+              Both panels wrote to the box. The grid's {f2(gridNow)} sits {agree ? "inside" : "just outside"} the walkers' one-standard-error bracket{agree ? "" : " — a ±1 SE bracket misses about a third of the time; more walkers tighten it"}; the formula agrees to the second decimal. Cooling backwards and averaging forwards are the same number, and the grid never simulated anything.
             </>
           )
         ) : (
@@ -317,6 +350,13 @@ export function F1Clock() {
               })}
             <Marker at={[0, P.S]} role="ink" r={4} />
             <Label at={[0, P.S]} text="42 today" dx={6} dy={-12} />
+            {!arrived && (
+              <g opacity={N === 1 ? 1 : 0.6}>
+                {visible.map((pts, i) => (
+                  <Marker key={"h" + i} at={pts[pts.length - 1]} role="approx" r={N === 1 ? 4.5 : N === 100 ? 2 : 1.4} />
+                ))}
+              </g>
+            )}
             {!arrived && <Curve pts={[[months, PRICE[0]], [months, PRICE[1]]]} role="ink" width={1} dash="3 3" smooth={false} />}
           </Plot>
           <svg className="b6-pile" viewBox={`0 0 ${RW} ${RH}`} role="img" aria-label="The walkers' discounted payoffs piled on a rail, with their average and its bracket">
@@ -358,15 +398,16 @@ export function F1Clock() {
           <div className="b6-pane-head">
             <strong>cool backwards</strong>
             <span>
-              {N_GRID} columns · weights {f2(g.phi.up)} / {f2(g.phi.mid)} / {f2(g.phi.down)}
+              {N_GRID} columns · three doors a cell
             </span>
           </div>
           <WatchOrDo watch={<ClipHeatRod />} watchLabel="watch it (15 s)" doLabel="fill it yourself">
             <Plot xDomain={[0, MONTHS]} yDomain={PRICE} width={RW} height={300} xLabel="months" yLabel="price" axisY={PRICE[0]} xTicks={6} grid={false} ariaLabel="A grid of price against time; columns fill from the right with the option's value, darker where it is worth more; the frontier cell at 42 shows its three children">
               <FieldImage href={field.href} />
+              <PayoffStrip href={field.payoffHref} />
               <Curve pts={[[0, P.K], [MONTHS, P.K]]} role="error" width={1.2} dash="4 3" smooth={false} />
               <Label at={[MONTHS, P.K]} text="strike 40" role="error" anchor="end" dx={-4} dy={-5} />
-              <Label at={[MONTHS, PRICE[1]]} text="payoff" anchor="end" dx={-4} dy={14} />
+              <Label at={[MONTHS, PRICE[1]]} text="payoff" anchor="end" dx={-14} dy={14} />
               <Stencil g={g} kFront={kFront} c={clock} />
               {arrived && (
                 <>
@@ -405,7 +446,7 @@ export function F1Clock() {
         </div>
         <div className="b6-cell">
           <span className="k">the formula (chapter C3) · today</span>
-          <span className="v">{f4(bs)}</span>
+          <span className="v">{arrived ? f4(bs) : <small>at six months</small>}</span>
         </div>
       </div>
     </Figure>

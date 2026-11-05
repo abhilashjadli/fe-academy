@@ -115,13 +115,13 @@ export function StrikeLine({ K, draggable, label }: { K: number; draggable?: boo
   );
 }
 
-export function CloudPlot({ futures, K, kind = "call", onDragK, children, height = 380, lit = "approx", dim = true, ariaLabel }: { futures: number[]; K: number; kind?: "call" | "put"; onDragK?: (price: number) => void; children?: ReactNode; height?: number; lit?: "approx" | "truth" | "none"; dim?: boolean; ariaLabel?: string }) {
+export function CloudPlot({ futures, K, kind = "call", onDragK, children, height = 400, lit = "approx", dim = true, ariaLabel }: { futures: number[]; K: number; kind?: "call" | "put"; onDragK?: (price: number) => void; children?: ReactNode; height?: number; lit?: "approx" | "truth" | "none"; dim?: boolean; ariaLabel?: string }) {
   const lay = useMemo(() => layoutCloud(futures), [futures]);
   return (
     <Plot
       xDomain={DAYS_AXIS}
       yDomain={PRICE}
-      width={640}
+      width={520}
       height={height}
       margin={{ top: 14, right: 12, bottom: 34, left: 16 }}
       xLabel="days from now"

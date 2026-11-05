@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Figure } from "../../../ui/Figure";
 import { ResultCard } from "../../../ui/Bet";
 import { Slider } from "../../../ui/controls";
-import { DIAL, KEY, NSE_CALL_IV, NSE, ROW, SNAP_RUPEES, n0, n2, pct1 } from "./c3";
+import { DIAL, KEY, NSE_CALL_IV, NSE, ROW, SNAP_RUPEES, n0, n2, pct1, pct2 } from "./c3";
 import { Machine, detent, modelPrice, type Target } from "./Machine";
 import "./figures.css";
 
@@ -113,7 +113,7 @@ export function F0Dial() {
         <Machine target={TARGET} sigma={sigma} />
       </div>
       {good && (
-        <ResultCard yours={`wobble ${pct1(sigma)}`} answer={`${pct1(iv)} — the one setting that prints ${n2(ROW.call)}`} verdict="right">
+        <ResultCard yours={`wobble ${pct1(sigma)}`} answer={`${pct2(iv)} — the one setting that prints ${n2(ROW.call)}`} verdict="right">
           You just computed an <strong>implied volatility</strong>: the wobble the market's price implies. The screen's own IV column says <strong>{n2(NSE_CALL_IV[I_ATM])} %</strong> for this
           row. One of you fed the machine something different — Figure 5.
         </ResultCard>

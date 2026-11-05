@@ -112,7 +112,8 @@ export function F3Weights() {
           <Dots dots={lay.dots} weights={raw} />
           <Curve pts={outline} role="error" width={1.5} smooth={false} />
           <VLine at={100} />
-          <Label at={[100, lay.rows * 0.92]} text="100 = fair after interest" dx={5} dy={0} />
+          {/* left of the 100 line and above the dots, so it never sits on the needle (which lands on 100 at θ = 0.25) */}
+          <Label at={[100, lay.rows + 3]} text="100 = fair after interest" anchor="end" dx={-5} dy={0} />
           <VLine at={80} />
           <Label at={[80, lay.rows * 0.92]} text="80: a 20 % fall" anchor="end" dx={-5} dy={0} />
           <VLine at={rw.discountedMean} role={isPriya ? "truth" : "error"} />

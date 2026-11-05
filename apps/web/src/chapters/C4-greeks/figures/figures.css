@@ -1,0 +1,499 @@
+/* Chapter C4 — figure-local styles (imported by each figure and by Chapter.tsx). House tokens only. */
+
+.c4-err {
+  color: var(--error-text);
+  font-weight: 500;
+}
+.c4-approx {
+  color: var(--approx-text);
+  font-weight: 500;
+}
+.c4-quiet {
+  font-size: 0.8rem;
+  color: var(--ink-3);
+}
+.c4-ctl-note {
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.c4-hint,
+.c4-foot {
+  font-family: var(--font-prose);
+  font-size: 0.95rem;
+  color: var(--ink-3);
+  padding: var(--space-2) var(--space-2) var(--space-3);
+}
+
+/* ---- Figure 0: the risk screen ---- */
+.c4-screen {
+  margin: var(--space-2) 0 var(--space-3);
+  padding: var(--space-3);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  border: 1px solid var(--rule);
+}
+.c4-screen-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  padding: 0 var(--space-1) var(--space-2);
+}
+.c4-row {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+  padding: var(--space-2);
+  border-radius: var(--radius);
+  background: #10151c; /* the screen is dark in both themes: it is a terminal */
+  color: #d6dde6;
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (max-width: 760px) {
+  .c4-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 420px) {
+  .c4-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.c4-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+  padding: 8px 8px 7px;
+  border: 1px solid #2b333e;
+  border-radius: 3px;
+  background: #161b22;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.35s ease, box-shadow 0.35s ease, background 0.35s ease;
+}
+.c4-tile:hover {
+  border-color: #5d6775;
+}
+.c4-tile.on {
+  border-color: var(--error);
+  box-shadow: 0 0 0 1px var(--error);
+}
+.c4-tile.lit {
+  border-color: var(--truth);
+  background: #1a2238;
+  box-shadow: 0 0 14px rgba(95, 128, 245, 0.35);
+}
+.c4-tile.pos {
+  opacity: 0.85;
+}
+.c4-tile-head {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #8a95a5;
+}
+.c4-tile-n {
+  display: inline-grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--error);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.c4-tile.lit .c4-tile-n {
+  background: var(--truth);
+}
+.c4-tile-v {
+  font-size: clamp(0.86rem, 1.5vw, 1.02rem);
+  font-weight: 600;
+  color: #e6eaf0;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.c4-tile-u {
+  font-size: 0.66rem;
+  color: #8a95a5;
+  line-height: 1.25;
+}
+.c4-tile-meaning {
+  margin-top: 3px;
+  font-family: var(--font-prose);
+  font-style: italic;
+  font-size: 0.82rem;
+  color: #b4c3ff;
+  animation: result-in 0.5s ease-out;
+}
+.c4-screen-note {
+  margin-top: var(--space-2);
+  min-height: 2.4em;
+  font-family: var(--font-prose);
+  font-size: 0.98rem;
+  color: var(--ink-2);
+}
+.c4-screen-note strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+.c4-bet-held {
+  margin-top: var(--space-3);
+  font-family: var(--font-prose);
+  color: var(--ink-2);
+}
+
+/* ---- Figure 1: the comic ---- */
+.c4-naked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+}
+.c4-cloud {
+  width: 100%;
+  max-width: 220px;
+}
+.c4-cloud-t {
+  font: 600 15px var(--font-ui);
+  fill: var(--ink);
+}
+.c4-cloud-s {
+  font: 10px var(--font-ui);
+  fill: var(--ink-3);
+}
+.c4-run {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.c4-run-counter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  align-items: baseline;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  padding: 0 var(--space-1);
+  white-space: nowrap;
+}
+.c4-run-k {
+  color: var(--ink-3);
+}
+.c4-run-v {
+  font-size: 1rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.c4-says {
+  padding: 0 var(--space-3) var(--space-2);
+  max-width: 520px;
+}
+.c4 .comic .panel-art {
+  padding: var(--space-2);
+}
+
+/* ---- Figure 2: the stage, the surface, the slice ---- */
+.c4-stage3d {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+.c4-stage3d.live {
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+}
+@media (max-width: 760px) {
+  .c4-stage3d.live {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.c4-stage {
+  min-width: 0;
+}
+.c4-stage > svg.plot {
+  width: 100%;
+  max-width: 620px;
+  display: block;
+  margin: 0 auto;
+}
+.c4-gl-box,
+.c4-heat-box {
+  position: relative;
+  width: 100%;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  overflow: hidden;
+  touch-action: none;
+  outline: none;
+}
+.c4-gl-box:focus-visible,
+.c4-heat-box:focus-visible {
+  box-shadow: 0 0 0 2px var(--focus);
+}
+.c4-gl {
+  display: block;
+  cursor: crosshair;
+}
+.c4-heat-box canvas {
+  display: block;
+  cursor: crosshair;
+}
+.c4-gl-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-1000px, -1000px);
+  margin: -8px 0 0 -14px;
+  font: 11px var(--font-ui);
+  color: var(--ink-3);
+  pointer-events: none;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.c4-gl-label.ax {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.c4-gl-label.ridge {
+  color: var(--ink);
+  font-style: italic;
+  font-family: var(--font-prose);
+  font-size: 12px;
+}
+.c4-gl-wait {
+  display: grid;
+  place-items: center;
+  height: 400px;
+  color: var(--ink-3);
+  font-size: 0.9rem;
+}
+.c4-slice {
+  min-width: 0;
+}
+.c4-slice > svg.plot {
+  width: 100%;
+  max-width: 420px;
+  display: block;
+}
+.c4-slice-head {
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  padding: 2px var(--space-1) 4px;
+}
+.c4-reads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+}
+.c4-read {
+  flex: 1 1 9rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 10px;
+  border: 1px solid var(--rule);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  font-family: var(--font-ui);
+}
+.c4-read .k {
+  font-size: 0.7rem;
+  color: var(--ink-3);
+}
+.c4-read .v {
+  font-size: 1.2rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.c4-read.err {
+  border-left-color: var(--error);
+}
+.c4-read.err .v {
+  color: var(--error-text);
+}
+.c4-read.approx {
+  border-left-color: var(--approx);
+}
+.c4-read.approx .v {
+  color: var(--approx-text);
+}
+
+/* ---- Figure 3: three small plots ---- */
+.c4-three {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  padding: var(--space-2) 0;
+  transition: opacity 0.3s ease;
+}
+.c4-three.dim {
+  opacity: 0.35;
+}
+.c4-three > svg.plot {
+  width: 100%;
+}
+@media (max-width: 760px) {
+  .c4-three {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+/* ---- Figure 4: the ledger and its picture ---- */
+.c4-ledgerwrap {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .c4-ledgerwrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.c4-ledger-pic > svg.plot {
+  width: 100%;
+  max-width: 420px;
+  display: block;
+}
+.c4-ledger-rows {
+  min-width: 0;
+}
+.c4-ledger-rows .ledger {
+  padding: 0 0 var(--space-2);
+}
+.c4-ledger-rows .ledger-table {
+  font-size: 0.86rem;
+}
+.c4-ledger-rows .ledger-table td {
+  padding: 5px 6px;
+  vertical-align: top;
+}
+.c4-ledger-rows .ledger-value {
+  white-space: nowrap;
+}
+.c4-friday {
+  padding: var(--space-3);
+  border: 1px dashed var(--rule);
+  border-radius: var(--radius);
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  color: var(--ink);
+  display: grid;
+  gap: 4px;
+}
+.c4-friday-k {
+  color: var(--ink-3);
+  font-size: 0.82rem;
+}
+.c4-result {
+  padding: 0 0 var(--space-3);
+}
+
+/* ---- Figure 5: the dial ---- */
+.c4-dial {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .c4-dial {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.c4-dial-main > svg.plot,
+.c4-dial-side > svg.plot {
+  width: 100%;
+  display: block;
+}
+.c4-dial-main > svg.plot {
+  max-width: 560px;
+}
+.c4-dial-side > svg.plot {
+  max-width: 400px;
+}
+.c4-bars {
+  display: grid;
+  gap: 6px;
+  padding: var(--space-2) var(--space-1);
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  max-width: 560px;
+}
+.c4-bar {
+  display: grid;
+  grid-template-columns: 9.5rem minmax(0, 1fr) auto;
+  gap: var(--space-2);
+  align-items: center;
+}
+@media (max-width: 420px) {
+  .c4-bar {
+    grid-template-columns: 7.5rem minmax(0, 1fr) auto;
+    font-size: 0.78rem;
+  }
+}
+.c4-bar-k {
+  color: var(--ink-2);
+}
+.c4-bar-track {
+  height: 12px;
+  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+.c4-bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--approx);
+  transition: width 0.15s ease-out;
+}
+.c4-bar.truth .c4-bar-fill {
+  background: var(--truth);
+}
+.c4-bar-v {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.c4-net {
+  margin-top: 2px;
+  font-family: var(--font-prose);
+  font-size: 0.98rem;
+  color: var(--ink-2);
+}
+.c4-net.tie {
+  color: var(--ink);
+  font-weight: 500;
+}
+.c4-net.cost strong {
+  color: var(--error-text);
+}
+.c4-net.income strong {
+  color: var(--truth-text);
+}

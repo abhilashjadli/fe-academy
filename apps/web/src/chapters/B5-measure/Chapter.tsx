@@ -38,8 +38,9 @@ export function MeasureChapter() {
 
       <div className="prose">
         <p>
-          The needle Raj charges never moves, because Priya's belief was never in his two columns. Widen the range of futures and it moves at once: the{" "}
-          <em>spread</em> of what can happen is in the price; the odds of each are not. That is the half of the sentence freshers forget. Priya has one
+          The needle Raj charges never moves, because Priya's belief was never in his two columns. Widen the range of futures and it moves at once — on
+          the 23 / 17 board the right to buy at 21 pays 2, and Raj must hedge a bigger swing: the <em>spread</em> of what can happen is in the price;
+          the odds of each are not. That is the half of the sentence freshers forget. Priya has one
           more go.
         </p>
       </div>

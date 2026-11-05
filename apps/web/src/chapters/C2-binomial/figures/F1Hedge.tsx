@@ -74,7 +74,7 @@ export function F1Hedge() {
           height={240}
           bucketLabels="none"
           ariaLabel="The one-row board; under each future, what the shares-minus-ticket book is worth there"
-          nodeLabel={(r, k) => (r === 0 ? ["20", { text: `${f2(h)} shares, owe 1 ticket`, plain: true }] : k === 1 ? ["22", `worth ${f2(m.gapUp)}`] : ["18", `worth ${f2(m.gapDown)}`])}
+          nodeLabel={(r, k) => (r === 0 ? ["20", { text: `${f2(h)} shares, owe 1 ticket`, plain: true }] : k === 1 ? ["22", { text: "worth", plain: true }, f2(m.gapUp)] : ["18", { text: "worth", plain: true }, f2(m.gapDown)])}
           nodeState={(r) => (r === 1 ? (agree ? "lit" : "dim") : undefined)}
           edges={() => ({ opacity: 0.6 })}
         />

@@ -45,7 +45,7 @@ function Ruler({ priya, raj, max }: { priya: number; raj: number; max: number })
         <svg x={-14} y={yBar - 68} width={28} height={28} viewBox="0 0 48 48" overflow="visible">
           <Avatar name="Priya" mood="happy" size={48} title="Priya" />
         </svg>
-        <text className="needle-lbl priya" x={18} y={yBar - 46}>
+        <text className="needle-lbl priya" x={priya / max > 0.62 ? -18 : 18} y={yBar - 46} textAnchor={priya / max > 0.62 ? "end" : "start"}>
           Priya expects {f2(priya)}
         </text>
       </g>
@@ -56,7 +56,7 @@ function Ruler({ priya, raj, max }: { priya: number; raj: number; max: number })
         <svg x={-14} y={yBar + 34} width={28} height={28} viewBox="0 0 48 48" overflow="visible">
           <Avatar name="Raj" mood="neutral" size={48} title="Raj" />
         </svg>
-        <text className="needle-lbl raj" x={18} y={yBar + 54}>
+        <text className="needle-lbl raj" x={raj / max > 0.62 ? -18 : 18} y={yBar + 54} textAnchor={raj / max > 0.62 ? "end" : "start"}>
           Raj charges {f3(raj)}
         </text>
       </g>
@@ -72,11 +72,13 @@ export function F1Dial() {
   // Raj's price does not depend on the belief: the engine says so for this belief and every other
   const raj = priceUnderEveryBelief(input, [belief])[0];
   const priya = belief * step.fu + (1 - belief) * step.fd; // what she expects the ticket to pay
+  // a pays-1-if-up ticket on the wide board, for the observe: the engine's fair weight on "up", discounted (the price per unit of payoff)
+  const perUnitWide = step.f / step.fu;
 
   return (
     <Figure
       n="1"
-      prompt={<>Same stock, same ticket. Turn Priya's belief and watch the two needles. Then widen the range.</>}
+      prompt={<>Same stock, same ticket — the right to buy at 21. Turn Priya's belief and watch the two needles. Then widen the range.</>}
       controls={
         <>
           <Slider label="Priya's belief it goes up" value={belief} min={0.1} max={0.9} step={0.01} onChange={setBelief} role="truth" fmt={pct0} width={140} />
@@ -84,9 +86,15 @@ export function F1Dial() {
         </>
       }
       observe={
-        <>
-          Priya's needle swings 0.10 → 0.90; Raj's sits at 0.633. Her odds were never in his two columns. Now widen the range: his needle jumps to 1.17 at once. How far the stock can swing sets the price. How likely she thinks each way is does not.
-        </>
+        wide ? (
+          <>
+            On the 23 / 17 board the same ticket — the right to buy at 21 — pays <strong>2</strong> when the stock is 23, not 1. Raj's needle jumps {f3(oneStep(HULL).f)} → {f3(raj)}, and the bigger payoff is most of why: per unit of payoff the wide board is a little <em>cheaper</em>, {f3(perUnitWide)}, because the fair weight on "up" falls. Either way it was the range of futures that moved the price. Priya's belief is still nowhere in it — slide it and his needle stays put. How far the stock can go sets the price; how likely she thinks each way is does not.
+          </>
+        ) : (
+          <>
+            Priya's needle swings 0.10 → 0.90; Raj's sits at 0.633. Her odds were never in his two columns. Now widen the range: the stock can reach 23 or 17, the ticket pays 2 or 0, and his needle moves at once.
+          </>
+        )
       }
     >
       <div className="b5-stage b5-stage-col">
@@ -111,10 +119,10 @@ export function F1Dial() {
                   {f3(raj)}
                 </span>,
               ],
-              ["the stock in three months", `${f0(step.Su)} or ${f0(step.Sd)}, pays ${f0(step.fu)} or ${f0(step.fd)}`],
+              ["the stock in three months", `${f0(step.Su)} or ${f0(step.Sd)} — the right to buy at 21 pays ${f0(step.fu)} or ${f0(step.fd)}`],
             ]}
           />
-          <div className={"b5-note " + (wide ? "lit" : "")}>{wide ? `the range moved Raj's needle: ${f3(oneStep(HULL).f)} → ${f3(raj)}` : "Raj's needle has not moved since you arrived"}</div>
+          <div className={"b5-note " + (wide ? "lit" : "")}>{wide ? `the range moved Raj's needle: ${f3(oneStep(HULL).f)} → ${f3(raj)} (the ticket now pays ${f0(step.fu)}, not 1)` : "Raj's needle has not moved since you arrived"}</div>
         </div>
       </div>
     </Figure>

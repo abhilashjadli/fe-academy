@@ -4,7 +4,7 @@ import { StepThrough } from "../../../ui/StepThrough";
 import { WatchOrDo } from "../../../ui/WatchOrDo";
 import { Clip } from "../../../ui/Clip";
 import { M } from "../../../ui/Math";
-import { Label, Marker } from "../../../ui/Plot";
+import { Curve, Label, Marker } from "../../../ui/Plot";
 import { black76Greeks, cloud, cloudStats } from "../../../engine/bs";
 import { CloudPlot } from "./Cloud";
 import { BASE, KEY, ROW, f3, n0, n2, pct1, useDark } from "./c3";
@@ -18,6 +18,8 @@ import "./figures.css";
  */
 
 const SIGMA = KEY.atm.iv;
+/** a number for KaTeX: thousands separators without the space KaTeX puts after a comma */
+const tex = (v: number) => n2(v).replace(/,/g, "{,}");
 
 function ClipAreas() {
   const base = import.meta.env.BASE_URL + "clips/C3/areas" + (useDark() ? "_dark" : "_light");
@@ -95,11 +97,8 @@ export function F2Steps() {
     {
       caption: (
         <>
-          <strong>Shrink by {ROW.days} days of interest.</strong> {n2(undiscounted)} × {f3(D)} = <strong>{n2(g.price)}</strong> — the screen's price, from Figure 0's dial. Written once:
-          <M
-            block
-            tex={`\\begin{aligned} c &= e^{-rT}\\big[\\,\\tok{truth}{F\\,N(d_1)} - \\tok{approx}{K\\,N(d_2)}\\,\\big] \\\\ &= ${f3(D)}\\,[\\,\\tok{truth}{${n2(FNd1)}} - \\tok{approx}{${n2(KNd2)}}\\,] \\\\ &= ${n2(g.price)} \\end{aligned}`}
-          />
+          <strong>Shrink by {ROW.days} days of interest.</strong> {n2(undiscounted)} × {f3(D)} = <strong>{n2(g.price)}</strong> — the screen's price, from Figure 0's dial. The line under the
+          tiles is the whole of it, written once.
         </>
       ),
     },
@@ -126,11 +125,12 @@ export function F2Steps() {
           steps={steps}
           render={(i) => (
             <div className="c3-stage c3-steps-stage">
-              <CloudPlot futures={futures} K={ROW.K} height={340} lit={i >= 2 ? "truth" : "approx"} ariaLabel="The cloud of Figure 1, frozen; the futures above the strike are shaded">
+              <CloudPlot futures={futures} K={ROW.K} height={360} lit={i >= 2 ? "truth" : "approx"} ariaLabel="The cloud of Figure 1, frozen; the futures above the strike are shaded">
                 {i >= 2 && (
                   <>
-                    <Marker at={[ROW.days + 0.6, litAvg]} role="truth" r={4} />
-                    <Label at={[ROW.days + 0.6, litAvg]} text={`lit futures average ${n0(litAvg)}`} role="truth" dx={10} dy={4} />
+                    <Curve pts={[[ROW.days - 0.3, litAvg], [ROW.days + 2.6, litAvg]]} role="truth" width={1.5} dash="3 2" smooth={false} />
+                    <Marker at={[ROW.days, litAvg]} role="truth" r={4} />
+                    <Label at={[ROW.days, litAvg]} text={`the lit futures average ${n0(litAvg)}`} role="truth" dx={-10} dy={4} anchor="end" />
                   </>
                 )}
               </CloudPlot>
@@ -141,6 +141,13 @@ export function F2Steps() {
                 <Tile on={i >= 3} k="get − pay, at expiry" v={n2(undiscounted)} />
                 <Tile on={i >= 4} role="ghost" k={`× ${ROW.days} days of discount`} v={n2(g.price)} note={`× ${f3(D)}`} />
               </div>
+              {i >= 4 && (
+                <M
+                  block
+                  className="c3-formula"
+                  tex={`\\begin{aligned} c \\;&=\\; e^{-rT}\\big[\\,\\tok{truth}{F\\,N(d_1)} - \\tok{approx}{K\\,N(d_2)}\\,\\big] \\\\ &=\\; ${f3(D)}\\,\\big[\\,\\tok{truth}{${tex(FNd1)}} - \\tok{approx}{${tex(KNd2)}}\\,\\big] \\\\ &=\\; ${n2(g.price)} \\end{aligned}`}
+                />
+              )}
             </div>
           )}
         />

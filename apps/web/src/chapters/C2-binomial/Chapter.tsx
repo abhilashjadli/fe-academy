@@ -25,8 +25,8 @@ export function BinomialChapter() {
 
       <div className="prose">
         <p>
-          The tile did not move. Whatever you believe about the stock, the ticket is worth 0.633 — and the "average payout" readout, which did move, is
-          not its price. Here is how the trick is done. No probabilities are involved; only a dial for how many shares to hold.
+          Spin the dial and the tile does not move. Whatever you believe about the stock, the ticket is worth 0.633 — and the "average payout" readout,
+          which does move, is not its price. Here is how the trick is done. No probabilities are involved; only a dial for how many shares to hold.
         </p>
       </div>
 

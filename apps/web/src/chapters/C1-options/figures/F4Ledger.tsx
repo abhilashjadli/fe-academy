@@ -88,7 +88,7 @@ export function F4Ledger() {
       }
       observe={
         <>
-          Every row lands between {n2(f.min)} and {n2(f.max)}: twelve points on 22,600, five hundredths of a percent.{" "}
+          Every row lands between {n2(f.min)} and {n2(f.max)}: twelve points on 22,600, about six hundredths of a percent.{" "}
           <strong>Call − put = index − strike</strong> in every row, because two bundles worth the same whatever happens must cost the same. The
           22,603 is today's index grown at the interest rate to expiry; that growth is the discounting.
         </>

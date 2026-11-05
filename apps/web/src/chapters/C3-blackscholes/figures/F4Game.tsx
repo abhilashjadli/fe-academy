@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { format } from "d3-format";
 import { Figure } from "../../../ui/Figure";
 import { Readouts, Slider } from "../../../ui/controls";
 import { Curve, Label, Marker, Plot, usePlot, type Pt } from "../../../ui/Plot";
@@ -25,7 +26,8 @@ const STRIP_X: [number, number] = [22200, 23100];
 const STRIP_Y: [number, number] = [0.15, 0.175];
 const HAND = new Set(ROUNDS.filter((r) => r.kind === "call").map((r) => r.K)).add(ROW.K);
 const REST = NSE.strikes.map((K, i) => ({ K, screen: NSE.calls[i] })).filter((r) => !HAND.has(r.K)); // the other twelve
-const FRAME_MS = 200; // three frames a row: two tangent steps and the drop
+const FRAME_MS = 200;
+const pct3 = format(".3%"); // three frames a row: two tangent steps and the drop
 
 interface Dot {
   K: number;
@@ -179,7 +181,7 @@ export function F4Game() {
         ) : phase === "auto" ? (
           <>
             Newton: at the current guess, follow the tangent of the price-against-wobble curve to the screen's price and jump there. The slope is the vega. From 30 % the 22,600 call lands
-            in two steps: {pct2(KEY.newton.path[1])} → {pct2(KEY.newton.path[2])}.
+            in two steps: {pct3(KEY.newton.path[1])} → {pct3(KEY.newton.path[2])}.
           </>
         ) : !roundsLeft ? (
           <>
@@ -205,7 +207,7 @@ export function F4Game() {
     >
       <div className="c3-stage c3-stage-col">
         {phase === "rounds" ? <Machine target={target} sigma={sigma} sealed /> : phase === "auto" ? <NewtonInset K={REST[autoRow].K} screen={REST[autoRow].screen} frame={frame} /> : null}
-        <Plot xDomain={STRIP_X} yDomain={STRIP_Y} width={640} height={230} margin={{ top: 14, right: 16, bottom: 34, left: 16 }} xLabel="strike" yLabel="wobble that prints the screen's price" xTicks={0} yTicks={0} grid={false} axisY={STRIP_Y[0]} axisX={STRIP_X[0]} ariaLabel="A strip of the wobble found for each strike: your dots, the 22,600 call from Figure 0, the computer's dots, and a line through all seventeen calls">
+        <Plot xDomain={STRIP_X} yDomain={STRIP_Y} width={560} height={290} margin={{ top: 14, right: 16, bottom: 34, left: 16 }} xLabel="strike" yLabel="wobble that prints the screen's price" xTicks={0} yTicks={0} grid={false} axisY={STRIP_Y[0]} axisX={STRIP_X[0]} ariaLabel="A strip of the wobble found for each strike: your dots, the 22,600 call from Figure 0, the computer's dots, and a line through all seventeen calls">
           <XTicksInside at={[22250, 22500, 22600, 22800, 23050]} fmt={n0} />
           <YTicksInside at={[0.155, 0.16, 0.165, 0.17]} fmt={pct1} />
           <Curve pts={[[ROW.F, STRIP_Y[0]], [ROW.F, STRIP_Y[1]]]} role="ghost" dash="3 3" width={1} smooth={false} />
@@ -215,15 +217,29 @@ export function F4Game() {
           {dots.length <= 1 && <Label at={[ROW.K, ATM_IV]} text={`Figure 0: ${pct1(ATM_IV)}`} role="truth" dx={10} dy={4} />}
           {phase === "done" && (
             <>
-              <Label at={[NSE.strikes[0], KEY.strip.call_iv[0]]} text={pct1(KEY.strip.call_iv[0])} dx={8} dy={-6} />
+              <Label at={[NSE.strikes[0], KEY.strip.call_iv[0]]} text={pct1(KEY.strip.call_iv[0])} dx={9} dy={14} />
               <Label at={[NSE.strikes[16], KEY.strip.call_iv[16]]} text={pct1(KEY.strip.call_iv[16])} dx={-8} dy={-8} anchor="end" />
             </>
           )}
         </Plot>
+        <div className="c3-legend">
+          <span>
+            <i className="c3-sw approx" /> your dots
+          </span>
+          <span>
+            <i className="c3-sw truth" /> Figure 0's 22,600 call
+          </span>
+          <span>
+            <i className="c3-sw error diamond" /> the 22,600 put
+          </span>
+          <span>
+            <i className="c3-sw ink" /> the computer's
+          </span>
+        </div>
         <Readouts
           items={[
             ["dial", pct1(sigma)],
-            ["gap, machine − screen", <span key="g" className={good ? "c3-truth" : ""}>{s2(gap)}</span>],
+            ["gap, machine − screen", <span key="g" className={good ? "c3-truth" : ""}>{Math.abs(gap) < 0.005 ? "0.00" : s2(gap)}</span>],
             ["your last dot", lastYours ? `${n0(lastYours.K)} ${lastYours.kind} → ${pct1(lastYours.iv)}` : "—"],
           ]}
         />

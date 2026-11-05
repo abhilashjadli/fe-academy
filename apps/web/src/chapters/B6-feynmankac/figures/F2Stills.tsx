@@ -84,6 +84,8 @@ export function F2Stills() {
   const week = column(N_GRID - WEEK_STEPS);
   const today = column(0);
   // the push from the bend alone, over the next month of steps: D·δt·(second difference)/δx² with D = ½σ² in ln S
+  // NB the second difference is taken in x = ln S (the grid's coordinate), so each arrow is ½σ²(S²V_SS + S·V_S)δt, not ½σ²S²V_SS alone:
+  // the label beneath names the S²∂²V/∂S² piece, which is the part that lives only at the bend; the S·∂V/∂S piece is invisible at this scale.
   const push = useMemo(() => {
     const { x, v } = gridColumn(g, K0 + N_GRID - WEEK_STEPS);
     const perStep = curvatureArrows(v, g.dx, g.dt, 0.5 * P.sigma * P.sigma);

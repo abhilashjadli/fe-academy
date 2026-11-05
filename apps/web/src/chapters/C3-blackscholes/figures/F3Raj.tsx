@@ -19,16 +19,20 @@ const SIGMA = KEY.atm.iv;
 const LOT = ROW.lot;
 const PREMIUM = LOT * ROW.call;
 const MAX_TICKS = 10; // one day per tick; the last tick leaves a day to expiry
-const SEED = 23;
+const SEED = 17;
 const X_RANGE: [number, number] = [22000, 23200];
 
-/** A fixed sequence of index moves, ±60–180 points, from the engine's seeded generator (same every visit). */
+/**
+ * A fixed sequence of index moves from the engine's seeded generator (the same every visit): ±90–280 points a day, which is the
+ * size of move a 15.9 % wobble promises (22,603 × 0.1585 / √365 ≈ 187 points rms). Smaller moves would make the hedged book drift
+ * up — the index calmer than the dial — which is D1's lesson, not this one.
+ */
 const MOVES: number[] = (() => {
   const next = rng(SEED);
   const out: number[] = [];
   for (let i = 0; i < MAX_TICKS; i++) {
     const sign = next() < 0.5 ? -1 : 1;
-    out.push(sign * Math.round((60 + 120 * next()) / 5) * 5);
+    out.push(sign * Math.round((90 + 190 * next()) / 5) * 5);
   }
   return out;
 })();
@@ -44,31 +48,29 @@ interface Tick {
   naked: number; // short 65 calls + the premium in the bank
 }
 
-/** Hull's bookkeeping: the hedge is bought with borrowed money; the premium sits in the bank; everything accrues at 6.5 %. */
+/** The bookkeeping: the premium sits in the bank at 6.5 %; the hedge is index futures (no money changes hands to hold them), whose
+ * daily gains and losses go into the same account. The book is the account minus what the 65 calls are worth. */
 function simulate(): Tick[] {
   const out: Tick[] = [];
   const day = Math.exp(ROW.r / 365);
   let F = ROW.F;
   let days = ROW.days;
-  const g = black76Greeks({ ...BASE, sigma: SIGMA, T: days / 365 });
-  let h = LOT * g.delta;
-  let borrow = h * F;
-  let bank = PREMIUM;
-  out.push({ t: 0, F, days, delta: g.delta, sliver: h, bank, hedged: bank + h * F - borrow - LOT * g.price, naked: bank - LOT * g.price });
+  const g0 = black76Greeks({ ...BASE, sigma: SIGMA, T: days / 365 });
+  let h = LOT * g0.delta;
+  let bank = PREMIUM; // the premium alone, growing at 6.5 %
+  let cash = PREMIUM; // the premium plus the hedge's running gains and losses
+  out.push({ t: 0, F, days, delta: g0.delta, sliver: h, bank, hedged: cash - LOT * g0.price, naked: bank - LOT * g0.price });
   for (let t = 1; t <= MAX_TICKS; t++) {
-    F += MOVES[t - 1];
+    const dF = MOVES[t - 1];
+    F += dF;
     days -= 1;
-    borrow *= day;
     bank *= day;
-    const call = black76({ ...BASE, F, sigma: SIGMA, T: days / 365 });
-    const gF = black76Greeks({ ...BASE, F, sigma: SIGMA, T: days / 365 });
-    const hedged = bank + h * F - borrow - LOT * call;
-    const naked = bank - LOT * call;
-    const hNew = LOT * gF.delta;
+    cash = cash * day + h * dF;
+    const g = black76Greeks({ ...BASE, F, sigma: SIGMA, T: days / 365 });
+    const hNew = LOT * g.delta;
     const sliver = hNew - h;
-    borrow += sliver * F;
     h = hNew;
-    out.push({ t, F, days, delta: gF.delta, sliver, bank, hedged, naked });
+    out.push({ t, F, days, delta: g.delta, sliver, bank, hedged: cash - LOT * g.price, naked: bank - LOT * g.price });
   }
   return out;
 }
@@ -154,8 +156,9 @@ export function F3Raj() {
   const ticks = useMemo(() => simulate(), []);
   const now = ticks[n];
   const shown = ticks.slice(0, n + 1);
-  const yMax = useMemo(() => Math.ceil((Math.max(1500, ...ticks.map((t) => Math.max(Math.abs(t.hedged - PREMIUM), Math.abs(t.naked - PREMIUM)))) * 1.15) / 1000), [ticks]); // ₹ thousand
-  const k = (v: number) => (v - PREMIUM) / 1000;
+  const yMax = useMemo(() => Math.ceil((Math.max(1500, ...ticks.map((t) => Math.max(Math.abs(t.hedged), Math.abs(t.naked)))) * 1.3) / 1000), [ticks]); // ₹ thousand
+  const k = (v: number) => v / 1000; // the book, in ₹ thousand, against where it started
+  const bankLine = (t: Tick) => k(t.bank - PREMIUM); // what the premium alone has earned in the bank
   const done = n >= MAX_TICKS;
 
   return (
@@ -205,7 +208,7 @@ export function F3Raj() {
             <Label at={[X_RANGE[0], 0]} text={n0(X_RANGE[0])} dx={4} dy={-5} anchor="start" />
             <Label at={[X_RANGE[1], 0]} text={n0(X_RANGE[1])} dx={-4} dy={-5} anchor="end" />
             <Label at={[ROW.K, 0]} text={`strike ${n0(ROW.K)}`} dx={0} dy={-5} anchor="middle" />
-            <Label at={[X_RANGE[1], X_RANGE[1] - ROW.K]} text="payoff at expiry" dx={-4} dy={22} anchor="end" />
+            <Label at={[22780, 22780 - ROW.K]} text="payoff at expiry" dx={8} dy={4} anchor="start" />
             <Label at={[22850, black76({ ...BASE, F: 22850, sigma: SIGMA })]} text="today's curve" role="truth" dx={0} dy={22} anchor="middle" />
           </Plot>
         </Panel>
@@ -239,14 +242,14 @@ export function F3Raj() {
               ariaLabel="Raj's book over the days, in rupees against the premium: the hedged book near flat, the naked book swinging, the bank line growing slowly"
             >
               <Curve pts={shown.map((t) => [t.t, k(t.naked)])} role="error" width={1.5} opacity={0.6} smooth={false} />
-              <Curve pts={shown.map((t) => [t.t, k(t.bank)])} role="ghost" dash="4 3" smooth={false} />
+              <Curve pts={shown.map((t) => [t.t, bankLine(t)])} role="ghost" dash="4 3" smooth={false} />
               <Curve pts={shown.map((t) => [t.t, k(t.hedged)])} role="truth" width={2.4} smooth={false} />
               <Marker at={[now.t, k(now.hedged)]} role="truth" r={4} />
               {n > 0 && <Marker at={[now.t, k(now.naked)]} role="error" r={3.5} />}
-              <Label at={[0, yMax]} text="₹ thousand above or below the premium" dx={4} dy={12} />
-              {n > 0 && <Label at={[now.t, k(now.hedged)]} text={`hedged ${s2(now.hedged - PREMIUM)}`} role="truth" dx={-6} dy={k(now.naked) > k(now.hedged) ? 16 : -10} anchor="end" />}
-              {n > 0 && <Label at={[now.t, k(now.naked)]} text={`naked ${s2(now.naked - PREMIUM)}`} role="error" dx={-6} dy={k(now.naked) > k(now.hedged) ? -10 : 16} anchor="end" />}
-              {n >= 3 && <Label at={[1, k(ticks[1].bank)]} text={`the premium in the bank, +${f2(now.bank - PREMIUM)} by now`} dx={0} dy={k(now.naked) > 0 ? 14 : -8} />}
+              <Label at={[0, yMax]} text="Raj's book, ₹ thousand, against where it started" dx={4} dy={12} />
+              {n > 0 && <Label at={[now.t, k(now.hedged)]} text={`hedged ${s2(now.hedged)}`} role="truth" dx={-6} dy={k(now.naked) > k(now.hedged) ? 18 : -12} anchor="end" />}
+              {n > 0 && <Label at={[now.t, k(now.naked)]} text={`naked ${s2(now.naked)}`} role="error" dx={-6} dy={k(now.naked) > k(now.hedged) ? -12 : 18} anchor="end" />}
+              {n >= 3 && <Label at={[0.3, bankLine(ticks[0])]} text={`the premium alone, in the bank: +${f2(now.bank - PREMIUM)} by now`} dx={0} dy={k(now.naked) > 0 ? 16 : -10} />}
             </Plot>
             <Readouts
               items={[

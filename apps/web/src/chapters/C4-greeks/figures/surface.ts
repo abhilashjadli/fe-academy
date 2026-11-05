@@ -7,7 +7,7 @@ export const D_MAX = 11;
 export const NX = 65;
 export const NZ = 45;
 /** vertical scale: price → scene units */
-export const V_SCALE = 1 / 700;
+export const V_SCALE = 1 / 1000;
 
 export interface Grid {
   nx: number;

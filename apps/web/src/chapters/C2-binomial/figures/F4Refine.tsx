@@ -273,7 +273,8 @@ export function F4Refine() {
               <Points pts={even} role="ghost" r={2.6} opacity={0.85} />
               <Marker at={[Math.log10(n), price]} role="error" r={6} />
               <Label at={[Math.log10(n), price]} text={`${fn(n)}: ${f4(price)}`} role="error" anchor={n >= 100 ? "end" : "start"} dx={n >= 100 ? -9 : 9} dy={price > bs ? -8 : 16} />
-              <Label at={[0.2, 12.25]} text="amber: odd steps · grey: even steps" anchor="start" dx={0} dy={0} />
+              {/* legend top-right, clear of the n = 1 marker (top-left) and the 1,000-step label (bottom-right) */}
+              <Label at={[3.05, yHi]} text="amber: odd steps · grey: even steps" anchor="end" dx={-2} dy={14} />
             </Plot>
           </div>
         </div>

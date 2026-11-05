@@ -15,8 +15,8 @@ export function FeynmanKacChapter() {
         <h1>Two ways to get the same number</h1>
         <p className="standfirst">
           On a desk two programs price the same option. One releases ten thousand imaginary futures and averages what they pay. The other never
-          simulates anything: it fills in a grid from the end backwards. They print 4.75 and 4.76. This page is about why they must agree, why one of
-          them is faster, and what the 0.01 is.
+          simulates anything: it fills in a grid from the end backwards. They print 4.76 ± 0.05 and 4.76. This page is about why they must agree, why
+          one of them is faster, and what the ± is.
         </p>
         <p className="assumes">Assumes: you know what an average is and can read a grid. That is all.</p>
       </header>
@@ -83,7 +83,7 @@ export function FeynmanKacChapter() {
         <p>
           Every pricing library has both programs, and the choice between them is this page: a grid when the problem is small enough to draw (one or two
           prices, early exercise, barriers — chapter F1 builds the grid properly), a simulation when it is not (baskets, path-dependence, many assets —
-          chapter E2). The 0.01 between them is the bracket, and a desk reports it.
+          chapter E2). The ± after the walkers' number is the bracket, and a desk reports it.
         </p>
         <p className="b6-last">If two honest methods disagree by more than the bracket, one of them has a bug, and it is almost never the maths.</p>
         <div className="b6-pull">
@@ -94,7 +94,8 @@ export function FeynmanKacChapter() {
           <summary>What computes the figures on this page</summary>
           <pre className="num b6-code">
             {`grid (ln S, trinomial): V[i] = e^{−rδt}(φ₊ V[i+1] + φ₀ V[i] + φ₋ V[i−1]),  φ± = ½(σ²δt/δx² ± (r − ½σ²)δt/δx),  φ₀ = 1 − σ²δt/δx²
-walkers: average of e^{−rT}·payoff over N futures; bracket = 2·sd/√N
+walkers: average of e^{−rT}·payoff over N futures; bracket = ± sd/√N (one standard error, drawn and tested as such)
+F1's grid: 100 columns over six months, δx = σ√(1.5 δt) → three doors weighted 0.34 / 0.33 / 0.32 (up / flat / down)
 x² check: u(x, t) = x² + (T − t) exactly; grid reproduces it to 1e−6, walkers to ±0.012 at N = 20,000
 stable only while σ²δt/δx² ≤ 1 (weights stay probabilities)
 // all tested against tests/answer-key/key_B5B6.py`}

@@ -46,8 +46,8 @@ function readPalette(): Palette {
 }
 
 /** camera on a ring around the surface: azimuth about the y axis, in radians */
-const CAM = { front: { az: 0.62, el: 0.5, r: 3.3 }, side: { az: 0.62 + (80 * Math.PI) / 180, el: 0.36, r: 3.1 } };
-const TARGET = [0, 0.42, 0] as const;
+const CAM = { front: { az: 0.42, el: 0.5, r: 5.8 }, side: { az: 0.42 + (80 * Math.PI) / 180, el: 0.3, r: 5.4 } };
+const TARGET = [0.05, 0.38, 0] as const;
 
 interface LabelDef {
   text: string;
@@ -82,7 +82,7 @@ export function Surface3D({ probe, onProbe, alongTime, height = 400 }: Props) {
       renderer.domElement.setAttribute("role", "img");
       el.appendChild(renderer.domElement);
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
+      const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 50);
       const target = new THREE.Vector3(...TARGET);
       const cam = { ...CAM.front };
       const placeCamera = () => {
@@ -123,9 +123,27 @@ export function Surface3D({ probe, onProbe, alongTime, height = 400 }: Props) {
         }
       const geo = new THREE.BufferGeometry();
       geo.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+      const col = new Float32Array(grid.nx * grid.nz * 3);
+      geo.setAttribute("color", new THREE.BufferAttribute(col, 3));
       geo.setIndex(idx);
       geo.computeVertexNormals();
-      const mat = new THREE.MeshStandardMaterial({ color: pal.truth, transparent: true, opacity: 0.62, side: THREE.DoubleSide, roughness: 0.85, metalness: 0, depthWrite: false });
+      const lo = new THREE.Color(),
+        hi = new THREE.Color(),
+        tmp = new THREE.Color();
+      const paint = () => {
+        lo.set(pal.raised);
+        hi.set(pal.truth);
+        for (let k = 0; k < grid.nx * grid.nz; k++) {
+          const u = 0.15 + 0.85 * Math.sqrt(grid.v[k] / grid.vmax);
+          tmp.copy(lo).lerp(hi, u);
+          col[k * 3] = tmp.r;
+          col[k * 3 + 1] = tmp.g;
+          col[k * 3 + 2] = tmp.b;
+        }
+        (geo.attributes.color as InstanceType<Three["BufferAttribute"]>).needsUpdate = true;
+      };
+      paint();
+      const mat = new THREE.MeshStandardMaterial({ vertexColors: true, transparent: true, opacity: 0.8, side: THREE.DoubleSide, roughness: 0.9, metalness: 0, depthWrite: false });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.renderOrder = 1;
       scene.add(mesh);
@@ -168,18 +186,39 @@ export function Surface3D({ probe, onProbe, alongTime, height = 400 }: Props) {
       const stick = new THREE.Line(new THREE.BufferGeometry().setFromPoints(stickPts), stickMat);
       scene.add(stick);
 
-      // floor outline
-      const floorPts = [
-        new THREE.Vector3(toX(F_MIN), 0, toZ(0)),
-        new THREE.Vector3(toX(F_MAX), 0, toZ(0)),
+      // the box: floor grid, back wall (expiry) with price rungs, left wall with price rungs
+      const seg: number[] = [];
+      const add = (a: [number, number, number], b: [number, number, number]) => seg.push(...a, ...b);
+      const YTOP = toY(900);
+      for (const F of [22000, 22200, 22400, 22600, 22800, 23000, 23200]) {
+        add([toX(F), 0, toZ(0)], [toX(F), 0, toZ(D_MAX)]);
+        add([toX(F), 0, toZ(0)], [toX(F), YTOP, toZ(0)]);
+      }
+      for (const d of [0, 2, 4, 6, 8, 10, 11]) {
+        add([toX(F_MIN), 0, toZ(d)], [toX(F_MAX), 0, toZ(d)]);
+        add([toX(F_MIN), 0, toZ(d)], [toX(F_MIN), YTOP, toZ(d)]);
+      }
+      for (const V of [200, 400, 600, 800]) {
+        add([toX(F_MIN), toY(V), toZ(0)], [toX(F_MAX), toY(V), toZ(0)]);
+        add([toX(F_MIN), toY(V), toZ(0)], [toX(F_MIN), toY(V), toZ(D_MAX)]);
+      }
+      const boxGeo = new THREE.BufferGeometry();
+      boxGeo.setAttribute("position", new THREE.Float32BufferAttribute(seg, 3));
+      const floorMat = new THREE.LineBasicMaterial({ color: pal.ink3, transparent: true, opacity: 0.28 });
+      const floor = new THREE.LineSegments(boxGeo, floorMat);
+      scene.add(floor);
+      const edgeMat = new THREE.LineBasicMaterial({ color: pal.ink3, transparent: true, opacity: 0.8 });
+      const edgePts = [
         new THREE.Vector3(toX(F_MAX), 0, toZ(D_MAX)),
         new THREE.Vector3(toX(F_MIN), 0, toZ(D_MAX)),
         new THREE.Vector3(toX(F_MIN), 0, toZ(0)),
-        new THREE.Vector3(toX(F_MIN), toY(840), toZ(0)),
+        new THREE.Vector3(toX(F_MAX), 0, toZ(0)),
+        new THREE.Vector3(toX(F_MAX), YTOP, toZ(0)),
+        new THREE.Vector3(toX(F_MIN), YTOP, toZ(0)),
+        new THREE.Vector3(toX(F_MIN), 0, toZ(0)),
       ];
-      const floorMat = new THREE.LineBasicMaterial({ color: pal.ink3, transparent: true, opacity: 0.7 });
-      const floor = new THREE.Line(new THREE.BufferGeometry().setFromPoints(floorPts), floorMat);
-      scene.add(floor);
+      const edge = new THREE.Line(new THREE.BufferGeometry().setFromPoints(edgePts), edgeMat);
+      scene.add(edge);
 
       // --- the probe: a bead, a drop line, the slice line and a short tangent ---
       const beadMat = new THREE.MeshStandardMaterial({ color: pal.error, roughness: 0.4 });
@@ -252,7 +291,9 @@ export function Surface3D({ probe, onProbe, alongTime, height = 400 }: Props) {
         { text: "5 d", at: [toX(F_MAX) + 0.1, 0, toZ(5)] },
         { text: "expiry", at: [toX(F_MAX) + 0.1, 0, toZ(0)] },
         { text: "days left", at: [toX(F_MAX) + 0.12, 0.09, toZ(5.5)], cls: "ax" },
-        { text: "price ↑", at: [toX(F_MIN) - 0.04, toY(860), toZ(0)], cls: "ax" },
+        { text: "price", at: [toX(F_MIN) - 0.16, toY(900), toZ(0)], cls: "ax" },
+        { text: "400", at: [toX(F_MIN) - 0.12, toY(400), toZ(0)] },
+        { text: "800", at: [toX(F_MIN) - 0.12, toY(800), toZ(0)] },
         { text: "ridge 22,600", at: [toX(ROW.K) - 0.02, toY(price(ROW.K, 6)) + 0.1, toZ(6)], cls: "ridge" },
       ];
       const labelEls = labelDefs.map((d) => {
@@ -356,12 +397,13 @@ export function Surface3D({ probe, onProbe, alongTime, height = 400 }: Props) {
       // --- theme changes recolour the materials ---
       const recolour = () => {
         pal = readPalette();
-        mat.color.set(pal.truth);
+        paint();
         wireMat.color.set(pal.ink);
         ridgeMat.color.set(pal.ink);
         stickMat.color.set(pal.ink);
         sliceMat.color.set(pal.ink);
         floorMat.color.set(pal.ink3);
+        edgeMat.color.set(pal.ink3);
         beadMat.color.set(pal.error);
         dropMat.color.set(pal.error);
         tanMat.color.set(pal.error);
@@ -400,8 +442,9 @@ export function Surface3D({ probe, onProbe, alongTime, height = 400 }: Props) {
         for (const g of [geo, wireGeo, ridgeGeo, dropGeo, sliceGeo, tanGeo]) g.dispose();
         stick.geometry.dispose();
         floor.geometry.dispose();
+        edge.geometry.dispose();
         bead.geometry.dispose();
-        for (const m of [mat, wireMat, ridgeMat, stickMat, floorMat, beadMat, dropMat, sliceMat, tanMat]) m.dispose();
+        for (const m of [mat, wireMat, ridgeMat, stickMat, floorMat, edgeMat, beadMat, dropMat, sliceMat, tanMat]) m.dispose();
         renderer.dispose();
         renderer.domElement.remove();
         labelEls.forEach((s) => s.remove());

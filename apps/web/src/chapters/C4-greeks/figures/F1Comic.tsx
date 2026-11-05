@@ -159,7 +159,7 @@ export function F1Comic() {
               <Curve pts={curve} role="truth" width={2} />
               <Curve pts={tangent} role="error" width={2} smooth={false} />
               <Marker at={[ROW.F, G0.price]} role="ink" r={4} />
-              <Label at={[ROW.F + 420, G0.price + 420 * G0.delta]} text={`slope ${n3(G0.delta)}`} role="error" anchor="end" dx={-6} dy={14} />
+              <Label at={[ROW.F + 300, G0.price + 300 * G0.delta]} text={`slope ${n3(G0.delta)}`} role="error" anchor="start" dx={6} dy={16} />
             </Plot>
           </Panel>
         </Comic>

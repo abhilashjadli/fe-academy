@@ -37,12 +37,17 @@
 }
 .c3-stage-col {
   flex-direction: column;
+  flex-wrap: nowrap;
   align-items: stretch;
+}
+.c3-stage-col > * {
+  min-width: 0;
+  max-width: 100%;
 }
 .c3-stage-col > svg.plot {
   flex: 0 0 auto;
   width: 100%;
-  max-width: 640px;
+  max-width: 600px;
   align-self: center;
 }
 .c3-stage-col > .c3-machine {
@@ -118,6 +123,7 @@
 }
 .c3-machine-head {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   gap: var(--space-2);
   align-items: baseline;
@@ -250,6 +256,10 @@
   stroke: var(--ink-3);
   stroke-width: 1.2;
 }
+.c3-stage .plot .marker.ghost {
+  fill: var(--ghost);
+  opacity: 0.55;
+}
 .c3-tick {
   stroke: var(--grid);
   stroke-width: 1;
@@ -262,8 +272,13 @@
 /* ---- Figure 2: tiles that switch on one step at a time ---- */
 .c3-steps-stage {
   flex-direction: column;
+  flex-wrap: nowrap;
   align-items: stretch;
   padding: var(--space-2) var(--space-2) var(--space-3);
+}
+.c3-steps-stage > * {
+  min-width: 0;
+  max-width: 100%;
 }
 .c3-steps-stage > svg.plot {
   flex: 0 0 auto;
@@ -305,12 +320,18 @@
 .c3-step-tile.on.ghost {
   border-color: var(--ink);
 }
-.c3-steps-stage + .steps-caption .math-block {
-  margin: var(--space-2) 0 0;
+@media (max-width: 480px) {
+  .c3-formula .katex {
+    font-size: 0.92em;
+  }
 }
-.steps .step-text .math-block {
-  margin: var(--space-2) 0 0;
-  padding: 0;
+.c3-formula {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  text-align: center;
 }
 .clip-inside {
   padding: var(--space-2) 0;
@@ -364,6 +385,11 @@
 }
 .c3 .comic .panel-wide {
   grid-column: 1 / -1;
+}
+@media (max-width: 560px) {
+  .c3 .comic {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 /* ---- Figure 4: the computer's inset, the strip, the bisection ---- */
@@ -506,4 +532,44 @@
   .c3-fdial-mark.alt i {
     margin-left: 60%;
   }
+}
+
+/* legend swatches under the strip */
+.c3-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  padding: 0 var(--space-1);
+}
+.c3-sw {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+.c3-sw.approx {
+  background: var(--approx);
+}
+.c3-sw.truth {
+  background: var(--truth);
+}
+.c3-sw.error {
+  background: var(--error);
+}
+.c3-sw.ink {
+  background: var(--ink);
+}
+.c3-sw.diamond {
+  border-radius: 1px;
+  transform: rotate(45deg) scale(0.9);
+}
+
+.c3-hint {
+  font-size: 0.8rem;
+  color: var(--ink-3);
 }

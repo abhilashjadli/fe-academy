@@ -39,8 +39,9 @@ export function F0Trick() {
   const step = useMemo(() => oneStep(HULL), []);
   const demo = beliefDemonstrator(HULL, [p])[0];
   const price = step.f; // 0.633, whatever the dial says
-  const gap = committed ? Math.abs(guess - price) : 0;
-  const verdict = !committed ? "none" : gap < 0.05 ? "right" : gap < 0.15 ? "close" : "miss";
+  // "right" only within a paisa of 0.633. Anything else is a miss: the card says why — a wrong price is a trade, not a near thing.
+  const diff = committed ? guess - price : 0;
+  const verdict = !committed ? "none" : Math.abs(diff) <= 0.01 + 1e-9 ? "right" : "miss";
 
   return (
     <Figure
@@ -90,6 +91,12 @@ export function F0Trick() {
       <BetNumber question="Your dial is set. What is the ticket worth today?" value={guess} onCommit={setGuess} committed={committed} min={0} max={5} step={0.01}>
         <ResultCard yours={guess !== null ? f3(guess) : "—"} answer="0.633 — at every setting of the dial" verdict={verdict}>
           Most people say about <span className="num">0.50</span> (half of a 1), or "it depends on the odds". It does not. Turn the dial now: the amber number chases it, the price tile sits at 0.633. The magician never looked at your dial — and the next figure shows what he looked at instead.
+          {verdict === "miss" && (
+            <>
+              {" "}
+              Your {f3(guess ?? 0)} is not close, it is a trade: whoever {diff > 0 ? "sells you the ticket at that price and buys a quarter share" : "buys your ticket at that price and sells a quarter share"} keeps {f3(Math.abs(diff))} a ticket whichever way the stock goes.
+            </>
+          )}
         </ResultCard>
       </BetNumber>
     </Figure>

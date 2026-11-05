@@ -96,7 +96,7 @@ export function Machine({ target, sigma, sealed = true }: { target: Target; sigm
         </div>
         <div className={"c3-tile c3-tile-gap " + (good ? "good" : "")}>
           <span className="k">gap, machine − screen</span>
-          <span className="v">{s2(gap)}</span>
+          <span className="v">{Math.abs(gap) < 0.005 ? "0.00" : s2(gap)}</span>
           <GapMeter gap={gap} good={good} />
         </div>
       </div>

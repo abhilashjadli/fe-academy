@@ -86,15 +86,16 @@ export function F0Odds() {
   const price = step.f; // 0.633
   const priyaPrice = Math.round(q * 100) / 100; // "about seventy paise"
   const pocket = priyaPrice - price; // 0.067 a ticket
-  const gap = committed ? Math.abs(guess - price) : 0;
-  const verdict = !committed ? "none" : gap < 0.03 ? "right" : gap < 0.12 ? "close" : "miss";
+  // "right" only within a paisa of 0.633. Anything else is a miss: the card says why — a wrong price is a trade, not a near thing.
+  const diff = committed ? guess - price : 0;
+  const verdict = !committed ? "none" : Math.abs(diff) <= 0.01 + 1e-9 ? "right" : "miss";
 
   return (
     <Figure
       n="0"
       prompt={
         <>
-          A stock is <strong>20</strong>. In three months it will be <strong>22</strong> or <strong>18</strong> — the textbook's numbers, and so is the 12 % a year interest. A ticket pays <strong>1</strong> if the stock is 22, nothing if it is 18. What is the ticket worth today?
+          A stock is <strong>20</strong>. In three months it will be <strong>22</strong> or <strong>18</strong> — the textbook's numbers, and so is the 12 % a year interest. A ticket is the <strong>right to buy the stock at 21</strong> in three months — it pays <strong>1</strong> if the stock is 22, nothing if it is 18. What is the ticket worth today?
         </>
       }
       observe={
@@ -140,6 +141,15 @@ export function F0Odds() {
       <BetNumber question="Your price for the ticket, today?" value={guess} onCommit={setGuess} committed={committed} min={0} max={5} step={0.01}>
         <ResultCard yours={guess !== null ? f3(guess) : "—"} answer={`${f3(price)} — from Raj's drawing, not from anyone's odds`} verdict={verdict}>
           The usual answers are <span className="num">0.50</span> (half of a 1), <span className="num">0.70</span> (Priya's), or "it depends on the odds". A sure {f2(step.portfolio)} in three months is {f3(step.pv)} today; the quarter share cost {f2(HULL.S0 * step.delta)}; the ticket is the difference, {f3(price)}. <Who name="Priya" />'s 0.70 is free money for <Who name="Raj" />: {f3(pocket)} a ticket, ₹{f0(pocket * 10000)} on a 10,000-lot, whichever way the stock goes.
+          {verdict === "miss" && Math.abs((guess ?? 0) - priyaPrice) < 0.005 ? (
+            <> Yours is Priya's number, so that 0.067 a ticket comes out of your pocket. A price is not nearly right or nearly wrong — it is either the drawing's number or a trade against you.</>
+          ) : verdict === "miss" && (
+            <>
+              {" "}
+              So is yours: at {f3(guess ?? 0)} Raj {diff > 0 ? "sells you the ticket and buys a quarter share" : "buys your ticket and sells a quarter share"}, and keeps{" "}
+              {f3(Math.abs(diff))} a ticket whatever the stock does. A price is not nearly right or nearly wrong — it is either the drawing's number or a trade against you.
+            </>
+          )}
         </ResultCard>
       </BetNumber>
     </Figure>
