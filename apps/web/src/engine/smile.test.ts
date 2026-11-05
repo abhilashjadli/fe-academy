@@ -24,13 +24,13 @@ describe("D2 — the smile fitted in log-moneyness", () => {
 });
 
 describe("D2 — butterflies as probabilities", () => {
-  it("the raw screen: six of fifteen call tents priced below zero; the 22,600 tent costs ₹3.70", () => {
+  it("the raw screen: six of fifteen call tents priced below zero; the 22,550/22,600/22,650 tent costs ₹3.70", () => {
     let neg = 0;
     key.raw_butterflies.rows.forEach((row, i) => {
       const fly = butterfly(calls[i], calls[i + 1], calls[i + 2]);
       expect(fly).toBeCloseTo(row.call_fly, 8);
       if (fly < 0) neg++;
-      expect(tentProbability(fly, 100, r, T)).toBeCloseTo(row.prob_per_100_call, 8);
+      expect(tentProbability(fly, 50, r, T)).toBeCloseTo(row.prob_within_25, 8);
     });
     expect(neg).toBe(key.raw_butterflies.negative_calls);
     expect(neg).toBe(6);

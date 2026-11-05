@@ -1,0 +1,348 @@
+/* Chapter D2 — figure-local styles. House tokens only.
+   Roles: calls and the fitted smile wear --truth; puts, lit down-days and a red tent wear --error; lit up-days wear --approx;
+   the bell curve is ink; the screen's prints are ghosts. */
+
+.d2-truth {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.d2-approx {
+  color: var(--approx-text);
+  font-weight: 600;
+}
+.d2-err {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.d2-hint {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  padding: 0 var(--space-1);
+  min-height: 1.3em;
+}
+
+/* a column: plot, legend, bet, stacked and centred */
+.d2-stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-items: stretch;
+  padding-bottom: var(--space-2);
+}
+.d2-stage > * {
+  min-width: 0;
+  max-width: 100%;
+}
+.d2-stage > svg.plot {
+  width: 100%;
+  max-width: 620px;
+  align-self: center;
+}
+.d2-stage > .bet {
+  margin-top: var(--space-2);
+}
+.plot .label.d2-ticklabel {
+  font-size: 10.5px;
+  fill: var(--ink-3);
+}
+.d2 .plot .marker.d2-lit {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+
+/* legend swatches under a plot */
+.d2-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  padding: 0 var(--space-1);
+  align-self: center;
+  justify-content: center;
+}
+.d2-legend-note {
+  color: var(--ink-3);
+}
+.d2-sw {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: -1px;
+}
+.d2-sw.truth {
+  background: var(--truth);
+}
+.d2-sw.approx {
+  background: var(--approx);
+}
+.d2-sw.error {
+  background: var(--error);
+}
+.d2-sw.plain {
+  background: var(--ink-3);
+  border-radius: 1px;
+  opacity: 0.55;
+}
+.d2-sw.line {
+  width: 14px;
+  height: 2px;
+  border-radius: 0;
+  background: var(--ink-2);
+  vertical-align: 3px;
+}
+.d2-sw.diamond {
+  border-radius: 1px;
+  transform: rotate(45deg) scale(0.9);
+}
+
+/* ---- Figure 1: the histogram's bins ---- */
+.plot .d2-bin {
+  stroke: none;
+}
+.plot .d2-bin.plain {
+  fill: var(--ink-3);
+  opacity: 0.4;
+}
+.plot .d2-bin.error {
+  fill: var(--error);
+  opacity: 0.95;
+}
+.plot .d2-bin.approx {
+  fill: var(--approx);
+  opacity: 0.95;
+}
+.plot .d2-arrow line,
+.plot .d2-arrow path {
+  stroke: var(--error);
+  stroke-width: 1.6;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ---- Figure 2: the three tickets, the small strip above the main plot ---- */
+.d2-tickets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  justify-content: center;
+}
+.d2-ticket {
+  flex: 1 1 9rem;
+  max-width: 13rem;
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--truth);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  padding: var(--space-1) var(--space-3);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-2);
+}
+.d2-ticket.sell {
+  border-left-color: var(--error);
+}
+.d2-ticket-side {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.d2-ticket.buy .d2-ticket-side {
+  color: var(--truth-text);
+}
+.d2-ticket.sell .d2-ticket-side {
+  color: var(--error-text);
+}
+.d2-ticket-k {
+  font-size: 1.05rem;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.d2-ticket-ltp {
+  font-variant-numeric: tabular-nums;
+}
+.d2-substrip {
+  width: 100%;
+  max-width: 620px;
+  align-self: center;
+}
+.d2-substrip .plot {
+  width: 100%;
+}
+.d2 .steps > div:first-child {
+  min-width: 0;
+}
+
+/* ---- Figure 3: the dial with two marks on its track ---- */
+.d2-dial {
+  width: 100%;
+  max-width: 620px;
+}
+.d2-dial .ctl {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  align-items: flex-start;
+}
+.d2-dial-track {
+  position: relative;
+  flex: 1 1 180px;
+  min-width: 0;
+  padding-bottom: 2.3rem;
+}
+@media (max-width: 560px) {
+  .d2-dial .ctl-label {
+    flex: 1 1 100%;
+  }
+}
+.d2-dial-track input[type="range"] {
+  width: 100%;
+  display: block;
+}
+.d2-dial-marks {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  top: 1.1rem;
+  height: 2.2rem;
+  pointer-events: none;
+}
+.d2-dial-mark {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  pointer-events: auto;
+  white-space: nowrap;
+}
+.d2-dial-mark i {
+  display: block;
+  width: 2px;
+  height: 9px;
+  background: var(--ink-2);
+}
+.d2-dial-mark.alt i {
+  background: var(--error);
+}
+.d2-dial-mark b {
+  font-weight: 500;
+}
+.d2-dial-mark.alt b {
+  color: var(--error-text);
+  padding-top: 1rem; /* the two marks are 0.975 apart: stagger their words */
+}
+.d2-dial-mark[aria-pressed="true"] b {
+  font-weight: 700;
+  color: var(--ink);
+}
+@media (max-width: 480px) {
+  .d2-dial-mark {
+    font-size: 0.66rem;
+  }
+}
+
+/* ---- Figure 4: the surface as a grid ---- */
+.d2-aside {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-prose);
+  font-size: 0.92rem;
+  color: var(--ink-2);
+  max-width: 44rem;
+  align-self: center;
+}
+.d2-grid {
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+  border-collapse: separate;
+  border-spacing: 2px;
+  align-self: center;
+  max-width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+.d2-grid caption {
+  caption-side: top;
+  text-align: left;
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  padding: 0 0 var(--space-1) 2px;
+}
+.d2-grid th {
+  font-weight: 500;
+  color: var(--ink-3);
+  padding: 3px 6px;
+  text-align: right;
+  white-space: nowrap;
+}
+.d2-grid thead th {
+  text-align: center;
+  border-bottom: 1px solid var(--rule);
+}
+.d2-grid .d2-grid-corner {
+  text-align: left;
+  font-size: 0.74rem;
+}
+.d2-grid td {
+  padding: 5px 0;
+  width: 3.6rem;
+  text-align: center;
+  color: var(--ink);
+  border-radius: 3px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: border-color 0.15s ease;
+}
+.d2-grid td.lit {
+  border-color: var(--ink-3);
+}
+.d2-grid td.cell {
+  border-color: var(--ink);
+  font-weight: 600;
+}
+.d2-grid th.col-lit,
+.d2-grid tr.row-lit th {
+  color: var(--ink);
+  font-weight: 600;
+}
+.d2-grid th.col-probe {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.d2-grid tr.row-probe th {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.d2-grid tr.row-probe td.col-probe {
+  box-shadow: inset 0 0 0 2px var(--truth);
+}
+.d2-grid td:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+@media (max-width: 480px) {
+  .d2-grid {
+    font-size: 0.78rem;
+  }
+  .d2-grid td {
+    width: 2.9rem;
+    padding: 4px 0;
+  }
+  .d2-grid th {
+    padding: 3px 4px;
+  }
+}

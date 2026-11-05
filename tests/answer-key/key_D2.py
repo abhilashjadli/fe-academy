@@ -60,9 +60,9 @@ raw = []
 for i in range(1, 16):
     bc = float(calls[i - 1] - 2 * calls[i] + calls[i + 1])
     bp = float(puts[i - 1] - 2 * puts[i] + puts[i + 1])
-    raw.append(dict(K=float(strikes[i]), call_fly=bc, put_fly=bp, prob_per_100_call=bc / 100 / D))
+    raw.append(dict(K=float(strikes[i]), call_fly=bc, put_fly=bp, prob_within_25=bc / 50 / D))  # tent of height 50 → P(land within ±25)
 key["raw_butterflies"] = dict(h=50, rows=raw, negative_calls=sum(1 for x in raw if x["call_fly"] < 0), negative_puts=sum(1 for x in raw if x["put_fly"] < 0),
-                              tent_22600=dict(cost=raw[6]["call_fly"], prob_per_100=raw[6]["prob_per_100_call"]))
+                              tent_22600=dict(tickets=[22550, 22600, 22650], cost=raw[6]["call_fly"], prob_within_25=raw[6]["prob_within_25"]))
 
 # ------------------------------------------------------------------ the market's density from the smoothed smile (Breeden–Litzenberger)
 h = 5.0
