@@ -1,0 +1,163 @@
+/* Chapter B3 — figure-local styles (imported by each figure). Tokens only. */
+
+.b3-truth {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.b3-approx {
+  color: var(--approx-text);
+  font-weight: 600;
+}
+.b3-error {
+  color: var(--error-text);
+  font-weight: 600;
+}
+
+/* ---------- Figure 0: the comic ---------- */
+.b3-comic .comic {
+  padding-left: 0;
+  padding-right: 0;
+}
+.b3-comic .panel-art svg {
+  width: 100%;
+  max-width: 340px;
+}
+@media (max-width: 760px) {
+  .b3-comic .comic {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b3-comic .bet {
+  margin-top: var(--space-2);
+}
+
+/* ---------- Figure 1: two pictures, one magnifying glass ---------- */
+.b3-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .b3-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b3-pane {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.b3-pane-head {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  color: var(--ink-3);
+  padding: 0 var(--space-1);
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+.b3-pane-head strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ---------- Figure 2: the instrument panel ---------- */
+.b3-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+.b3-panel > svg.plot {
+  min-width: 0;
+  max-width: 760px;
+}
+.b3-dash {
+  align-self: flex-start;
+  max-width: 760px;
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: var(--surface-raised);
+  box-sizing: border-box;
+}
+.b3-hint {
+  margin-top: var(--space-3);
+  font-family: var(--font-prose);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--rule);
+}
+.b3-gauge {
+  display: block;
+  height: auto;
+  max-width: 100%;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.b3-ledger {
+  margin-top: var(--space-3);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--rule);
+}
+.b3-ledger > svg.plot {
+  max-width: 560px;
+}
+.b3-result {
+  margin-top: var(--space-3);
+}
+.b3-result .result {
+  margin: 0;
+}
+
+/* ---------- Figure 3: the real dial ---------- */
+.b3-real {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
+  align-items: center;
+}
+.b3-real-plots {
+  flex: 1 1 380px;
+  min-width: 0;
+  max-width: 620px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.b3-real-dash {
+  flex: 0 1 320px;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1.5px solid var(--ink);
+  border-radius: 6px;
+  background: var(--surface-raised);
+}
+.b3-shade {
+  fill: var(--approx-soft);
+}
+[data-theme="dark"] .b3-shade {
+  fill: var(--approx-soft);
+}
+
+/* ---------- Figures 4 and 5 ---------- */
+.b3-fan > svg.plot,
+.b3-leash > svg.plot {
+  max-width: 760px;
+}
+.b3 .figure-prompt .who-chip {
+  font-size: 0.9rem;
+}
