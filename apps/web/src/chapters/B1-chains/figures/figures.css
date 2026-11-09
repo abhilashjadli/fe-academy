@@ -1,0 +1,633 @@
+/* Chapter B1 — figure-local styles. House tokens only.
+   The three weather states are three colours of one idea: dry = rule grey, some = truth at half strength, heavy = truth.
+   Roles elsewhere: the law / the bet = truth; what actually happened = approx; a broken row = error; fixed points = ink. */
+
+.b1-dry {
+  --cell: color-mix(in srgb, var(--ink-3) 32%, var(--surface-raised));
+}
+.b1-some {
+  --cell: color-mix(in srgb, var(--truth) 45%, var(--surface-raised));
+}
+.b1-heavy {
+  --cell: var(--truth);
+}
+
+/* ---- the strip ---- */
+.b1-strip {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 640px;
+  font-family: var(--font-ui);
+}
+.b1-day rect,
+.b1-day-rect {
+  fill: var(--cell);
+  stroke: none;
+  transition: opacity 0.25s ease;
+}
+.b1-day.b1-dim rect {
+  opacity: 0.22;
+}
+.b1-day.b1-today rect {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+.b1-day.b1-yesterday rect {
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-dasharray: 2 1.5;
+}
+.b1-rowlabel {
+  font-size: 7.5px;
+  fill: var(--ink-3);
+}
+.b1-tag {
+  font-size: 5.5px;
+  fill: var(--ink-3);
+}
+.b1-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  padding: var(--space-1) 0;
+}
+.b1-legend-n {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.b1-legend-note {
+  color: var(--ink-3);
+}
+.b1-sw {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--cell);
+  vertical-align: -1px;
+  margin-right: 2px;
+}
+.b1-hint {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  padding: var(--space-1) 0;
+  min-height: 1.3em;
+}
+
+/* ---- Figure 0: the artefact ---- */
+.b1-artefact {
+  max-width: none;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: var(--surface-raised);
+}
+.b1-arthead {
+  font-size: 7.5px;
+  fill: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+.b1-artflag {
+  fill: var(--approx-text);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.b1-afterlabel {
+  fill: var(--ink-2);
+}
+.b1-legendtext {
+  font-size: 7.5px;
+  fill: var(--ink-2);
+}
+.b1-thresh {
+  fill: var(--ink-3);
+}
+.b1 .artefact-box {
+  background: var(--surface-raised);
+}
+@media (max-width: 520px) {
+  .b1-thresh {
+    display: none;
+  }
+  .b1-artefact .b1-arthead,
+  .b1-artefact .b1-legendtext,
+  .b1-artefact .b1-rowlabel {
+    font-size: 10.5px;
+  }
+}
+
+/* ---- Figure 1: the ledger ---- */
+.b1-ledger {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+  padding-bottom: var(--space-2);
+}
+@media (max-width: 760px) {
+  .b1-ledger {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b1-ledger-strip {
+  min-width: 0;
+}
+.b1-table-wrap {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: var(--space-2);
+  background: var(--surface-raised);
+  transition: border-color 0.3s ease;
+  min-width: 0;
+  overflow-x: auto;
+}
+.b1-table-wrap.b1-broke {
+  border-color: var(--error);
+}
+.b1-table {
+  width: 100%;
+  margin: 0;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+}
+.b1-table th,
+.b1-table td {
+  padding: 4px 4px;
+  text-align: center;
+}
+.b1-table td.num {
+  text-align: center;
+  transition: background-color 0.4s ease;
+}
+.b1-table td.b1-diag {
+  background: color-mix(in srgb, var(--truth) 7%, transparent);
+}
+.b1-table td.b1-hit {
+  background: var(--approx-soft);
+}
+.b1-table tbody th {
+  text-align: left;
+  white-space: nowrap;
+  font-weight: 500;
+}
+.b1-corner {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-weight: 400;
+  color: var(--ink-3);
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+.b1-sum {
+  color: var(--ink-3);
+  border-left: 1px solid var(--rule-soft);
+}
+.b1-row-bad td,
+.b1-row-bad th {
+  color: var(--error-text);
+}
+.b1-row-bad td.b1-bad {
+  font-weight: 600;
+}
+.b1-cell {
+  font: inherit;
+  font-family: var(--font-ui);
+  font-variant-numeric: tabular-nums;
+  width: 3.6em;
+  padding: 2px 2px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule-soft);
+  border-radius: var(--radius);
+  text-align: center;
+}
+.b1-row-bad .b1-cell {
+  border-color: var(--error);
+  color: var(--error-text);
+}
+
+/* ---- Figure 2: the machine ---- */
+.b1-machine {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-2) var(--space-4);
+  align-items: start;
+  padding-bottom: var(--space-2);
+}
+@media (max-width: 760px) {
+  .b1-machine {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b1-diagram {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  display: block;
+  justify-self: center;
+  font-family: var(--font-ui);
+}
+.b1-arrow path,
+.b1-arrow circle {
+  stroke: var(--cell);
+  opacity: 0.45;
+  transition: opacity 0.25s ease;
+  stroke-linecap: round;
+}
+.b1-arrow .b1-head {
+  fill: var(--cell);
+  opacity: 0.45;
+  transition: opacity 0.25s ease;
+}
+.b1-arrow.lit path,
+.b1-arrow.lit circle,
+.b1-arrow.lit .b1-head {
+  opacity: 1;
+}
+.b1-arrow.used path,
+.b1-arrow.used circle {
+  stroke: var(--approx);
+}
+.b1-arrow.used .b1-head {
+  fill: var(--approx);
+}
+.b1-arrowlabel {
+  font-size: 9px;
+  fill: var(--ink-3);
+  opacity: 0.8;
+}
+.b1-arrow.lit .b1-arrowlabel {
+  fill: var(--ink);
+  opacity: 1;
+  font-weight: 500;
+}
+.b1-node circle {
+  fill: var(--cell);
+  stroke: var(--surface-figure);
+  stroke-width: 2;
+}
+.b1-node.on circle {
+  stroke: var(--ink);
+}
+.b1-node text {
+  font-size: 10px;
+  fill: var(--surface-raised);
+  font-weight: 600;
+}
+.b1-node.b1-dry text {
+  fill: var(--ink);
+}
+.b1-token {
+  fill: var(--approx);
+  stroke: var(--surface-raised);
+  stroke-width: 1.5;
+  transition: cx 0.2s ease, cy 0.2s ease;
+}
+.b1-instruments {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+}
+@media (max-width: 760px) {
+  .b1-instruments {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+@media (max-width: 440px) {
+  .b1-instruments {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b1-instr {
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  padding: var(--space-2);
+  min-width: 0;
+}
+.b1-instr-head {
+  font-family: var(--font-prose);
+  font-size: 0.92rem;
+  color: var(--ink);
+  margin-bottom: var(--space-1);
+}
+.b1-instr-foot {
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  color: var(--ink-3);
+  margin-top: var(--space-1);
+}
+.b1-bars,
+.b1-simplex {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: var(--font-ui);
+}
+.b1-barlabel {
+  font-size: 9px;
+  fill: var(--ink-2);
+}
+.b1-bar-bg {
+  fill: var(--rule-soft);
+}
+.b1-bar {
+  fill: var(--approx);
+  transition: width 0.15s linear;
+}
+.b1-fixed {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.b1-tri {
+  fill: var(--surface-figure);
+  stroke: var(--axis);
+  stroke-width: 1;
+}
+.b1-simplex-corner {
+  font-size: 8px;
+  fill: var(--ink-3);
+}
+.b1-trail {
+  fill: none;
+  stroke: var(--truth);
+  stroke-width: 1.2;
+  opacity: 0.55;
+}
+.b1-lawdot {
+  fill: var(--truth);
+}
+.b1-fixedpt {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.b1-grown {
+  grid-column: 1 / -1;
+}
+.b1-grown .b1-strip {
+  max-width: 520px;
+}
+
+/* ---- Figure 3: the street ---- */
+.b1-street {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 720px;
+  margin: 0 auto;
+  font-family: var(--font-ui);
+}
+.b1-countbar {
+  fill: var(--approx);
+  opacity: 0.8;
+}
+.b1-road {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.b1-ticks line {
+  stroke: var(--axis);
+}
+.b1-ticks text {
+  font-size: 9px;
+  fill: var(--ink-3);
+}
+.b1-street.narrow .b1-ticks text,
+.b1-street.narrow .b1-balllabel,
+.b1-street.narrow .b1-bracket text,
+.b1-street.narrow .b1-count {
+  font-size: 11px;
+}
+.b1-lamp line {
+  stroke: var(--ink-3);
+  stroke-width: 2;
+}
+.b1-lamp circle {
+  fill: var(--approx-text);
+}
+.b1-ball {
+  fill: var(--truth);
+  stroke: var(--surface-raised);
+  stroke-width: 1.5;
+}
+.b1-balllabel {
+  font-size: 9.5px;
+  fill: var(--truth-text);
+  font-weight: 500;
+}
+.b1-trailwalk {
+  fill: none;
+  stroke: var(--truth);
+  stroke-width: 1;
+  opacity: 0.5;
+}
+.b1-bracket path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.b1-bracket text {
+  font-size: 10px;
+  fill: var(--ink);
+}
+.b1-count {
+  font-size: 10px;
+  fill: var(--ink-3);
+}
+
+/* ---- Figure 4: rebuild ---- */
+.b1-rebuild {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+.b1-candidate {
+  border: 1px solid var(--rule);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface-raised);
+  transition: border-color 0.3s ease;
+}
+.b1-candidate.b1-season {
+  border-left-color: var(--truth);
+}
+.b1-candidate.b1-chain {
+  border-left-color: var(--approx);
+}
+.b1-candidate.b1-coin {
+  border-left-color: var(--ghost);
+}
+.b1-cand-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  align-items: baseline;
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-2);
+  margin-bottom: var(--space-1);
+}
+.b1-letter {
+  font-weight: 600;
+  color: var(--ink);
+  font-size: 0.95rem;
+}
+.b1-cand-run {
+  margin-left: auto;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.b1-rebuild .bet {
+  margin-top: var(--space-1);
+}
+
+/* ---- Figure 5: the bus stop ---- */
+.b1-bus {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.b1-bus .comic {
+  padding: 0;
+  max-width: 640px;
+}
+.b1-bus .panel {
+  min-height: 120px;
+}
+@media (max-width: 520px) {
+  .b1-bus .comic {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.b1-bus .panel-art {
+  padding: var(--space-2);
+}
+.b1-stop {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  width: 100%;
+}
+.b1-sign {
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 14px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  font-family: var(--font-ui);
+  background: var(--surface);
+  min-width: 120px;
+}
+.b1-sign-k {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  color: var(--ink-3);
+}
+.b1-sign-v {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.b1-sign-s {
+  font-size: 0.72rem;
+  color: var(--ink-2);
+}
+.b1-stop .says {
+  margin: 0;
+}
+.b1-line {
+  width: 100%;
+  height: auto;
+  display: block;
+  font-family: var(--font-ui);
+  touch-action: none;
+  cursor: crosshair;
+}
+.b1-lane line {
+  stroke: var(--axis);
+}
+.b1-lane text {
+  font-size: 10.5px;
+  fill: var(--ink-3);
+}
+.b1-lanelabel {
+  font-size: 11px;
+  fill: var(--ink-2);
+}
+.b1-busicon rect {
+  fill: var(--truth);
+}
+.b1-busicon.chance rect {
+  fill: var(--approx);
+}
+.b1-busicon .b1-win {
+  fill: var(--surface-raised);
+  opacity: 0.85;
+}
+.b1-busicon .b1-wheel {
+  fill: var(--ink);
+}
+.b1-busicon.yours {
+  cursor: grab;
+}
+.b1-glow {
+  fill: var(--approx);
+  opacity: 0.35;
+}
+.b1-sweep line {
+  stroke: var(--error);
+  stroke-width: 1.2;
+}
+.b1-sweep text {
+  font-size: 10px;
+  fill: var(--error-text);
+}
+.b1-drop path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.b1-drop text {
+  font-size: 10.5px;
+  fill: var(--ink);
+}
+.b1-ghostbus {
+  stroke: var(--ghost);
+  stroke-width: 1.5;
+  opacity: 0.6;
+}
+.b1-pois {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-width: 260px;
+  font-family: var(--font-ui);
+}
+.b1-poisbar {
+  fill: var(--truth-soft);
+  stroke: var(--truth);
+  stroke-width: 0.6;
+}
+.b1-measbar {
+  fill: var(--approx);
+  opacity: 0.85;
+}
+.b1-poislabel {
+  font-size: 7.5px;
+  fill: var(--ink-3);
+}
+.b1-poisnote {
+  fill: var(--ink-2);
+}
