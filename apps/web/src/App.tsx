@@ -16,6 +16,11 @@ import { BlackScholesChapter } from "./chapters/C3-blackscholes/Chapter";
 import { GreeksChapter } from "./chapters/C4-greeks/Chapter";
 import { HedgingChapter } from "./chapters/D1-hedging/Chapter";
 import { SmileChapter } from "./chapters/D2-smile/Chapter";
+import { BrownianChapter } from "./chapters/B3-brownian/Chapter";
+import { MartingalesChapter } from "./chapters/B2-martingales/Chapter";
+import { ChainsChapter } from "./chapters/B1-chains/Chapter";
+import { VolatilityChapter } from "./chapters/A5-volatility/Chapter";
+import { TimeSeriesChapter } from "./chapters/A4-timeseries/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
@@ -32,6 +37,11 @@ const CHAPTERS: Record<string, ComponentType> = {
   C4: GreeksChapter,
   D1: HedgingChapter,
   D2: SmileChapter,
+  B3: BrownianChapter,
+  B2: MartingalesChapter,
+  B1: ChainsChapter,
+  A5: VolatilityChapter,
+  A4: TimeSeriesChapter,
   lab: Lab,
 };
 
