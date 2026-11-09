@@ -1,0 +1,399 @@
+/* Chapter B2 — figure-local styles. House tokens only. */
+
+.b2-truth {
+  color: var(--truth-text);
+  font-weight: 500;
+}
+.b2-approx {
+  color: var(--approx-text);
+  font-weight: 500;
+}
+.b2-error {
+  color: var(--error-text);
+  font-weight: 500;
+}
+.b2-dim {
+  color: var(--ink-3);
+  font-size: 0.82rem;
+}
+.b2 .plot .curve.ghost {
+  stroke: var(--ghost);
+}
+.b2 .figure-body .says {
+  max-width: 36rem;
+  margin: var(--space-2) 0 var(--space-3);
+}
+.b2 .figure-body .bet {
+  margin: 0 0 var(--space-3);
+}
+
+/* the stage: the meter above the table, the table, anything under it */
+.b2-stage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: stretch;
+  padding-bottom: var(--space-2);
+}
+.b2-stage > svg.plot {
+  width: 100%;
+  max-width: 640px;
+  align-self: center;
+}
+.b2-two {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-2) var(--space-4);
+  align-items: start;
+}
+.b2-two > svg.plot {
+  width: 100%;
+  min-width: 0;
+}
+.b2-ledger {
+  max-width: 560px;
+}
+.b2-ledger .ledger-table {
+  width: 100%;
+}
+.b2-ledger .ledger-work,
+.b2-ledger .ledger-value {
+  white-space: nowrap;
+}
+
+/* ---- the meter ---- */
+.b2-meter {
+  align-self: center;
+  width: 100%;
+  max-width: 300px;
+  border: 1.5px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  padding: var(--space-2) var(--space-3) var(--space-2);
+  font-family: var(--font-ui);
+  transition: border-color 0.4s ease, background 0.4s ease;
+}
+.b2-meter.pinned {
+  border-color: var(--truth);
+}
+.b2-meter.moved {
+  border-color: var(--error);
+  background: var(--error-soft);
+}
+.b2-meter-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  align-items: baseline;
+  font-size: 0.74rem;
+  color: var(--ink-3);
+  letter-spacing: 0.02em;
+}
+.b2-meter-tag {
+  white-space: nowrap;
+  font-weight: 500;
+}
+.b2-meter-tag.pinned {
+  color: var(--truth-text);
+}
+.b2-meter-tag.moved {
+  color: var(--error-text);
+  text-transform: uppercase;
+}
+.b2-gauge {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 2px 0 0;
+}
+.b2-gauge-rail {
+  stroke: var(--axis);
+  stroke-width: 2;
+}
+.b2-gauge-tick {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+}
+.b2-gauge-num {
+  fill: var(--ink-3);
+  font-size: 9px;
+}
+.b2-gauge-band {
+  fill: var(--truth-soft);
+}
+.b2-meter.moved .b2-gauge-band {
+  fill: var(--error-soft);
+}
+.b2-needle path {
+  fill: var(--truth);
+  stroke: var(--surface-raised);
+  stroke-width: 1;
+}
+.b2-meter.moved .b2-needle path {
+  fill: var(--error);
+}
+.b2-meter-read {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+.b2-meter-v {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.b2-meter.moved .b2-meter-v {
+  color: var(--error-text);
+}
+.b2-meter-u {
+  font-size: 0.74rem;
+  color: var(--ink-3);
+}
+.b2-meter.compact {
+  max-width: none;
+  align-self: stretch;
+  padding: var(--space-2);
+}
+.b2-meter.compact .b2-meter-v {
+  font-size: 1.2rem;
+}
+.b2-meters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+}
+
+/* ---- Figure 3: the habit card ---- */
+.b2-habit {
+  align-self: center;
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+}
+.b2-habit-head {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  color: var(--ink-2);
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--rule);
+  margin-bottom: 4px;
+}
+.b2-habit-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 2px 0;
+}
+.b2-habit-row .k {
+  color: var(--ink-3);
+}
+.b2-habit-row .v {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  font-weight: 500;
+  text-align: right;
+}
+.b2-habit-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+/* ---- Figure 4: the card under the fan and the footnote tree ---- */
+.b2-card {
+  border: 1.5px solid var(--error);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  padding: var(--space-3) var(--space-3);
+  font-family: var(--font-ui);
+  font-size: 0.86rem;
+}
+.b2-card-head {
+  font-family: var(--font-prose);
+  font-size: 1.05rem;
+  color: var(--ink);
+  margin-bottom: var(--space-2);
+}
+.b2-card-rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2px var(--space-4);
+  max-width: 560px;
+}
+.b2-card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: 2px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.b2-card-row .k {
+  color: var(--ink-3);
+}
+.b2-card-row .v {
+  font-variant-numeric: tabular-nums;
+  color: var(--truth-text);
+  white-space: nowrap;
+}
+.b2-card-row.moved .k {
+  color: var(--ink);
+}
+.b2-card-row.moved .v {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.b2-tree {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  margin-top: var(--space-3);
+}
+.b2-tree > svg {
+  flex: 1 1 300px;
+  max-width: 520px;
+  width: 100%;
+  height: auto;
+}
+.b2-tree-edge line {
+  stroke: var(--axis);
+  stroke-width: 1.2;
+}
+.b2-tree-edge line.on {
+  stroke: var(--truth);
+  stroke-width: 2.2;
+}
+.b2-tree-under {
+  fill: var(--surface-raised);
+}
+.b2-tree-node {
+  fill: var(--surface-figure);
+  stroke: var(--ink-2);
+  stroke-width: 1.2;
+}
+.b2-tree-node.stopped {
+  fill: var(--error-soft);
+  stroke: var(--error);
+  stroke-width: 2;
+}
+.b2-tree-node.on {
+  fill: var(--truth-soft);
+  stroke: var(--truth);
+  stroke-width: 2;
+}
+.b2-tree-v {
+  fill: var(--ink);
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+.b2-tree-cap {
+  fill: var(--ink-3);
+  font-size: 10px;
+}
+.b2-footnote {
+  flex: 1 1 260px;
+  margin: 0;
+  font-family: var(--font-prose);
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  max-width: 40ch;
+}
+
+/* ---- the close: the information diary ---- */
+.b2-diary {
+  margin: var(--space-4) 0 var(--space-6);
+  padding: var(--space-3);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--surface-figure);
+  font-family: var(--font-ui);
+}
+.b2-diary > svg {
+  display: block;
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+  margin: 0 auto var(--space-3);
+}
+.b2-pages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-2);
+}
+.b2-page {
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  background: var(--surface-raised);
+  padding: var(--space-2);
+  font-size: 0.8rem;
+  min-width: 0;
+}
+.b2-page-head {
+  display: flex;
+  gap: var(--space-2);
+  align-items: baseline;
+  color: var(--ink);
+}
+.b2-page-n {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.b2-page-paths {
+  color: var(--ink-3);
+  margin: 2px 0 4px;
+}
+.b2-page-fore {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 6px;
+  align-items: baseline;
+}
+.b2-page-fore .k {
+  flex-basis: 100%;
+  color: var(--ink-3);
+  font-size: 0.72rem;
+}
+.b2-fore {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+  padding: 1px 5px;
+  border-radius: 3px;
+  border: 1px solid var(--rule-soft);
+}
+.b2-fore .atom {
+  color: var(--ink-3);
+  font-size: 0.7rem;
+  margin-right: 3px;
+}
+.b2-fore.on {
+  color: var(--truth-text);
+  border-color: var(--truth);
+  font-weight: 500;
+}
+
+@media (max-width: 520px) {
+  .b2 .figure-controls {
+    gap: var(--space-2) var(--space-3);
+  }
+  .b2 .seg {
+    flex-wrap: wrap;
+  }
+  .b2 .seg button {
+    white-space: normal;
+  }
+  .b2-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
