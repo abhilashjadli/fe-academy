@@ -67,10 +67,10 @@ function ClipHeatRod() {
         poster={base + ".png"}
         ariaLabel="The option's payoff drawn as the temperature along a rod of prices; run backwards, the kink at the strike melts into a smooth curve"
         beats={[
-          { at: 0, caption: "The payoff as a rod's temperature: cold below the strike, hotter above, a kink at it. (This rod is C2's 100-stock for a year; the grid beside it is Hull's 42.)" },
+          { at: 0, caption: "The payoff as a rod's temperature: cold below the strike, hotter above, a kink at 40 — the same option as the grid beside it." },
           { at: 3.0, caption: "One day back. Each point moves toward the average of its neighbours — only where the rod bends. The straight parts don't move." },
-          { at: 8.0, caption: "The arrows are longer on the right: the same 20 % wobble is more rupees at a higher price. In price, the push scales with S²." },
-          { at: 12.0, caption: "A year of steps back: the kink has melted into today's smooth curve. A probe reads the option's price. Cooling backwards is averaging forwards." },
+          { at: 8.0, caption: "The arrows are longer on the right: the same 20 % wobble is more money at a higher price. In price, the push scales with S²." },
+          { at: 12.0, caption: "Six months of steps back: the kink has melted into today's smooth curve. The probe at 42 reads 4.76 — the grid's number. Cooling backwards is averaging forwards." },
         ]}
       />
     </div>

@@ -7,8 +7,8 @@ neighbours — scaled by S², so the right end of the rod moves faster (the appr
 Beats:
  0.0  At expiry the value is the payoff: a kink at the strike.
  3.0  Step one day backwards. Each point moves toward the average of its two neighbours — faster where the rod bends.
- 8.0  The arrows are longer on the right: the same wobble is bigger in rupees when the price is higher.
- 12.0 A year of steps backwards: the kink has melted into today's smooth curve. That curve is the option price.
+ 8.0  The arrows are longer on the right: the same wobble is bigger in money when the price is higher.
+ 12.0 Six months of steps backwards: the kink has melted into today's smooth curve. That curve is the option price.
 
 Render: THEME=light manim render -qm --format mp4 -o heatrod_light b6_heatrod.py HeatRod
 """
@@ -19,8 +19,8 @@ from fe_theme import *
 
 apply_theme()
 
-K, R, SIG, T = 100.0, 0.05, 0.20, 1.0
-S = np.linspace(40, 180, 71)  # the rod
+K, R, SIG, T = 40.0, 0.10, 0.20, 0.5  # Hull's option: stock 42, right to buy at 40, six months, 10 %, 20 %
+S = np.linspace(16, 72, 71)  # the rod
 dS = S[1] - S[0]
 
 
@@ -40,7 +40,7 @@ class HeatRod(Scene):
     def construct(self):
         title = Text("The payoff melts", font_size=34).to_edge(UP, buff=0.35)
         self.play(FadeIn(title), run_time=0.5)
-        ax = Axes(x_range=[40, 180, 20], y_range=[0, 90, 30], x_length=10.5, y_length=4.2,
+        ax = Axes(x_range=[16, 72, 8], y_range=[0, 36, 12], x_length=10.5, y_length=4.2,
                   axis_config={"color": GHOST, "include_tip": False, "stroke_width": 2},
                   x_axis_config={"include_numbers": True, "font_size": 22, "decimal_number_config": {"num_decimal_places": 0, "color": INK}}).shift(DOWN * 0.8)
         xl = Text("price of the stock, S", font_size=20, color=INK).next_to(ax, DOWN, buff=0.1)
@@ -54,7 +54,7 @@ class HeatRod(Scene):
         self.wait(0.8)
 
         # one day back, with arrows at a few points
-        dt = T / 250
+        dt = T / 125  # one trading day of a six-month option
         SUB = 4  # four sub-steps per day keeps the explicit scheme stable (λ ≈ 0.16 at S = 180)
         V1 = V
         for _ in range(SUB):
@@ -69,21 +69,21 @@ class HeatRod(Scene):
             arrows.add(a)
         self.play(Transform(lbl, Text("one day back: each point moves toward the average of its neighbours", font_size=22, color=INK).next_to(title, DOWN, buff=0.12)), FadeIn(arrows), run_time=1.0)
         self.wait(1.6)
-        self.play(Transform(lbl, Text("longer arrows on the right: the same wobble is bigger in rupees at a higher price", font_size=22, color=TRUTH).next_to(title, DOWN, buff=0.12)), run_time=0.6)
+        self.play(Transform(lbl, Text("longer arrows on the right: the same wobble is bigger in dollars at a higher price", font_size=22, color=TRUTH).next_to(title, DOWN, buff=0.12)), run_time=0.6)
         self.wait(1.8)
         self.play(FadeOut(arrows), run_time=0.3)
 
-        # a year back, animated in chunks
+        # six months back, animated in chunks
         cur = V.copy()
-        days = 250
+        days = 125
         chunks = 25
         for c in range(chunks):
             for _ in range(days // chunks * SUB):
                 cur = step_back(cur, dt / SUB)
             new = ax.plot_line_graph(S, cur, line_color=TRUTH if c == chunks - 1 else APPROX, add_vertex_dots=False, stroke_width=4)
             self.play(Transform(curve, new), run_time=0.16)
-        self.play(Transform(lbl, Text("a year back: the kink has melted into today's smooth curve — the option's price", font_size=22, color=TRUTH).next_to(title, DOWN, buff=0.12)), run_time=0.6)
-        atm = Dot(ax.c2p(100, float(np.interp(100, S, cur))), color=INK, radius=0.07)
-        atxt = Text(f"at S = 100: {float(np.interp(100, S, cur)):.2f}", font_size=22, color=INK).next_to(atm, UR, buff=0.1)
+        self.play(Transform(lbl, Text("six months back: the kink has melted into today's smooth curve — the option's price", font_size=22, color=TRUTH).next_to(title, DOWN, buff=0.12)), run_time=0.6)
+        atm = Dot(ax.c2p(42, float(np.interp(42, S, cur))), color=INK, radius=0.07)
+        atxt = Text(f"at S = 42: {float(np.interp(42, S, cur)):.2f}", font_size=22, color=INK).next_to(atm, UR, buff=0.1)
         self.play(FadeIn(atm), FadeIn(atxt), run_time=0.5)
         self.wait(1.6)

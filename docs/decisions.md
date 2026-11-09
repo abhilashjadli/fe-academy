@@ -58,3 +58,4 @@ One line per decision, newest first. Product decisions in the charter are not re
 
 ## 2026-11-09
 - **A4, A5, B1, B2, B3 storyboards approved as drafted** ("all suggestions are okay, go ahead and build"). Routes and stub pages pre-wired; figures built per chapter by separate builders. B1's rain file cannot be fetched from this environment (Open-Meteo is not on the allowlist) — B1 ships with the labelled simulated season and switches to `apps/web/src/data/rain-bengaluru-2024.json` when it arrives.
+- 2026-11-09 11:22: sponsor approved the three storyboard-changing review items (`reviews/C1-C2-B5-B6-review.md` 3, 6, and the B6 clip): C2 opens on the real 22,600 row and its prop figure becomes a sentence + link to B5; B6's F1 clip re-rendered on Hull's 42-stock; C1 F3 draws the legs tip-to-tail. "Run more": next storyboards C5, D3.
