@@ -49,7 +49,7 @@ export const SYLLABUS: Track[] = [
       { id: "C2", title: "Binomial to Black–Scholes: pick any probability", built: true },
       { id: "C3", title: "Black–Scholes in detail: the one dial the screen does not set", built: true },
       { id: "C4", title: "Greeks I: the slope, the bend and the clock", built: true },
-      { id: "C5", title: "Greeks II: vanna, volga, charm…" },
+      { id: "C5", title: "Greeks II: all he did was change his mind", built: true },
     ],
   },
   {
@@ -58,7 +58,7 @@ export const SYLLABUS: Track[] = [
     chapters: [
       { id: "D1", title: "Delta hedging: theta pays for gamma", built: true },
       { id: "D2", title: "The smile and the surface: the market does not believe in one number", built: true },
-      { id: "D3", title: "Beyond Black-Scholes: local vol, Heston, SABR, jumps" },
+      { id: "D3", title: "Beyond Black–Scholes: three stories, one curve", built: true },
     ],
   },
   {

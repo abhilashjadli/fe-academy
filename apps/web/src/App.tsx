@@ -16,6 +16,8 @@ import { BlackScholesChapter } from "./chapters/C3-blackscholes/Chapter";
 import { GreeksChapter } from "./chapters/C4-greeks/Chapter";
 import { HedgingChapter } from "./chapters/D1-hedging/Chapter";
 import { SmileChapter } from "./chapters/D2-smile/Chapter";
+import { VolModelsChapter } from "./chapters/D3-volmodels/Chapter";
+import { GreeksTwoChapter } from "./chapters/C5-greeks2/Chapter";
 import { BrownianChapter } from "./chapters/B3-brownian/Chapter";
 import { MartingalesChapter } from "./chapters/B2-martingales/Chapter";
 import { ChainsChapter } from "./chapters/B1-chains/Chapter";
@@ -37,6 +39,8 @@ const CHAPTERS: Record<string, ComponentType> = {
   C4: GreeksChapter,
   D1: HedgingChapter,
   D2: SmileChapter,
+  D3: VolModelsChapter,
+  C5: GreeksTwoChapter,
   B3: BrownianChapter,
   B2: MartingalesChapter,
   B1: ChainsChapter,
