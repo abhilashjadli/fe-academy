@@ -87,7 +87,7 @@ export function FeynmanKacChapter() {
         </p>
         <p className="b6-last">If two honest methods disagree by more than the bracket, one of them has a bug, and it is almost never the maths.</p>
         <div className="b6-pull">
-          <strong>The next thing to find.</strong> The smooth curve at six months has a closed form, and two different arguments reach it.{" "}
+          <strong>The curve has a name.</strong> The smooth curve at six months has a closed form, and two different arguments reach it.{" "}
           <a href="#/C3">C3 · Black–Scholes in detail →</a>
         </div>
         <details className="prose b6-more">

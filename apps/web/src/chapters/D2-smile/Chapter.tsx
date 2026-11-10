@@ -99,7 +99,7 @@ export function SmileChapter() {
         </p>
         <p className="d2-last">Seventeen strikes, seventeen numbers, one index. The numbers are not seventeen opinions — they are one opinion, written out.</p>
         <div className="d2-pull">
-          <strong>The next thing to find.</strong> Three knobs that draw the whole curve — and the day they stop fitting.{" "}
+          <strong>Three knobs.</strong> Three knobs that draw the whole curve — and the day they stop fitting.{" "}
           <a href="#/D3">D3 · Local vol, Heston, SABR →</a>
         </div>
         <details className="prose d2-more">

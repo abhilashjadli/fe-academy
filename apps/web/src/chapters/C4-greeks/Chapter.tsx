@@ -107,7 +107,7 @@ export function GreeksChapter() {
         </p>
         <p className="c4-last">Five numbers, one surface. Learn to stand on it and the screen reads itself.</p>
         <div className="c4-pull">
-          <strong>The next thing to find.</strong> Raj hedged once a day for a week on the real closes. The clock paid him every morning and the bend
+          <strong>A week on the real closes.</strong> Raj hedged once a day for a week on the real closes. The clock paid him every morning and the bend
           charged him on the one day it moved. Did he keep the money? <a href="#/D1">D1 · Theta pays for gamma →</a>
         </div>
         <details className="prose c4-more">

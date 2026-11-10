@@ -102,7 +102,7 @@ export function ChainsChapter() {
         </p>
         <p className="b1-last">The weather has a habit, and the habit fits in nine numbers.</p>
         <div className="b1-pull">
-          <strong>The next thing to find.</strong> The drunk's average position never moves — and that, not the memory, is what a price has.{" "}
+          <strong>What the drunk keeps.</strong> The drunk's average position never moves — and that, not the memory, is what a price has.{" "}
           <a href="#/B2">B2 · The meter that will not move →</a>
         </div>
         <details className="prose b1-more">

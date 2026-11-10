@@ -99,7 +99,8 @@ export function VolModelsChapter() {
         </p>
         <p className="d3-last">Today's curve does not choose the story. Tomorrow does — and a desk is paid for tomorrow.</p>
         <div className="d3-pull">
-          <strong>The next thing to find.</strong> A product that pays only if the index never touches a level cares about the story, not the curve.{" "}
+          <strong>From the story to the loss.</strong> A desk runs a whole book on one of these stories. The next question is not what a price is but how much the book can lose by
+          tomorrow — and how often that number turns out wrong.{" "}
           <a href="#/E1">E1 · Value at risk →</a>
         </div>
         <details className="prose d3-more">

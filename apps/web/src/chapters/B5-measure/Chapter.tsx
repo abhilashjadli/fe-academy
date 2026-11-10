@@ -91,7 +91,7 @@ export function MeasureChapter() {
         </p>
         <p className="b5-last">Priya predicts. Raj prices. Only one of them has to be right every time, and it is the one who never says what will happen.</p>
         <div className="b5-pull">
-          <strong>The next thing to find.</strong> Raj's average is also the answer to an equation — and a grid can fill it in backwards without
+          <strong>The same average, run backwards.</strong> Raj's average is also the answer to an equation — and a grid can fill it in backwards without
           simulating a single future. <a href="#/B6">B6 · Two ways to get the same number →</a>
         </div>
         <details className="prose b5-more">

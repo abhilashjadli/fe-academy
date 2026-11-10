@@ -105,7 +105,7 @@ export function VolatilityChapter() {
         </p>
         <p className="a5-last">The future's sign is unknowable. Its size remembers yesterday — and your only decision is how fast to let it forget.</p>
         <div className="a5-pull">
-          <strong>The next thing to find.</strong> A one-day loss you should only exceed once in a hundred days — the number the bucket is multiplied
+          <strong>The number the bucket is for.</strong> A one-day loss you should only exceed once in a hundred days — the number the bucket is multiplied
           by. <a href="#/E1">E1 · Value at risk →</a>
         </div>
         <details className="prose a5-more">

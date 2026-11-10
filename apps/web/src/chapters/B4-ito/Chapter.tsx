@@ -110,7 +110,7 @@ export function ItoChapter() {
           typical year ends below its average one."</strong>
         </p>
         <div className="b4-pull">
-          <strong>The next thing that goes wrong.</strong> The stock's price is random, so the price of an <em>option</em> on it is random too — and
+          <strong>Why anyone needs the square.</strong> The stock's price is random, so the price of an <em>option</em> on it is random too — and
           someone has to hedge it, every day, with Ada's square in the books. <a href="#/C2">C2 · the binomial tree, where the hedge appears →</a>
         </div>
         <details className="prose b4-more">

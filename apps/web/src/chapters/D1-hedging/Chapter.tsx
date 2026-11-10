@@ -101,7 +101,7 @@ export function HedgingChapter() {
         </p>
         <p className="d1-last">Theta is the rent the market pays Raj for carrying the bend. The rent is fair exactly when the index does what he sold.</p>
         <div className="d1-pull">
-          <strong>The next thing to find.</strong> Raj sold 15.9 %. The 23,050 call was sold at 15.5 % the same afternoon and the 22,250 at 17 %. Why
+          <strong>One index, three wobbles.</strong> Raj sold 15.9 %. The 23,050 call was sold at 15.5 % the same afternoon and the 22,250 at 17 %. Why
           would one index wobble differently depending on the strike? <a href="#/D2">D2 · The market does not believe in one number →</a>
         </div>
         <details className="prose d1-more">

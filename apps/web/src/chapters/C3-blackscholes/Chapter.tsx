@@ -109,7 +109,7 @@ export function BlackScholesChapter() {
         </p>
         <p className="c3-last">Four of the five numbers are facts. The fifth is a price wearing a percentage sign.</p>
         <div className="c3-pull">
-          <strong>The next thing to find.</strong> Raj's slope was 0.51 on Friday. On Monday the index moved 153 points and his screen handed him five
+          <strong>Monday morning on Raj's screen.</strong> Raj's slope was 0.51 on Friday. On Monday the index moved 153 points and his screen handed him five
           numbers — the slope, the bend, the clock and two more. <a href="#/C4">C4 · The slope, the bend and the clock →</a>
         </div>
         <details className="prose c3-more">

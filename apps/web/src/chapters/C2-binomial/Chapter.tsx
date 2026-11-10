@@ -86,7 +86,7 @@ export function BinomialChapter() {
         </p>
         <p className="c2-last">The trick has no secret: you never needed to know where the stock was going, only what you could copy.</p>
         <div className="c2-pull">
-          <strong>The next thing to find.</strong> The number the board closes in on has two derivations, and the smooth curve the tree makes at six
+          <strong>What the board closes in on.</strong> The number the board closes in on has two derivations, and the smooth curve the tree makes at six
           months is one of them. <a href="#/C3">C3 · Black–Scholes in detail →</a>
         </div>
         <details className="prose c2-more">

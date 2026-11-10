@@ -90,7 +90,7 @@ export function TimeSeriesChapter() {
         </p>
         <p className="a4-last">A chart can show you a home. Only a test can tell you whether it is really there.</p>
         <div className="a4-pull">
-          <strong>The next thing to find.</strong> The kicks in Round 2 were all the same size. Real kicks come in spells — and the size of the kick
+          <strong>What the kicks were hiding.</strong> The kicks in Round 2 were all the same size. Real kicks come in spells — and the size of the kick
           has a memory too. <a href="#/A5">A5 · How fast should you forget? →</a>
         </div>
         <details className="prose a4-more">

@@ -106,7 +106,7 @@ export function OptionsChapter() {
           The screen is forty numbers and one law. Read the law first; the numbers are what it leaves you free to argue about.
         </p>
         <div className="c1-pull">
-          <strong>The next thing to find.</strong> The chain says the 22,600 call is worth 249.15. Where does that number come from — and why does the
+          <strong>Where 249.15 comes from.</strong> The chain says the 22,600 call is worth 249.15. Where does that number come from — and why does the
           answer need no opinion about where the index is going? <a href="#/C2">C2 · Pick any probability →</a>
         </div>
         <details className="prose c1-more">

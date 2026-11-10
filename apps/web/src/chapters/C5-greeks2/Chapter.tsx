@@ -77,7 +77,7 @@ export function GreeksTwoChapter() {
         </p>
         <p className="c5-last">A hedge is a sentence about the world. Change your mind about the world and the sentence is wrong, even if nothing happened.</p>
         <div className="c5-pull">
-          <strong>The next thing to find.</strong> The cents left over after Raj's clock and bend in chapter D1 are these — and the smile in chapter D2
+          <strong>Where the cents go.</strong> The cents left over after Raj's clock and bend in chapter D1 are these — and the smile in chapter D2
           is the market saying the wobble is not one number. What happens to a price when the wobble has a life of its own?{" "}
           <a href="#/D3">D3 · Three stories, one curve →</a>
         </div>

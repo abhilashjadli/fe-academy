@@ -109,7 +109,7 @@ export function MartingalesChapter() {
         </p>
         <p className="b2-last">You may leave whenever you like, bet whatever you like, and use everything you know. The meter has already read it.</p>
         <div className="b2-pull">
-          <strong>The next thing to find.</strong> Which average — and who moves the odds so that the meter reads the price?{" "}
+          <strong>The question the meter leaves open.</strong> Which average — and who moves the odds so that the meter reads the price?{" "}
           <a href="#/B5">B5 · The odds are not the price →</a>
         </div>
         <details className="prose b2-more">

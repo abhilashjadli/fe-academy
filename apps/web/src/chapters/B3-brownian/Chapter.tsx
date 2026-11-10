@@ -105,7 +105,7 @@ export function BrownianChapter() {
         </p>
         <p className="b3-last">The speedometer lies and the odometer lies. The dial that adds up the squares reads the clock.</p>
         <div className="b3-pull">
-          <strong>The next thing to find.</strong> The squares dial is about to become a toll on every curved function of the road.{" "}
+          <strong>The dial comes back.</strong> The squares dial is about to become a toll on every curved function of the road.{" "}
           <a href="#/B4">B4 · Itô's lemma →</a>
         </div>
         <details className="prose b3-more">
