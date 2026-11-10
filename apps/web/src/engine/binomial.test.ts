@@ -21,6 +21,7 @@ import {
   terminalProbabilities,
 } from "./binomial";
 import { putCallParity } from "./options";
+import { black76 } from "./bs";
 
 const k = key as typeof key;
 const hull = { S0: 20, u: 1.1, d: 0.9, K: 21, r: 0.12, T: 0.25 };
@@ -286,6 +287,46 @@ describe("C2 CRR and convergence vs key (Hull pp. 211–215; Leisen–Reimer)", 
       const p = crrPrice({ ...atm, n, kind: "put" });
       expect(putCallParity(c, p, atm.S, atm.K, atm.r, atm.T, 1e-9).holds).toBe(true);
     }
+  });
+
+  it("C2 F0/F1's real row: one CRR step on the stock whose forward is 22,603 (22,558.77 → 23,188.22 / 21,946.40); Δ 0.4737, p 0.5287, price 310.41; 1,000 steps 249.11 ≈ Black-76 249.15", () => {
+    const c = k.c2_real;
+    const { u, d } = crrParameters(c.sigma, c.r, c.T);
+    expect(u).toBeCloseTo(c.u, 12);
+    expect(d).toBeCloseTo(c.d, 12);
+    const s = oneStep({ S0: c.S0, u, d, K: c.K, r: c.r, T: c.T });
+    expect(c.S0).toBeCloseTo(c.F * Math.exp(-c.r * c.T), 8);
+    expect(s.Su).toBeCloseTo(c.Su, 8);
+    expect(s.Sd).toBeCloseTo(c.Sd, 8);
+    expect(s.fu).toBeCloseTo(c.fu, 8);
+    expect(s.fd).toBe(0);
+    expect(s.delta).toBeCloseTo(c.delta, 12);
+    expect(s.portfolio).toBeCloseTo(c.portfolio, 8);
+    expect(s.pv).toBeCloseTo(c.pv, 8);
+    expect(s.f).toBeCloseTo(c.price, 8);
+    expect(s.p).toBeCloseTo(c.p, 12);
+    expect(s.fRiskNeutral).toBeCloseTo(c.price_rn, 8);
+    expect(s.Su).toBeCloseTo(23188.22, 2);
+    expect(s.Sd).toBeCloseTo(21946.4, 2);
+    expect(s.delta).toBeCloseTo(0.4737, 4);
+    expect(s.p).toBeCloseTo(0.5287, 4);
+    expect(s.f).toBeCloseTo(310.41, 2);
+    // the price is the same at every belief; the naive number is not
+    beliefDemonstrator({ S0: c.S0, u, d, K: c.K, r: c.r, T: c.T }, c.beliefs).forEach((row, i) => {
+      expect(row.replication).toBeCloseTo(c.price, 8);
+      expect(row.naive).toBeCloseTo(c.naive_prices[i], 8);
+    });
+    // fine board and the screen's number: the board's stock is the one whose 11-day forward is 22,603, so its limit is the forward-form
+    // 249.15 (to within the sawtooth); a board that wrongly took 22,603 itself as today's level would converge to 272.20 instead
+    const prm = { S: c.S0, K: c.K, r: c.r, sigma: c.sigma, T: c.T };
+    expect(crrPrice({ ...prm, n: 1000 })).toBeCloseTo(c.crr_1000, 8);
+    expect(crrPrice({ ...prm, n: 1000 })).toBeCloseTo(249.11, 2);
+    expect(crrPrice({ ...prm, S: c.F, n: 1000 })).toBeCloseTo(c.crr_1000_on_F, 8);
+    expect(crrPrice({ ...prm, S: c.F, n: 1000 })).toBeCloseTo(272.2, 1);
+    expect(bsPrice(c.F, c.K, c.r, c.sigma, c.T)).toBeCloseTo(c.bs_on_F, 8);
+    expect(black76({ F: c.F, K: c.K, r: c.r, sigma: c.sigma, T: c.T })).toBeCloseTo(c.black76, 8);
+    expect(black76({ F: c.F, K: c.K, r: c.r, sigma: c.sigma, T: c.T })).toBeCloseTo(c.black76_screen, 2);
+    expect(Math.abs(c.crr_1000_on_spot - c.black76)).toBeLessThan(0.05);
   });
 
   it("Hull's BS example (handover to B6/C3): S = 42, K = 40, r = 10 %, σ = 20 %, T = 0.5 → call 4.76, put 0.81", () => {

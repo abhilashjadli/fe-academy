@@ -11,7 +11,7 @@ import { rng } from "../../../engine/random";
 import "./figures.css";
 
 /**
- * Figure 4 — the trick scaled up. A 100-stock, the right to buy at 100, one year, 5 % interest, 20 % wobble (the standard textbook case).
+ * Figure 3 — the trick scaled up. A 100-stock, the right to buy at 100, one year, 5 % interest, 20 % wobble (the standard textbook case).
  * One scrubber: steps, 1 → 1,000. The board on its side grows rows, the buckets on the right sharpen into a leaning bell, and the price
  * settles on 10.4506 — Black–Scholes, written once, handed to C3. The "watch" tab is the 17-second clip of the same thing.
  */
@@ -228,16 +228,16 @@ export function F4Refine() {
       watchLabel="watch it (17 s)"
       doLabel="scrub it yourself"
       watch={
-        <Figure n="4" prompt="The tree becomes the curve, watched. The same board, the same numbers — then scrub it yourself.">
+        <Figure n="3" prompt="The tree becomes the curve, watched. The same board, the same numbers — then scrub it yourself.">
           <ClipRefine />
         </Figure>
       }
     >
       <Figure
-        n="4"
+        n="3"
         prompt={
           <>
-            The trick, scaled up. A 100-stock, the right to buy at <strong>100</strong>, one year, 5 % interest, a 20 % wobble — the standard textbook case. Drag the steps from 1 to 1,000 and watch the board and the price.
+            The trick, scaled up — on the textbook board, not the real row: a 100-stock, the right to buy at <strong>100</strong>, one year, 5 % interest, a 20 % wobble. Those are the inputs every book uses, because the limit they give, 10.4506, is the number every book prints. Drag the steps from 1 to 1,000 and watch the board and the price.
           </>
         }
         controls={

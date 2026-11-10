@@ -8,7 +8,7 @@ import { binomialTree, payoff, type TreeResult } from "../../../engine/binomial"
 import "./figures.css";
 
 /**
- * Figure 3 — two rows, and the American toggle. The board grows a second row (24.2 / 19.8 / 16.2); press Forward and the last column
+ * Figure 2 — two rows, and the American toggle. The board grows a second row (24.2 / 19.8 / 16.2); press Forward and the last column
  * takes the payoff, then each parent lights with its two children and becomes their discounted weighted average, down to the root.
  * Hull's put (K = 52 on a 50-stock, two one-year steps, ±20 %, 5 %) and the American toggle use the same fill with one extra question per node.
  */
@@ -67,7 +67,7 @@ export function F3Fill() {
       return {
         caption: (
           <>
-            Node <strong>{fS(S(r, k))}</strong> lights with its two children. Average them with the weight {f4(t.p)} (the weight from Figure 2, for this board), then discount {period}: <span className="num">{disc.toFixed(4)} × ({avg(r, k)}) = {f4(cont(r, k))}</span>.
+            Node <strong>{fS(S(r, k))}</strong> lights with its two children. Average them with the weight {f4(t.p)} (the weight that makes this board's stock a fair bet at its interest rate — the one the sentence under Figure 1 named), then discount {period}: <span className="num">{disc.toFixed(4)} × ({avg(r, k)}) = {f4(cont(r, k))}</span>.
             {exercised ? (
               <>
                 {" "}
@@ -88,7 +88,7 @@ export function F3Fill() {
 
   return (
     <Figure
-      n="3"
+      n="2"
       prompt={<>The board grows a second row. Fill it from the right: every node is the discounted weighted average of its two children.</>}
       controls={
         <>
@@ -142,7 +142,7 @@ export function F3Fill() {
                 <details className="c2-more c2-footnote-details">
                   <summary className="footnote">where the weight {f4(t.p)} comes from, and what the book prints</summary>
                   <div className="footnote c2-footnote">
-                    Weight {f4(t.p)} = (e^({input.r} × {input.dt}) − {input.d}) / ({input.u} − {input.d}) — Figure 2's row 1 for this board. {which === "call" ? "The book rounds along the way and prints 2.0257 and 1.2823." : american ? "The book prints 12 at the red node and 5.0894 at the root." : "The book prints 1.4147, 9.4636 and 4.1923."}
+                    Weight {f4(t.p)} = (e^({input.r} × {input.dt}) − {input.d}) / ({input.u} − {input.d}) — the fair-bet weight for this board (B5 F2 derives it row by row). {which === "call" ? "The book rounds along the way and prints 2.0257 and 1.2823." : american ? "The book prints 12 at the red node and 5.0894 at the root." : "The book prints 1.4147, 9.4636 and 4.1923."}
                     {" "}K = {K}.
                   </div>
                 </details>

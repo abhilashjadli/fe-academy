@@ -222,6 +222,34 @@ h, B = delta, -pv
 key["hedge_meter"] = dict(h=h, cash=B, up=h * S0 * u + B * math.exp(r * T), down=h * S0 * d + B * math.exp(r * T), cost=h * S0 + B,
                           wrong=dict(h=0.5, cash=-pv, up=0.5 * 22 - pv * math.exp(r * T), down=0.5 * 18 - pv * math.exp(r * T)))
 
+# ------------------------------------------------------------------ C2 F0/F1: the real row as a one-step board (C1's 22,600 call, 23 Oct 2026 chain)
+# One CRR step on the stock whose 11-day forward is the chain's 22,603: S0 = F e^{−rT} = 22,558.77 (the engine's oneStep treats S0 as a
+# stock earning r, so this is the board whose fine-step limit is the forward-form 249.15). K = 22,600, σ = 0.15853 (the row's implied
+# vol), 11 days, r = 6.5 %, u = e^{σ√T}, d = 1/u. The CRR limit on the forward itself (272.20) is also recorded so the gap is on the record.
+Fr, Kr, sig_r, Tr, rr = 22603.0, 22600.0, 0.15853, 11 / 365, 0.065
+spot_r = Fr * math.exp(-rr * Tr)
+ur = math.exp(sig_r * math.sqrt(Tr))
+dr = 1 / ur
+Su_r, Sd_r = spot_r * ur, spot_r * dr
+fu_r, fd_r = max(Su_r - Kr, 0), max(Sd_r - Kr, 0)
+delta_r = (fu_r - fd_r) / (Su_r - Sd_r)
+port_r = Su_r * delta_r - fu_r
+pv_r = port_r * math.exp(-rr * Tr)
+f_r = spot_r * delta_r - pv_r
+p_r = (math.exp(rr * Tr) - dr) / (ur - dr)
+d1_r = (math.log(Fr / Kr) + 0.5 * sig_r ** 2 * Tr) / (sig_r * math.sqrt(Tr))
+d2_r = d1_r - sig_r * math.sqrt(Tr)
+black76_r = math.exp(-rr * Tr) * (Fr * norm.cdf(d1_r) - Kr * norm.cdf(d2_r))
+key["c2_real"] = dict(
+    F=Fr, S0=spot_r, K=Kr, sigma=sig_r, T=Tr, r=rr, u=ur, d=dr, Su=Su_r, Sd=Sd_r, fu=fu_r, fd=fd_r, delta=delta_r, portfolio=port_r, pv=pv_r, p=p_r,
+    price=f_r, price_rn=math.exp(-rr * Tr) * (p_r * fu_r + (1 - p_r) * fd_r),
+    crr_1000=crr(spot_r, Kr, rr, sig_r, Tr, 1000)[0], crr_1000_on_F=crr(Fr, Kr, rr, sig_r, Tr, 1000)[0], bs_on_F=bs(Fr, Kr, rr, sig_r, Tr)[0],
+    black76=black76_r, black76_screen=249.15, spot_implied=spot_r, crr_1000_on_spot=crr(spot_r, Kr, rr, sig_r, Tr, 1000)[0],
+    beliefs=[0.1, 0.3, 0.5, 0.7, 0.9], naive_prices=[math.exp(-rr * Tr) * (b * fu_r + (1 - b) * fd_r) for b in [0.1, 0.3, 0.5, 0.7, 0.9]],
+)
+assert abs(black76_r - 249.15) < 0.01
+assert abs(key["c2_real"]["crr_1000_on_spot"] - black76_r) < 0.05
+
 out = os.path.join(os.path.dirname(__file__), "..", "..", "apps", "web", "src", "engine", "__fixtures__", "key-C1C2.json")
 json.dump(key, open(out, "w"))
 print("wrote", os.path.normpath(out))
