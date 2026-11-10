@@ -14,8 +14,9 @@ import { REAL_SECOND_EXPIRY } from "./secondExpiry";
 /**
  * Figure 4 — same dots, three stories, and the two questions that tell them apart. The three fitted smiles on one axis over
  * 21,800–23,400 with the 34 dots: they coincide on the quoted strikes and fan apart outside. Toggle 1, the index falls 5 %: the key's
- * three panels (local vol flattens and jumps; Heston and Merton slide). Toggle 2, a second expiry: Gatheral's SPX variance skews by
- * expiry (textbook, until the 24 Nov NIFTY row arrives) against the fitted stories' predicted skews. SABR as one captioned row.
+ * three panels (local vol flattens and jumps; Heston and Merton slide). Toggle 2, a second expiry: the real NIFTY variance skews by
+ * expiry at the close of 23 Oct (secondExpiry.ts, from the bhavcopy; Gatheral's SPX rows are the fallback) against the fitted
+ * stories' predicted skews. SABR as one captioned row.
  */
 
 const X: [number, number] = [21800, 23400];
@@ -56,7 +57,7 @@ function varSkewAt(story: "heston" | "merton", T: number): number {
 
 function TermPanel() {
   const narrow = useNarrow();
-  const real = REAL_SECOND_EXPIRY;
+  const real = REAL_SECOND_EXPIRY as typeof REAL_SECOND_EXPIRY | null;
   const rows = useMemo(() => {
     const src = real ? real.rows.map((r) => ({ T: r.T, label: r.label, skew: r.varSkew })) : TS.rows.map((r) => ({ T: r.T, label: r.label, skew: r.spx_var_skew }));
     return src.map((r) => ({ ...r, heston: varSkewAt("heston", r.T), merton: varSkewAt("merton", r.T) }));
@@ -81,10 +82,10 @@ function TermPanel() {
       <div className="d3-panel-title">
         <strong>a second expiry</strong> <span>{real ? real.source : "textbook: Gatheral's SPX, 15 Sep 2005 (Table 3.1) — the 24 Nov NIFTY row replaces it when it arrives"}</span>
       </div>
-      <Plot xDomain={xd} yDomain={yd} width={narrow ? 390 : 560} height={narrow ? 250 : 270} margin={{ top: 12, right: 14, bottom: 36, left: 44 }} xTicks={0} yTicks={4} grid={false} axisX={xd[0]} axisY={0} xLabel="time to expiry" yLabel="steepness of the smile at the money (variance skew)" ariaLabel="at-the-money variance skew against time to expiry: the textbook SPX points and the fitted Heston and Merton stories' predicted decay">
+      <Plot xDomain={xd} yDomain={yd} width={narrow ? 390 : 560} height={narrow ? 250 : 270} margin={{ top: 12, right: 14, bottom: 36, left: 44 }} xTicks={0} yTicks={4} grid={false} axisX={xd[0]} axisY={0} xLabel="time to expiry" yLabel="steepness of the smile at the money (variance skew)" ariaLabel="at-the-money variance skew against time to expiry: the real NIFTY points by expiry and the fitted Heston and Merton stories' predicted decay">
         <TermTicks rows={rows.map((r) => ({ x: lx(r.T), label: r.label }))} />
         <VLine at={chainX} />
-        <Label at={[chainX, yd[1]]} text="this chain, 11 days" dx={4} dy={26} role="ghost" />
+        <Label at={[chainX, yd[1]]} text={narrow ? "this chain" : "this chain, 11 days"} dx={4} dy={26} role="ghost" />
         <Curve pts={hl} role="approx" width={2} />
         <Curve pts={ml} role="error" width={2} />
         <Marker at={[chainX, TS.chain_quadratic_var_skew]} role="truth" r={5} />
@@ -100,10 +101,22 @@ function TermPanel() {
         <Label at={ml[0]} text="Merton" role="error" dx={8} dy={14} />
       </Plot>
       <p className="d3-term-note">
-        {real ? "Real rows" : "Textbook rows"}: {rows.map((r) => `${s3(r.skew)} at ${r.label}`).join(", ")}. The fitted stories at those dates — Heston {rows.map((r) => s3(r.heston)).join(" / ")}; Merton{" "}
-        {rows.map((r) => s3(r.merton)).join(" / ")} (key: Heston {TS.rows.map((r) => s3(r.heston_var_skew)).join(" / ")}, Merton {TS.rows.map((r) => s3(r.merton_var_skew)).join(" / ")}). Heston's tilt fades
-        like one over time; Merton's is steepest at a day and gone past a few weeks; local vol has no prediction here — it follows whatever surface it was painted from, and one expiry does not give it one.
-        Blue dot: this chain's own tilt, {s3(TS.chain_quadratic_var_skew)} at 11 days.
+        {real ? (
+          <>
+            Real rows, at the close: {rows.map((r) => `${s3(r.skew)} at ${r.label}`).join(", ")}. The fitted stories at those dates — Heston {rows.map((r) => s3(r.heston)).join(" / ")}; Merton{" "}
+            {rows.map((r) => s3(r.merton)).join(" / ")}. Both stories, fitted to one expiry, say the tilt <em>fades</em> with time (Heston like one over time, Merton faster); the market's tilt
+            does the opposite here — nearly flat at 4 days, where the smile is a U rather than a slope, and steepening out to December. Neither knob set was ever asked to know this,
+            which is why desks calibrate to the whole surface, and why local vol, which has no prediction of its own, needs every row painted in. Blue dot: this chain's own tilt from
+            the screenshot's fit, {s3(TS.chain_quadratic_var_skew)}; the close's 3 Nov row is the black dot beside it.
+          </>
+        ) : (
+          <>
+            Textbook rows: {rows.map((r) => `${s3(r.skew)} at ${r.label}`).join(", ")}. The fitted stories at those dates — Heston {rows.map((r) => s3(r.heston)).join(" / ")}; Merton{" "}
+            {rows.map((r) => s3(r.merton)).join(" / ")} (key: Heston {TS.rows.map((r) => s3(r.heston_var_skew)).join(" / ")}, Merton {TS.rows.map((r) => s3(r.merton_var_skew)).join(" / ")}). Heston's
+            tilt fades like one over time; Merton's is steepest at a day and gone past a few weeks; local vol has no prediction here — it follows whatever surface it was painted from, and
+            one expiry does not give it one. Blue dot: this chain's own tilt, {s3(TS.chain_quadratic_var_skew)} at 11 days.
+          </>
+        )}
       </p>
     </div>
   );
