@@ -364,6 +364,34 @@ export function simulateStory(p: StoryParams, nPaths: number, nSteps: number, se
   return out;
 }
 
+/**
+ * One Heston path drawn step by step for the picture above the breathing cloud: the same full-truncation Euler scheme and the same
+ * draw order as `simulateStory("heston")`, so with the same seed its terminal price equals the first (+) path of that cloud.
+ * Returns the price and the variance after each step, index 0 = today.
+ */
+export function hestonPath(m: HestonModel, nSteps: number, seed: number): { price: Float64Array; v: Float64Array } {
+  const R = rng(seed);
+  const dt = m.T / nSteps;
+  const sq = Math.sqrt(dt);
+  const c2 = Math.sqrt(1 - m.rho * m.rho);
+  const price = new Float64Array(nSteps + 1);
+  const v = new Float64Array(nSteps + 1);
+  let x = Math.log(m.F);
+  let vv = m.v0;
+  price[0] = m.F;
+  v[0] = vv;
+  for (let s = 0; s < nSteps; s++) {
+    const z1 = normalSample(R);
+    const z2 = m.rho * z1 + c2 * normalSample(R);
+    const vp = Math.max(vv, 0);
+    x += -0.5 * vp * dt + Math.sqrt(vp) * sq * z1;
+    vv += m.kappa * (m.theta - vp) * dt + m.eta * Math.sqrt(vp) * sq * z2;
+    price[s + 1] = Math.exp(x);
+    v[s + 1] = vv;
+  }
+  return { price, v };
+}
+
 /** Implied smile traced on a finished cloud: out-of-the-money option at each strike (put below F, call above), Black-76 root-finder. */
 export function impliedSmileFromCloud(terminals: Float64Array | number[], strikes: number[], r: number, T: number, F?: number): number[] {
   const n = terminals.length;

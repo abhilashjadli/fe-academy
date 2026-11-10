@@ -5,6 +5,7 @@ import {
   CHAIN,
   FITS,
   cloudMean,
+  hestonPath,
   hestonPrice,
   hestonSkew321,
   hestonSmile,
@@ -332,5 +333,15 @@ describe("D3 — the breathing clouds", () => {
     });
     expect(h[0]).toBeGreaterThan(h[2]);
     expect(m[0]).toBeGreaterThan(m[2]);
+  });
+  it("hestonPath walks the first path of the seeded cloud (same scheme, same draws) and is pulled toward its home", () => {
+    const one = hestonPath(FITS.heston, 22, 11);
+    const cloud = simulateStory({ story: "heston", model: FITS.heston }, 2, 22, 11);
+    expect(one.price[22]).toBeCloseTo(cloud[0], 9);
+    expect(one.price[0]).toBe(F);
+    expect(one.v[0]).toBe(FITS.heston.v0);
+    // with no jitter the variance relaxes to θ exactly
+    const calm = hestonPath({ ...FITS.heston, eta: 0, v0: 0.05, theta: 0.02 }, 2000, 1);
+    expect(calm.v[2000]).toBeCloseTo(0.02 + 0.03 * Math.exp(-2 * T), 4);
   });
 });
