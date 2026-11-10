@@ -94,10 +94,10 @@ export function F2Bucket() {
       }
       observe={
         <>
-          Small hole ({"≤"} 3 %): the level is smooth and slow and misses the storm for a week. Big hole (20 % and up): it jumps on the day and drains in a fortnight. The 250-cup average barely
-          notices anything — three storm days in a year of 250 do not move an average. With the hole at 6 % (the setting the RiskMetrics desk picked in 1994) the bucket forgets half in{" "}
-          {n1(halfLifeOfHole(HOLE_DEFAULT))} days and peaks at {volPct(Math.sqrt(Math.max(...EWMA94)))} a day on {niceDate(DATES[EWMA94.indexOf(Math.max(...EWMA94)) - 1])}, two days after the −13.9 % of{" "}
-          {niceDate(DATES[MARCH23])}. The level is a <strong>variance</strong> — squares in, squares held; the number a trader calls volatility is its square root.
+          Small hole ({"≤"} 3 %): smooth, slow, misses the storm for a week. Big hole (20 % and up): jumps on the day, drains in a fortnight. The 250-cup average barely notices —
+          three storm days do not move a year's average. At 6 % (RiskMetrics, 1994) the bucket forgets half in {n1(halfLifeOfHole(HOLE_DEFAULT))} days — the half-life of A4's Figure 3, there for a
+          fading correlation, here for a fading square — and peaks at {volPct(Math.sqrt(Math.max(...EWMA94)))} a day on {niceDate(DATES[EWMA94.indexOf(Math.max(...EWMA94)) - 1])}. The level is a{" "}
+          <strong>variance</strong>; volatility is its square root.
         </>
       }
     >
@@ -128,10 +128,6 @@ export function F2Bucket() {
           />
           <div className="a5-bucket-col">
             <Bucket level={toPct2(level)} cup={SQ[i]} hole={hole} ghost={Number.isFinite(ghost) ? toPct2(ghost) : undefined} label="variance" />
-            <div className="a5-sqrt-tile">
-              <span className="k">√ level = volatility</span>
-              <span className="v a5-truth">{volPct(Math.sqrt(level))}</span>
-            </div>
           </div>
         </div>
         <div className="a5-words">

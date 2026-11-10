@@ -38,8 +38,13 @@
   gap: var(--space-3);
   align-items: start;
 }
+/* from ×100 up the zoom has three panes: camera / camera / √-time */
+.b3-split.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 @media (max-width: 760px) {
-  .b3-split {
+  .b3-split,
+  .b3-split.three {
     grid-template-columns: minmax(0, 1fr);
   }
 }

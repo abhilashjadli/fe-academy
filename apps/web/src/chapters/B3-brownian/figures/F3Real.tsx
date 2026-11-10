@@ -47,7 +47,11 @@ export function F3Real() {
     vol.forEach((v, j) => {
       if (v > vol[jmax]) jmax = j;
     });
-    return { vol, drift, yrs, volPts, driftPts, pricePts, jmax, windows: vol.length };
+    // the dial's quartiles over all the windows: "a quiet year" is the middle half of them
+    const sorted = vol.slice().sort((a, b) => a - b);
+    const q1 = sorted[Math.floor(sorted.length * 0.25)],
+      q3 = sorted[Math.floor(sorted.length * 0.75)];
+    return { vol, drift, yrs, volPts, driftPts, pricePts, jmax, windows: vol.length, q1, q3 };
   }, []);
   const [j, setJ] = useState(Math.min(series.windows - 1, 900)); // opens on 2019–20, so the storm is one drag away
   const narrow = useNarrow();
@@ -85,10 +89,10 @@ export function F3Real() {
       }
       observe={
         <>
-          The dial — the year's squared daily moves, added up and read as a yearly wobble — sits near {pctSp(KEY.nifty.rv_all, 0)} most of the decade and lights up in the
-          storms (the year to {monthYear(stormDate)}, which holds March 2020: {pctSp(series.vol[series.jmax])}). The drift readout swings from window to window and never settles.{" "}
-          <strong>You can measure the wobble from one path; you cannot measure the drift from one decade.</strong> Read the dial much finer than a day and it starts to
-          over-read — the bid-ask bounce is a move that is not a move — which is why this one stops at daily closes.
+          The dial — the year's squared daily moves, added up and read as a yearly wobble — reads {pctSp(series.q1, 0)}–{pctSp(series.q3, 0)} in a quiet year and{" "}
+          {pctSp(KEY.nifty.rv_all, 0)} over the whole decade because of 2020 (the year to {monthYear(stormDate)}: {pctSp(series.vol[series.jmax])}). It is A5's trailing-year band,
+          the dashed √-250-cup line in that chapter's bucket. The drift readout swings from window to window and never settles.{" "}
+          <strong>You can measure the wobble from one path; you cannot measure the drift from one decade.</strong>
         </>
       }
     >
@@ -103,7 +107,7 @@ export function F3Real() {
             <Curve pts={series.volPts} role="truth" width={2} smooth={false} />
             <VLine at={x1} />
             <Label at={[series.volPts[series.jmax][0], series.volPts[series.jmax][1]]} text={`year to ${monthYear(stormDate)}: ${pct1(series.vol[series.jmax])}`} role="truth" anchor="start" dx={6} dy={-6} />
-            <Label at={[xDomain[0], 100 * KEY.nifty.rv_all]} text="the dial, as a yearly wobble" role="truth" dx={6} dy={-6} />
+            <Label at={[xDomain[0], 100 * KEY.nifty.rv_all]} text={`the dial, as a yearly wobble (decade average ${pctSp(KEY.nifty.rv_all, 1)})`} role="truth" dx={6} dy={-6} />
             <Label at={[xDomain[0], -32]} text="the average move, as a yearly drift" role="approx" dx={6} dy={-6} />
           </Plot>
         </div>

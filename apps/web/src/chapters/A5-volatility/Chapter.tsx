@@ -7,6 +7,7 @@ import { F2Bucket } from "./figures/F2Bucket";
 import { F3June } from "./figures/F3June";
 import { F4Drip } from "./figures/F4Drip";
 import { F5Score } from "./figures/F5Score";
+import { KEY, n0, n1 } from "./figures/a5";
 
 export function VolatilityChapter() {
   return (
@@ -92,7 +93,9 @@ export function VolatilityChapter() {
             persistence (α + β, typically 0.98–0.99 on daily index data) is quoted more confidently than either knob. Daily moves have fatter tails
             than a bell even after scaling, so desks fit a Student-t error; and index falls raise volatility more than rises of the same size (the
             leverage effect), which GJR-GARCH handles with one extra knob on the down days. Hull's yen example gives the textbook numbers (ω =
-            0.0000013, α = 0.083, β = 0.914, long-run 1.4 % a day) and lives in the tests.
+            0.00000176, α = 0.0626, β = 0.8976, long-run 0.665 % a day) and lives in the tests. Figure 5's "eaten the weather" has a formal test: the Ljung–Box
+            statistic of the squares over twenty lags is {n0(KEY.ljung_box_r2.stat)} on the raw strip and {n1(KEY.ljung_box_std2.stat)} on the squares divided by
+            the computer's band — a value a strip with no weather would give {Math.round(100 * KEY.ljung_box_std2.p)} % of the time.
           </p>
         </details>
         <h2>Where it is used</h2>

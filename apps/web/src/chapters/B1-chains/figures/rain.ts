@@ -4,8 +4,9 @@
  * `fitChain` on that strip, and every quoted constant from `key-B1.json` (made by tests/answer-key/key_B1.py).
  *
  * REAL DATA: the Open-Meteo file could not be fetched from the build environment, so the season is SIMULATED for now, from
- * the engine's own chain with the key's `fit_long.P_true` matrix (the matrix whose fitted recovery the key tests). The
- * figures that show it say so in their prompts. When the real file is dropped in at
+ * the engine's own chain with the key's `stand_in.P` matrix — a sticky one (diagonal 0.87 / 0.65 / 0.55, dry spells 7.7 days
+ * on average) so the strip has the spells the page describes; the key holds the exact strip drawn at this seed and tests it.
+ * The figures that show it say so in their prompts. When the real file is dropped in at
  *   apps/web/src/data/rain-bengaluru-2024.json
  * with the shape { city: string; from: "YYYY-MM-DD"; to: "YYYY-MM-DD"; mm: number[] } (one daily precipitation sum per
  * day, from..to inclusive), the glob below picks it up at build time and every figure switches to it — the "simulated"
@@ -41,10 +42,10 @@ export function stateOfMm(mm: number): State {
   return mm > THRESH.heavy ? 2 : mm >= THRESH.some ? 1 : 0;
 }
 
-/** the simulated season's generating matrix: the key's fit_long.P_true (what the key's long-strip fit test recovers) */
-export const P_SEASON: Matrix = key.fit_long.P_true;
-export const SEASON_SEED = 20261029; // the answer key's own seed, reused as the figure's playback seed
-export const SEASON_DAYS = 120;
+/** the simulated season's generating matrix: the key's sticky `stand_in.P`; the key reproduces this very strip at this seed */
+export const P_SEASON: Matrix = key.stand_in.P;
+export const SEASON_SEED = key.stand_in.season_seed; // 20261029 — the key ports the engine's PRNG and draws the same strip
+export const SEASON_DAYS = key.stand_in.season_days; // 120
 
 export interface Season {
   city: string;
@@ -137,8 +138,20 @@ export const LONGEST_DRY_ALL = spells(SEASON.states)
   .filter((s) => s.state === 0)
   .reduce((best, s) => (s.len > best.len ? s : best), { start: 0, len: 0, state: 0 as State });
 export const LONGEST_DRY = spells(SEASON.states)
-  .filter((s) => s.state === 0 && CELLS[s.start].month === CELLS[s.start + s.len - 1].month)
-  .reduce((best, s) => (s.len > best.len ? s : best), { start: 0, len: 0, state: 0 as State });
+  .filter((s) => s.state === 0)
+  .flatMap((s) => {
+    // split a spell at the row breaks: the hotspot boxes the longest piece that sits in one calendar row
+    const pieces: Array<{ start: number; len: number; state: State; whole: boolean }> = [];
+    let start = s.start;
+    for (let i = s.start + 1; i <= s.start + s.len; i++) {
+      if (i === s.start + s.len || CELLS[i].month !== CELLS[start].month) {
+        pieces.push({ start, len: i - start, state: 0, whole: s.len === i - start });
+        start = i;
+      }
+    }
+    return pieces;
+  })
+  .reduce((best, s) => (s.len > best.len ? s : best), { start: 0, len: 0, state: 0 as State, whole: true });
 export const HEAVY_DAYS = CELLS.filter((c) => c.state === 2 && c.i + 1 < DAYS).map((c) => c.i);
 export const AFTER_HEAVY = HEAVY_DAYS.map((i) => SEASON.states[i + 1]);
 export const AFTER_HEAVY_RAIN = AFTER_HEAVY.filter((s) => s > 0).length;

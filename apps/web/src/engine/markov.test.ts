@@ -165,6 +165,29 @@ describe("B1 Markov chains vs numpy key", () => {
     for (let i = 0; i < 3; i++) expect(Math.abs(occ[i] - key.fit_long.stationary[i])).toBeLessThan(0.01);
     expect(key.fit_long.max_abs_err).toBeLessThan(0.01);
   });
+
+  it("the stand-in season: the engine at the figure's seed draws the key's exact strip (mean spell 5.0 d, dry spells 8.6 d, 14 of 15 heavy days followed by rain)", () => {
+    const P = key.stand_in.P;
+    close(stationary(P), key.stand_in.stationary, 12);
+    for (let i = 0; i < 3; i++) expect(expectedHoldingTime(P, i)).toBeCloseTo(key.stand_in.expected_holding[i], 12);
+    expect(expectedHoldingTime(P, 0)).toBeCloseTo(7.6923, 4);
+    // the same strip the figures draw, byte for byte (mulberry32 ported into the key)
+    const season = simulateChain(P, key.stand_in.season_days - 1, 0, rng(key.stand_in.season_seed));
+    expect(season).toEqual(key.stand_in.season_states);
+    expect(occupancy(season, 3).map((f) => Math.round(f * season.length))).toEqual(key.stand_in.season_counts);
+    expect(meanRunLength(season)).toBeCloseTo(key.stand_in.season_mean_run, 12);
+    expect(meanRunLength(season)).toBeCloseTo(5.0, 12);
+    expect(runLengths(season).length).toBe(key.stand_in.season_n_runs);
+    const fitted = fitChain(season, 3);
+    fitted.P.forEach((row, i) => close(row, key.stand_in.season_P_fit[i], 12));
+    close(stationary(fitted.P), key.stand_in.season_stationary_of_fit, 12);
+    // and the chain really is sticky: mean spell ≈ 4.3 days against the coin's ≈ 1.8 (closed form and 2 × 10⁵ steps)
+    expect(key.stand_in.mean_run_closed).toBeGreaterThan(4);
+    expect(Math.abs(key.stand_in.mc_mean_run - key.stand_in.mean_run_closed)).toBeLessThan(0.05);
+    expect(Math.abs(key.stand_in.mc_coin_mean_run - key.stand_in.coin_mean_run_closed)).toBeLessThan(0.05);
+    const x = simulateChain(P, 200_000, 0, rng(5));
+    expect(Math.abs(meanRunLength(x) - key.stand_in.mean_run_closed)).toBeLessThan(0.05);
+  });
 });
 
 describe("B1 random walk (Shreve §3.2)", () => {

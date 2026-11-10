@@ -95,7 +95,8 @@ export function MartingalesChapter() {
             Proof that no system helps: your bet at toss n is decided from pages 1…n; the toss itself has mean zero and is independent of those
             pages; so the expected gain of the bet is the bet times zero; sum over tosses. The optional stopping theorem says the same for exit
             rules, provided the game cannot run forever on credit — the "up 1" rule needs unlimited time and an unlimited bankroll to be certain,
-            which is where the −40 tail comes from. Five properties worth a sentence each: a martingale's increments are uncorrelated (not
+            which is where the −40 tail comes from. Figure 1's two walls are the same theorem as arithmetic: with walls at +a and −b the chance of
+            reaching +a first is b / (a + b) — 20 / (20 + 5) = 0.8 — because that is the only split that keeps the average at zero. Five properties worth a sentence each: a martingale's increments are uncorrelated (not
             necessarily independent); a convex function of a martingale is a submartingale (Jensen — why the price of an option leans); a
             martingale that is bounded converges; Doob's inequality bounds how far it can wander; and any process splits into a predictable part
             plus a martingale (Doob decomposition), which is how B5 removes the lean.

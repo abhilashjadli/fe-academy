@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Figure } from "../../../ui/Figure";
 import { Readouts, Slider } from "../../../ui/controls";
 import { acf } from "../../../engine/volatility";
-import { CLUSTER, DATES, KEY, N, NAMED_STORMS, R, SQ, STORMS, movePct, n0, niceDate, s3 } from "./a5";
+import { CLUSTER, DATES, N, NAMED_STORMS, R, SQ, STORMS, movePct, n0, niceDate, s3 } from "./a5";
 import { setClock, useClock } from "./clock";
 import { TwoPictures } from "./pictures";
 import "./figures.css";
@@ -90,10 +90,10 @@ export function F1Clock() {
       }
       observe={
         <>
-          The top picture looks like noise; the bottom one has <strong>weather</strong> — the squares come in spells, and the spells are Figure 0's storms. In words: a big square (one of the biggest
-          tenth, a move past {movePct(CLUSTER.thr, 1).replace(/^[+−]/, "±")}) follows a big square <strong>{(100 * CLUSTER.pBigAfterBig).toFixed(0)} %</strong> of the time, where chance says{" "}
-          {(100 * CLUSTER.pBig).toFixed(0)} % — more than twice as often. An up day follows an up day {(100 * CLUSTER.pUpAfterUp).toFixed(0)} % of the time against {(100 * CLUSTER.pUp).toFixed(0)} % by chance:
-          nothing in particular. The lag-one correlation says the same in one number each: squares {s3(rho2)}, moves {s3(rho1)} (key: {s3(KEY.acf_r2[0])} and {s3(KEY.acf_r[0])}). Big days do not tell you the sign of tomorrow; they tell you its size.
+          The top picture is noise; the bottom one has <strong>weather</strong> — the squares come in spells, and the spells are Figure 0's storms. A big square (a move past{" "}
+          {movePct(CLUSTER.thr, 1).replace(/^[+−]/, "±")}) follows a big square <strong>{(100 * CLUSTER.pBigAfterBig).toFixed(0)} %</strong> of the time against {(100 * CLUSTER.pBig).toFixed(0)} % by chance; an up day
+          follows an up day {(100 * CLUSTER.pUpAfterUp).toFixed(0)} % against {(100 * CLUSTER.pUp).toFixed(0)} %. Lag-one correlation: squares {s3(rho2)}, moves {s3(rho1)}. Large changes tend to be followed by
+          large changes, of either sign.
         </>
       }
     >

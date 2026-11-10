@@ -124,7 +124,7 @@ export function F3Street() {
         ) : memory ? (
           <>
             With memory a step copies the last one {pct0(MEMORY_P)} of the time, so he strides. The crowd's spread² ÷ steps is {t > 0 ? f2(ms / t) : "—"}, not 1 — about{" "}
-            {f2(KEY.memory.ratio_formula)} in the long run (the key's measured {f2(KEY.memory.mc_ratio["400"])} at 400). The bracket still says √steps and the crowd has outrun it.
+            {f2(KEY.memory.ratio_formula)} in the long run. The bracket still says √steps and the crowd has outrun it.
             That is what "no memory beyond now" was buying you: the √ law.
           </>
         ) : t < 100 ? (

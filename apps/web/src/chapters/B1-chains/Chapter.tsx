@@ -48,8 +48,8 @@ export function ChainsChapter() {
       <div className="prose">
         <p>
           The token reads the arrow it stands on and never looks at the strip behind it — that is the whole of "Markov". Two instruments: what has
-          actually happened so far, and what you would bet before looking; from any corner both settle at the same point, the machine's long-run
-          weather. Now put the states on a line instead of in a triangle.
+          actually happened so far, and what you would bet before looking; from any corner the bet settles in a few hops on the machine's long-run
+          weather, and the "so far" creeps to within a few hundredths of it. Now put the states on a line instead of in a triangle.
         </p>
       </div>
 
@@ -96,8 +96,9 @@ export function ChainsChapter() {
         </details>
         <h2>Where it is used</h2>
         <p>
-          Credit rating transitions are a Markov chain with states AAA … D (chapter G1); regime-switching volatility models are a chain over "calm"
-          and "stormy"; and the lamppost walk, scaled, is every price path in blocks C–E.
+          Credit rating transitions are a Markov chain with states AAA … D — the one place the nine-number table appears as itself, in chapter G1. The
+          lamppost walk, scaled down to tiny steps, is where the next chapters' price paths come from. A "calm / stormy" weather table for volatility is
+          the same object again, later.
         </p>
         <p className="b1-last">The weather has a habit, and the habit fits in nine numbers.</p>
         <div className="b1-pull">

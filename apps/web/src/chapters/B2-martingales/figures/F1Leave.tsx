@@ -4,7 +4,6 @@ import { Figure } from "../../../ui/Figure";
 import { Says } from "../../../ui/Comic";
 import { Readouts, Segmented } from "../../../ui/controls";
 import { fixedBet, quitAt, quitWhenAhead, type Strategy } from "../../../engine/martingale";
-import key from "../../../engine/__fixtures__/key-B2.json";
 import { FanPlot, Finals } from "./Fan";
 import { Meter } from "./Meter";
 import { TOSSES, chips, f2, n1, n2, pct0, pct1, replayFan, useRecordReading } from "./table";
@@ -36,8 +35,6 @@ export function F1Leave() {
   const atUp = fan ? fan.finals.filter((v) => v === 5).length / fan.finals.length : 0;
   const atDown = fan ? fan.finals.filter((v) => v === -20).length / fan.finals.length : 0;
   const atBell = Math.max(0, 1 - atUp - atDown);
-  const q100 = key.quit_up_1[0];
-  const q1000 = key.quit_up_1[1];
 
   return (
     <Figure
@@ -78,11 +75,11 @@ export function F1Leave() {
           </>
         ) : rule === "up1" ? (
           <>
-            A spike at +1 with <strong>{pct1(ahead)}</strong> of players — and a thin tail to {chips(worst)}. The rule works almost every time, and the players it fails lose {n1(restMean)} chips on average, which is exactly what pays for everyone else's one chip. The meter reads <strong>{f2(fan.mean)}</strong> ± {n2(2 * fan.se)}. The answer key's version with 100 tosses to the bell: {pct1(q100.p_hit)} reach +1, the rest end at {n1(q100.mean_loss_given_miss)}, mean {n2(q100.mean)}; with 1,000 tosses {pct1(q1000.p_hit)} reach it and the rest lose {n1(q1000.mean_loss_given_miss)}. More time buys a higher hit rate and a deeper hole, never a moved meter.
+            A spike at +1 with <strong>{pct1(ahead)}</strong> of players — and a thin tail to {chips(worst)}. The rule works almost every time, and the players it fails lose {n1(restMean)} chips on average, which is exactly what pays for everyone else's one chip. The meter reads <strong>{f2(fan.mean)}</strong> ± {n2(2 * fan.se)}. More time buys a higher hit rate and a deeper hole, never a moved meter.
           </>
         ) : rule === "up5down20" ? (
           <>
-            Two walls: <strong>{pct0(atUp)}</strong> of players reached +5, {pct0(atDown)} hit −20, and {pct0(atBell)} were still between the walls when the bell rang at 200 (with unlimited time the split is 80/20 exactly — the chance of +5 before −20 is 20/(20 + 5); the answer key's 2,000-toss replay: {pct1(key.two_sided.p_up_first)}). Four wins of 5 against one loss of 20: the meter reads {f2(fan.mean)} ± {n2(2 * fan.se)}. Choose any two walls you like and the odds rearrange themselves so the average stays where it started.
+            Two walls: <strong>{pct0(atUp)}</strong> of players reached +5, {pct0(atDown)} hit −20, and {pct0(atBell)} were still between the walls at the bell (with unlimited time the split is 80/20 exactly). Four wins of 5 against one loss of 20: the meter reads {f2(fan.mean)} ± {n2(2 * fan.se)}. Choose any two walls you like and the odds rearrange themselves so the average stays where it started.
           </>
         ) : (
           <>

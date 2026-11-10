@@ -58,7 +58,7 @@ export function F5Wheel() {
           </>
         ) : (
           <>
-            Every meter tilts down, and the doubling system's fastest: on the wheel a cycle's exact average is {f2(dblExact)} chips, against {n2(key.doubling_k5.mean_cycle_formula)} for a fair one, because the long runs that reach the limit come more often ({pct1(Math.pow(1 - ROULETTE_P, 5))} a cycle instead of {pct1(1 / 32)}). The unit bet loses the answer key's {n3(key.roulette.unit_bet_mean_per_toss)} a toss, {f2(100 * key.roulette.unit_bet_mean_per_toss)} per 100. A game whose meter leans down is a <strong>supermartingale</strong>; one that leans up is a <strong>submartingale</strong>; a stock under its own odds leans up, and the chapter after next removes the lean. No exit rule and no bet sizing changes a tilt either: they only change who carries it.
+            Every meter tilts down, the doubling system's fastest: a cycle's exact average is {f2(dblExact)} chips on the wheel against {n2(key.doubling_k5.mean_cycle_formula)} fair, because the five-black runs come {pct1(Math.pow(1 - ROULETTE_P, 5))} of cycles instead of {pct1(1 / 32)}. The unit bet loses {n3(Math.abs(edge))} a toss. A meter that leans down is a <strong>supermartingale</strong>, up a <strong>submartingale</strong>; a stock under its own odds leans up, and chapter B5 removes the lean. No exit rule or bet sizing changes a tilt: they only change who carries it.
           </>
         )
       }

@@ -16,7 +16,7 @@ export function TimeSeriesChapter() {
         <p className="standfirst">
           Some series have a home they keep coming back to. Others wander off and never return. A trader's whole edge can be the difference — and no
           chart can tell you which you are looking at. This page is a game about telling them apart, played in five rounds, and then the one test
-          that can.
+          that can — given enough days.
         </p>
         <p className="assumes">Assumes: you can read a line chart and know what an average is. That is all.</p>
       </header>

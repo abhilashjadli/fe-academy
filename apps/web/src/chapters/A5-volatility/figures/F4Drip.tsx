@@ -3,7 +3,7 @@ import { Figure } from "../../../ui/Figure";
 import { Readouts, Slider } from "../../../ui/controls";
 import { Curve, Label, type Pt } from "../../../ui/Plot";
 import { garchForecast, garchLongRun, garchVariance, halfLife } from "../../../engine/volatility";
-import { DATES, FIT, KEY, MEAN_SQ, N, R, RV250, SQ, YEAR, n1, niceDate, useNarrow, varPct2, volPct, toPct2 } from "./a5";
+import { DATES, FIT, KEY, N, R, RV250, SQ, YEAR, n1, niceDate, useNarrow, varPct2, volPct, toPct2 } from "./a5";
 import { useClock } from "./clock";
 import { Bucket } from "./Bucket";
 import { SQ_CAP, TwoPictures, levelPts } from "./pictures";
@@ -11,25 +11,29 @@ import "./figures.css";
 
 /**
  * Figure 4 — the second pipe. A thin tap drips a constant into the bucket each day: GARCH(1,1), Hull eq. 17.8,
- * σ² = ω + α u² + β σ². One dial: the drip ω. The cup fraction α is the computer's fitted value; the keep fraction β is
- * whatever balances the drip at the ten-year average cup (β = 1 − α − ω/V̄, Hull's variance targeting, p. 381), so with
- * the drip off the bucket is Figure 2's again (α + β = 1, EWMA) and with it on the level has a home. Button: freeze the
+ * σ² = ω + α u² + β σ². One dial: the drip ω. The cup share α is the computer's fitted value; the keep β is whatever
+ * balances the drip at the computer's fitted home V_L (β = 1 − α − ω/V_L — Hull's variance-targeting form, p. 381, anchored
+ * on the fit's own long-run level rather than the sample average), so at the computer's drip the dial reads exactly the
+ * key's β, home and half-life, and with the drip off the bucket is Figure 2's again (α + β = 1, EWMA). Button: freeze the
  * pouring and let it drain from where the clock stands — Hull eq. 17.13. Readouts: home, half-life, 10 days ahead.
  */
 
 const HORIZON = 120;
-const STEP_PCT2 = 0.0025; // the dial moves in %² a day
+const STEP_PCT2 = 0.001; // the dial moves in %² a day
 const DAY = 1 / 252;
+/** the computer's fitted home, decimal variance: ω / (1 − α − β) of the key's fit (0.967 % a day) */
+const V_HOME = KEY.VL;
 
 export function F4Drip() {
   const i = useClock();
   const narrow = useNarrow();
-  const [dripPct2, setDrip] = useState(Math.round((10000 * FIT.omega) / STEP_PCT2) * STEP_PCT2);
+  const [dripPct2, setDrip] = useState(10000 * FIT.omega); // the computer's own drip, exactly
   const [frozen, setFrozen] = useState(false);
   const omega = dripPct2 / 10000;
   const alpha = FIT.alpha;
-  const gamma = omega / MEAN_SQ;
+  const gamma = omega / V_HOME;
   const beta = 1 - alpha - gamma;
+  const atFit = Math.abs(omega - FIT.omega) < 1e-12;
   const path = useMemo(() => garchVariance(R, omega, alpha, beta), [omega, alpha, beta]);
   const level = path[i + 1];
   const peakAt = useMemo(() => path.indexOf(Math.max(...path)) - 1, [path]);
@@ -54,13 +58,13 @@ export function F4Drip() {
       n="4"
       prompt={
         <>
-          The same bucket with one more pipe: a thin tap dripping a constant each day. One dial: the drip. The hole is now the computer's ({(100 * alpha).toFixed(0)} % of each cup is
-          kept; see Figure 5); the keep fraction is whatever balances the drip at the ten-year average cup. Then <em>freeze the pouring</em> and watch the bucket drain from where the clock stands.
+          The same bucket with one more pipe: a thin tap dripping a constant each day. One dial: the drip. The cup share is the computer's ({(100 * alpha).toFixed(0)} % of each cup
+          goes in; see Figure 5); the keep is whatever balances the drip at the computer's home. Then <em>freeze the pouring</em> and watch the bucket drain from where the clock stands.
         </>
       }
       controls={
         <>
-          <Slider label="the drip, %² a day" value={dripPct2} min={0} max={0.06} step={STEP_PCT2} onChange={setDrip} role="approx" fmt={(v) => v.toFixed(4).replace(/0+$/, "").replace(/\.$/, "")} width={170} />
+          <Slider label="the drip, %² a day" value={dripPct2} min={0} max={0.06} step={STEP_PCT2} onChange={setDrip} role="approx" fmt={(v) => v.toFixed(3)} width={170} />
           <button type="button" className={"btn " + (frozen ? "toggled" : "")} aria-pressed={frozen} onClick={() => setFrozen((v) => !v)}>
             {frozen ? "pour again" : "freeze the pouring"}
           </button>
@@ -75,10 +79,9 @@ export function F4Drip() {
       }
       observe={
         <>
-          With the drip on, the level has a <strong>home</strong>: the place where what drips in balances what leaks out, here the ten-year average cup, √ {varPct2(MEAN_SQ)} ={" "}
-          {volPct(Math.sqrt(MEAN_SQ))} a day. Frozen, the level glides back along a curve, not a cliff — Hull's half-life, ln ½ / ln (cup + keep). Drip off: no home, the forecast is a
-          flat line (that is EWMA). The computer's own drip is {varPct2(FIT.omega, 3)} a day with keep {FIT.beta.toFixed(3)}, home {volPct(Math.sqrt(KEY.VL))}, half-life{" "}
-          {n1(KEY.half_life)} days. Push cup + keep past 1 and the drip is never leaked away: the bucket overflows — the model is not stable.
+          With the drip on, the level has a <strong>home</strong>, where what drips in balances what leaks out: {gamma > 0 ? volPct(Math.sqrt(home)) : "none"} a day
+          {atFit ? " at the computer's own drip" : ""}. Frozen, it glides back along a curve, not a cliff, forgetting half the way in{" "}
+          {gamma > 0 ? n1(hl) + " days" : "— never"}: the bigger the drip, the smaller the keep, the sooner. Drip off: no home, a flat forecast — Figure 2's bucket, EWMA.
         </>
       }
     >
@@ -123,7 +126,7 @@ export function F4Drip() {
             ariaBottom="The squares with the bucket's level, an amber dashed home line, and when frozen a dashed forecast curve gliding to the home while a grey flat line shows the no-drip forecast"
           />
           <div className="a5-bucket-col">
-            <Bucket level={toPct2(level)} cup={frozen ? 0 : SQ[i]} hole={1 - beta} ghost={Number.isFinite(RV250[i]) ? toPct2(RV250[i]) : undefined} drip={gamma} label="variance" />
+            <Bucket level={toPct2(level)} cup={frozen ? 0 : SQ[i]} hole={1 - beta} ghost={Number.isFinite(RV250[i]) ? toPct2(RV250[i]) : undefined} drip={gamma} label="variance" holeText={`keep ${beta.toFixed(3)} of the level`} />
             <div className="a5-sqrt-tile">
               <span className="k">√ level = volatility</span>
               <span className="v a5-truth">{volPct(Math.sqrt(level))}</span>

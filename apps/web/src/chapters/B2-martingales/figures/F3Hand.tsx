@@ -111,12 +111,16 @@ export function F3Hand() {
       controls={
         <>
           <Stepper label="bet" value={stake} min={1} max={8} onChange={setStake} />
-          <button type="button" className={"btn " + (!over ? "primary" : "")} onClick={toss} disabled={over}>
-            {over ? "hand over" : hand.bets.length === 0 ? `bet ${stake} on red` : `toss ${hand.bets.length + 1} of ${HAND_TOSSES}: bet ${stake}`}
-          </button>
-          <button type="button" className="btn" onClick={leave} disabled={over || hand.bets.length === 0}>
-            leave the table
-          </button>
+          <span className="ctl">
+            <span className="seg" role="group" aria-label="bet or leave">
+              <button type="button" className={!over ? "primary" : ""} onClick={toss} disabled={over}>
+                {over ? "hand over" : hand.bets.length === 0 ? `bet ${stake} on red` : `toss ${hand.bets.length + 1} of ${HAND_TOSSES}: bet ${stake}`}
+              </button>
+              <button type="button" onClick={leave} disabled={over || hand.bets.length === 0}>
+                leave
+              </button>
+            </span>
+          </span>
           <Readouts
             items={[
               ["your chips", <strong>{chips(w)}</strong>],

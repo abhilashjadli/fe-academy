@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Figure } from "../../../ui/Figure";
 import { Bet, ResultCard, useBet } from "../../../ui/Bet";
 import { Readouts } from "../../../ui/controls";
-import { Curve, HLine, Label, Plot, Points, type Pt } from "../../../ui/Plot";
+import { Band, Curve, HLine, Label, Plot, Points, type Pt } from "../../../ui/Plot";
 import { DF_CRIT_5, dickeyFuller, meanReturnTime } from "../../../engine/timeseries";
 import { rng } from "../../../engine/random";
 import { getSpread, n0, n2, s2, s3, sd, useNarrow, zeroCrossings } from "./a4";
@@ -11,7 +11,10 @@ import { getSpread, n0, n2, s2, s3, sd, useNarrow, zeroCrossings } from "./a4";
 /**
  * Round 4 — the pairs trade. A spread between two bank stocks that has crossed zero again and again. "It always comes back —
  * buy when it's low." Rubber band or drunk? Then the Dickey–Fuller idea in one picture: today's change against yesterday's level;
- * the reader drags the line; the engine's own slope and t-ratio appear. One footnote: the critical values are special.
+ * the reader drags the line; the engine's own slope and t-ratio appear. The picture is drawn at the scale of the fit: the
+ * days are binned by yesterday's level and each bin's average change is one dot (its size the head-count), so a slope of
+ * −0.02 is a visible tilt rather than a line buried in a cloud ±15 tall; the fitted line carries its ±2 s.e. band.
+ * One footnote: the critical values are special.
  * The spread is simulated until the two bank-stock files arrive (a4.ts REAL_PAIR); the figure says which.
  */
 
@@ -41,12 +44,36 @@ export function F4Pairs() {
     hi = Math.max(...ys);
   const pad = 0.08 * (hi - lo);
   const xr = Math.max(Math.abs(lo), Math.abs(hi)) * 1.05;
-  const dys = pts.map((p) => p[1]);
-  const yr = Math.max(...dys.map(Math.abs)) * 1.05;
+  // the binned picture: twelve level buckets, each a dot at (bucket centre, average change of the days that started there)
+  const BINS = 12;
+  const bins = useMemo(() => {
+    const w = (2 * xr) / BINS;
+    const acc = Array.from({ length: BINS }, () => ({ sx: 0, sy: 0, n: 0 }));
+    for (const [x, dy] of pts) {
+      const k = Math.max(0, Math.min(BINS - 1, Math.floor((x + xr) / w)));
+      acc[k].sx += x;
+      acc[k].sy += dy;
+      acc[k].n++;
+    }
+    return acc.filter((b) => b.n >= 5).map((b) => ({ x: b.sx / b.n, y: b.sy / b.n, n: b.n }));
+  }, [pts, xr]);
+  const maxN = Math.max(...bins.map((b) => b.n));
+  const se = Math.abs(df.gamma / df.t); // the slope's standard error
+  // y axis at the scale of the fit, not of the cloud: the fitted drop across the frame, the band, and the binned dots all inside
+  const yr = Math.max(Math.abs(df.gamma) * xr + 2 * se * xr, ...bins.map((b) => Math.abs(b.y - cy))) * 1.35 + 1e-9;
+  const slopeCap = yr / xr; // a dragged line stays in the frame
   const lineAt = (m: number): Pt[] => [
     [-xr, cy + m * (-xr - cx)],
     [xr, cy + m * (xr - cx)],
   ];
+  const bandOf = (sign: 1 | -1): Pt[] => {
+    const out: Pt[] = [];
+    for (let k = 0; k <= 24; k++) {
+      const x = -xr + (k * 2 * xr) / 24;
+      out.push([x, cy + df.gamma * (x - cx) + sign * 2 * se * Math.abs(x - cx)]);
+    }
+    return out;
+  };
   const years = (spread.n / 250).toFixed(0);
 
   return (
@@ -79,19 +106,17 @@ export function F4Pairs() {
           </>
         ) : pick ? (
           <>
-            Regress today's change on yesterday's level. Slope zero: yesterday's level says nothing about today's change — a flat table, a drunk. Slope negative:
-            a high level is pulled down tomorrow — a bowl. The regression's slope here is <strong>{s3(df.gamma)}</strong>, so the machine behaves like φ ≈{" "}
-            {n3fix(phiHat)}; its t-ratio is <strong>{s2(df.t)}</strong>.{" "}
+            The dots tilt: slope <strong>{s3(df.gamma)}</strong> — the machine takes back about {(100 * -df.gamma).toFixed(1)} % of yesterday's level a day, φ ≈ {n3fix(phiHat)} — with t-ratio{" "}
+            <strong>{s2(df.t)}</strong>.{" "}
             {isBand ? (
               <>
-                Beyond the −{n2(-DF_CRIT_5)} line: the random walk is rejected. A rubber band has a finite average return time — from one typical deviation of ₹{n0(spreadSd)}{" "}
-                the fitted machine comes back in about <strong>{n0(back ?? 0)} days</strong> on average (simulated from φ̂). That finite number is the trade's whole edge; on a flat table
-                the same average is infinite, and {crossings} crossings would just have been luck.
+                Beyond the −{n2(-DF_CRIT_5)} line: the drunk is rejected. From one typical deviation of ₹{n0(spreadSd)} the fitted band comes back in about <strong>{n0(back ?? 0)} days</strong> on
+                average; on a flat table that average is infinite, and the {crossings} crossings would have been luck. The finite number is the trade's edge.
               </>
             ) : (
               <>
-                Not beyond the −{n2(-DF_CRIT_5)} line: the random walk cannot be rejected. On a flat table the average time to come back is infinite, and {crossings} crossings are
-                consistent with luck — the trade has no proven edge.
+                Not beyond the −{n2(-DF_CRIT_5)} line: the drunk cannot be rejected. On a flat table the average time back is infinite, and {crossings} crossings are consistent with
+                luck — no proven edge.
               </>
             )}
             <span className="a4-foot">
@@ -130,7 +155,8 @@ export function F4Pairs() {
       >
         <div className="a4-df">
           <div className="a4-panel-t">
-            The Dickey–Fuller picture: today's change against yesterday's level, one dot per day. <strong>Drag</strong> to set the line you believe in.
+            The Dickey–Fuller picture: today's average change against yesterday's level — one dot per level bucket, sized by how many days started there. <strong>Drag</strong> to set
+            the line you believe in.
           </div>
           <Plot
             xDomain={[-xr, xr]}
@@ -144,17 +170,20 @@ export function F4Pairs() {
             margin={{ top: 16, right: 14, bottom: 34, left: 44 }}
             onDrag={(x, y, phase) => {
               if (Math.abs(x - cx) < xr * 0.08) return;
-              setSlope(Math.max(-0.5, Math.min(0.2, (y - cy) / (x - cx))));
+              setSlope(Math.max(-slopeCap, Math.min(slopeCap, (y - cy) / (x - cx))));
               if (phase === "up") setDragged(true);
             }}
           >
-            <Points pts={pts} role="ghost" r={narrow ? 1.6 : 2} opacity={0.5} />
+            {dragged && <Band upper={bandOf(1)} lower={bandOf(-1)} role="truth" />}
             <Curve pts={lineAt(0)} role="ghost" width={1} dash="4 4" smooth={false} />
+            {bins.map((b, k) => (
+              <Points key={k} pts={[[b.x, b.y]]} role="ink" r={(narrow ? 2.5 : 3) + (narrow ? 4 : 6) * Math.sqrt(b.n / maxN)} opacity={0.55} />
+            ))}
             {dragged && <Curve pts={lineAt(df.gamma)} role="truth" width={2.2} smooth={false} />}
             <Curve pts={lineAt(slope)} role="approx" width={2} smooth={false} />
             <Label at={[xr * 0.98, cy + slope * (xr * 0.98 - cx)]} text={`yours: ${s3(slope)}`} role="approx" anchor="end" dx={0} dy={-8} />
-            {dragged && <Label at={[-xr * 0.98, cy + df.gamma * (-xr * 0.98 - cx)]} text={`the regression: ${s3(df.gamma)}`} role="truth" anchor="start" dx={0} dy={-10} />}
-            <Label at={[-xr * 0.98, 0]} text="slope 0: a drunk" role="ghost" anchor="start" dx={0} dy={14} />
+            {dragged && <Label at={[-xr * 0.98, cy + df.gamma * (-xr * 0.98 - cx)]} text={`the regression: ${s3(df.gamma)} ± ${s3(2 * se).replace("−", "")}`} role="truth" anchor="start" dx={0} dy={-10} />}
+            <Label at={[xr * 0.98, 0]} text="slope 0: a drunk" role="ghost" anchor="end" dx={0} dy={14} />
           </Plot>
           {dragged && (
             <ResultCard

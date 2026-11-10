@@ -105,8 +105,7 @@ export function F5Score() {
         ) : (
           <>
             The bottom picture is now each square divided by the computer's band — "how big was today, in units of how big the bucket said it could be". The clumps are gone: it looks like
-            Figure 0's shuffled strip. The lag-one correlation of the squares was <strong>{rhoBefore.toFixed(3)}</strong>; of the squares ÷ band it is <strong>{rhoAfter.toFixed(3)}</strong> (Ljung–Box{" "}
-            {n0(KEY.ljung_box_r2.stat)} → {n1(KEY.ljung_box_std2.stat)} on twenty lags). The model has eaten the weather. That — not "was tomorrow's square close to the band" — is the only test that
+            Figure 0's shuffled strip. The lag-one correlation of the squares was <strong>{rhoBefore.toFixed(3)}</strong>; of the squares ÷ band it is <strong>{rhoAfter.toFixed(3)}</strong>. The model has eaten the weather. That — not "was tomorrow's square close to the band" — is the only test that
             matters.
           </>
         )

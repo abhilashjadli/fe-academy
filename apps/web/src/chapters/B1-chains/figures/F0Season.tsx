@@ -34,7 +34,7 @@ export function F0Season() {
   const dry0 = cellXY(LONGEST_DRY.start);
   const dryEnd = CELLS[LONGEST_DRY.start + LONGEST_DRY.len - 1];
   const dryW = LONGEST_DRY.len * STEP - GAP;
-  const longerElsewhere = LONGEST_DRY_ALL.len > LONGEST_DRY.len;
+  const longerElsewhere = LONGEST_DRY_ALL.len > LONGEST_DRY.len; // the boxed piece is part of, or shorter than, a run that crosses a row break
   const heavy = cellXY(A_HEAVY_DAY);
   const afterW = AFTER_HEAVY.length * STEP - GAP;
   const legendW = 3 * 110;
@@ -50,10 +50,17 @@ export function F0Season() {
         <>
           {shortDate(CELLS[LONGEST_DRY.start].date)} to {shortDate(dryEnd.date)}: {LONGEST_DRY.len} dry days in a row
           {longerElsewhere ? (
-            <>
-              {" "}
-              — and a {LONGEST_DRY_ALL.len}-day one runs from {shortDate(CELLS[LONGEST_DRY_ALL.start].date)} across the row break
-            </>
+            LONGEST_DRY.whole ? (
+              <>
+                {" "}
+                — and a {LONGEST_DRY_ALL.len}-day one runs from {shortDate(CELLS[LONGEST_DRY_ALL.start].date)} across the row break
+              </>
+            ) : (
+              <>
+                {" "}
+                — the part of a {LONGEST_DRY_ALL.len}-day run from {shortDate(CELLS[LONGEST_DRY_ALL.start].date)} that fits in one row
+              </>
+            )
           ) : (
             ", the longest spell on the strip"
           )}

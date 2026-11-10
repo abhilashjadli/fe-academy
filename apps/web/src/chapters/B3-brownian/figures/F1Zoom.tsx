@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { Figure } from "../../../ui/Figure";
 import { Curve, Label, Plot, type Pt } from "../../../ui/Plot";
-import { Readouts, Slider, Toggle } from "../../../ui/controls";
+import { Readouts, Slider } from "../../../ui/controls";
 import { bridgeMidpoint } from "../../../engine/brownian";
 import { normalSample, rng } from "../../../engine/random";
 import { n2, n3, useNarrow, zoomLabel } from "./b3";
@@ -12,9 +12,12 @@ import "./figures.css";
  * on the left, a random path on the right. The zoom is a camera zoom — both axes shrink by the same factor — so the smooth curve
  * becomes its tangent by ×10 while the random path bursts out of the frame: its swing over a window shrinks only like the square
  * root of the window. The path grows new detail as you zoom, repeatably: every midpoint is a Brownian bridge draw seeded by its
- * position (engine bridgeMidpoint), so zooming out and back in shows the same wiggles. The toggle shrinks the height by √zoom
- * instead, and then every zoom level is the same picture.
+ * position (engine bridgeMidpoint), so zooming out and back in shows the same wiggles. From ×100 up a third pane shows the
+ * same random path with its height measured in √time instead — centred on the path's value at the zoom point, with the
+ * ±√t and ±2√t envelope drawn (Lyons's picture) — and in that pane every zoom level is the same picture.
  */
+const STRETCH_FROM = 100; // the √-time pane appears from this zoom up
+const ENV_K = 2.6; // the stretched frame's half-height, in units of √(half-window): the ±2√t envelope fits with room
 
 const T0 = 0.5; // the point we zoom on (dyadic, so the random path has an exact value there)
 const SEED = 1903;
@@ -56,8 +59,8 @@ class DyadicPath {
 
 export function F1Zoom() {
   const [s, setS] = useState(0); // zoom = 10^s
-  const [stretch, setStretch] = useState(false);
   const z = 10 ** s;
+  const stretch = z >= STRETCH_FROM; // the third pane is on
   const pathRef = useRef<DyadicPath | null>(null);
   if (!pathRef.current) pathRef.current = new DyadicPath(SEED);
   const path = pathRef.current;
@@ -66,7 +69,8 @@ export function F1Zoom() {
   const hw = 0.5 / z; // half-width of the window
   const lo = T0 - hw,
     hi = T0 + hw;
-  const hh = stretch ? 1 / Math.sqrt(z) : 1 / z; // half-height of the frame
+  const hh = 1 / z; // half-height of the camera frame
+  const hhS = ENV_K * Math.sqrt(hw); // half-height of the √-time frame
 
   const smooth = useMemo<Pt[]>(() => {
     const pts: Pt[] = [];
@@ -86,9 +90,22 @@ export function F1Zoom() {
   const secantL = swingL / (hi - lo);
   const secantR = swingR / (rough[rough.length - 1][0] - rough[0][0]);
   const framesTall = swingR / (2 * hh);
+  // the envelope about the zoom point: ±√|t − T0| and ±2√|t − T0|
+  const envelope = useMemo(() => {
+    const mk = (k: number, sign: 1 | -1): Pt[] => {
+      const pts: Pt[] = [];
+      for (let i = 0; i <= 80; i++) {
+        const t = lo + ((hi - lo) * i) / 80;
+        pts.push([t, cR + sign * k * Math.sqrt(Math.abs(t - T0))]);
+      }
+      return pts;
+    };
+    return { u1: mk(1, 1), l1: mk(1, -1), u2: mk(2, 1), l2: mk(2, -1) };
+  }, [lo, hi, cR]);
 
-  const W = narrow ? 360 : 420,
-    H = narrow ? 230 : 260;
+  // three panes side by side from ×100 up: draw each at the width it will be shown, so the lettering keeps its size
+  const W = narrow ? 360 : stretch ? 290 : 420,
+    H = narrow ? 230 : stretch ? 230 : 260;
   const margin = { top: 14, right: 30, bottom: 34, left: 54 };
   const fmtSec = (v: number) => (v >= 100 ? v.toFixed(0) : v >= 10 ? v.toFixed(1) : n2(v));
 
@@ -99,7 +116,6 @@ export function F1Zoom() {
       controls={
         <>
           <Slider label="zoom" value={s} min={0} max={4} step={0.02} onChange={setS} fmt={(v) => zoomLabel(10 ** v)} width={narrow ? 150 : 220} />
-          <Toggle label="stretch height by √zoom instead" on={stretch} onChange={setStretch} />
           <Readouts
             items={[
               ["window", (2 * hw).toPrecision(2) + " of the unit of time"],
@@ -112,8 +128,9 @@ export function F1Zoom() {
       observe={
         stretch ? (
           <>
-            Now the frame's height shrinks by √zoom while its width shrinks by zoom — and the random path looks the same at every level: a Brownian
-            path is the same picture at every scale, <strong>if you measure height in √time</strong>. The smooth curve, under that rule, goes flat.
+            The middle picture is a burst of vertical lines: {zoomLabel(z)} closer, the swing is {framesTall >= 10 ? Math.round(framesTall) : framesTall.toFixed(1)} frames
+            tall. The third picture measures height in <strong>√time</strong> instead, and there the path looks the same at every zoom — it stays inside the ±2√t curves and
+            fills the ±√t ones. A Brownian path is the same picture at every scale, if the ruler is √t; a slope, under that ruler, goes flat.
           </>
         ) : (
           <>
@@ -125,7 +142,7 @@ export function F1Zoom() {
         )
       }
     >
-      <div className="b3-split">
+      <div className={"b3-split" + (stretch ? " three" : "")}>
         <div className="b3-pane">
           <div className="b3-pane-head">
             <strong>smooth curve</strong>
@@ -142,10 +159,28 @@ export function F1Zoom() {
             <span>same axes</span>
           </div>
           <Plot xDomain={[lo, hi]} yDomain={[cR - hh, cR + hh]} width={W} height={H} margin={margin} xTicks={3} yTicks={3} ariaLabel="A random path under the same zoom, never straightening" axisX={lo} axisY={cR - hh}>
-            <Curve pts={rough} role="truth" width={z > 30 && !stretch ? 0.8 : 1.4} smooth={false} />
-            {!stretch && framesTall > 1.5 && <Label at={[lo, cR + hh]} text={`swing: ${framesTall >= 10 ? Math.round(framesTall) : framesTall.toFixed(1)} frames tall`} role="truth" anchor="start" dx={8} dy={14} />}
+            <Curve pts={rough} role="truth" width={z > 30 ? 0.8 : 1.4} smooth={false} />
+            {framesTall > 1.5 && <Label at={[lo, cR + hh]} text={`swing: ${framesTall >= 10 ? Math.round(framesTall) : framesTall.toFixed(1)} frames tall`} role="truth" anchor="start" dx={8} dy={14} />}
           </Plot>
         </div>
+        {stretch && (
+          <div className="b3-pane">
+            <div className="b3-pane-head">
+              <strong>random path, height in √time</strong>
+              <span>centred on its value at the zoom point</span>
+            </div>
+            <Plot xDomain={[lo, hi]} yDomain={[cR - hhS, cR + hhS]} width={W} height={H} margin={margin} xTicks={3} yTicks={3} ariaLabel="The same random path with its height scaled by the square root of the window, between the ±√t and ±2√t curves; it looks the same at every zoom" axisX={lo} axisY={cR - hhS}>
+              <Curve pts={envelope.u2} role="ghost" width={1} dash="4 3" smooth={false} />
+              <Curve pts={envelope.l2} role="ghost" width={1} dash="4 3" smooth={false} />
+              <Curve pts={envelope.u1} role="ghost" width={1} smooth={false} />
+              <Curve pts={envelope.l1} role="ghost" width={1} smooth={false} />
+              <Curve pts={rough} role="truth" width={1.4} smooth={false} />
+              <Label at={[hi, cR + 2 * Math.sqrt(hw)]} text="+2√t" role="ghost" anchor="end" dx={-4} dy={-4} />
+              <Label at={[hi, cR + Math.sqrt(hw)]} text="+√t" role="ghost" anchor="end" dx={-4} dy={-4} />
+              <Label at={[hi, cR - 2 * Math.sqrt(hw)]} text="−2√t" role="ghost" anchor="end" dx={-4} dy={12} />
+            </Plot>
+          </div>
+        )}
       </div>
     </Figure>
   );

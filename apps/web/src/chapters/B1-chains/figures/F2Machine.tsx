@@ -121,8 +121,8 @@ export function F2Machine() {
           </>
         ) : (
           <>
-            Both instruments have come to rest at the same point, ({PSI_STAR.map(f3).join(", ")}) — the fixed point of the table, the one law the table turns back into itself.
-            Start from another corner: the bet begins elsewhere and ends in the same place. The strip forgets where it began.
+            The bet settled in about ten hops at ({PSI_STAR.map(f3).join(", ")}) — the fixed point of the table, the one law the table turns back into itself. The "so far" is
+            still within a few hundredths of it and closes in slowly, like any average. Start from another corner: the bet ends in the same place. The strip forgets where it began.
           </>
         )
       }

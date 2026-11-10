@@ -98,6 +98,79 @@ _, Pfl = fit(long_strip, 3)
 key["fit_long"] = dict(P_true=P_w, P_fit=Pfl.tolist(), max_abs_err=float(np.abs(Pfl - np.array(P_w)).max()),
                        stationary=stationary(P_w).tolist(), mc_fraction=[float((long_strip == i).mean()) for i in range(3)])
 
+# 5b. The stand-in season the figures draw until the real Bengaluru file lands. A *sticky* chain (diagonal 0.87 / 0.65 / 0.55,
+# dry spells 7.7 days on average) so the strip on screen has the spells the page talks about; fit_long.P_true above is a fitter
+# test, not a monsoon (its mean spell is 2.4 days against the coin's 1.7). The figure draws the season with the engine's
+# mulberry32 PRNG at seed 20261029, ported here bit for bit so the key holds the very strip the reader sees.
+P_stand_in = [[0.87, 0.10, 0.03], [0.22, 0.65, 0.13], [0.10, 0.35, 0.55]]
+psi_si = stationary(P_stand_in)
+mean_run_closed = 1.0 / sum(psi_si[i] * (1 - P_stand_in[i][i]) for i in range(3))  # 1 / P(a spell ends today)
+coin_mean_run_closed = 1.0 / (1 - float((psi_si ** 2).sum()))  # memoryless draws with the same colour mix
+
+
+def mulberry32(seed):
+    """The engine's PRNG (apps/web/src/engine/random.ts), same 32-bit arithmetic."""
+    a = seed & 0xFFFFFFFF
+    M = 0xFFFFFFFF
+
+    def imul(x, y):
+        return ((x & M) * (y & M)) & M
+
+    def nxt():
+        nonlocal a
+        a = (a + 0x6D2B79F5) & M
+        t = a
+        t = imul(t ^ (t >> 15), t | 1)
+        t ^= (t + imul(t ^ (t >> 7), t | 61)) & M
+        t &= M
+        return ((t ^ (t >> 14)) & M) / 4294967296.0
+
+    return nxt
+
+
+def simulate_engine(P, n, start, nxt):
+    """markov.ts simulateChain: cumulative scan over the row with u < acc."""
+    out = [start]
+    x = start
+    for _ in range(n):
+        u = nxt()
+        row = P[x]
+        acc = 0.0
+        j = 0
+        while j < len(row) - 1:
+            acc += row[j]
+            if u < acc:
+                break
+            j += 1
+        x = j
+        out.append(x)
+    return out
+
+
+SEASON_SEED, SEASON_DAYS = 20261029, 120
+season = np.array(simulate_engine(P_stand_in, SEASON_DAYS - 1, 0, mulberry32(SEASON_SEED)))
+season_runs = run_lengths(season)
+run_starts = np.concatenate([[0], np.flatnonzero(np.diff(season) != 0) + 1])
+run_states = season[run_starts]
+heavy_idx = np.flatnonzero(season[:-1] == 2)
+after_heavy = season[heavy_idx + 1]
+_, P_season_fit = fit(season, 3)
+rng_si = np.random.default_rng(20261110)  # its own stream, so sections 6–7 draw exactly what they drew before
+long_si = simulate(P_stand_in, 200_000, 0, rng_si)
+coin_si = rng_si.choice(3, 200_001, p=psi_si)
+key["stand_in"] = dict(
+    P=P_stand_in, stationary=psi_si.tolist(), expected_holding=[1 / (1 - P_stand_in[i][i]) for i in range(3)],
+    mean_run_closed=float(mean_run_closed), coin_mean_run_closed=float(coin_mean_run_closed),
+    mc_mean_run=float(run_lengths(long_si).mean()), mc_coin_mean_run=float(run_lengths(coin_si).mean()),
+    season_seed=SEASON_SEED, season_days=SEASON_DAYS, season_states=season.tolist(),
+    season_counts=[int((season == i).sum()) for i in range(3)],
+    season_mean_run=float(season_runs.mean()), season_n_runs=int(len(season_runs)),
+    season_mean_run_by_state=[float(season_runs[run_states == i].mean()) for i in range(3)],
+    season_longest_dry=int(season_runs[run_states == 0].max()),
+    season_heavy_days=int(len(heavy_idx)), season_rain_after_heavy=int((after_heavy > 0).sum()),
+    season_P_fit=P_season_fit.tolist(), season_stationary_of_fit=stationary(P_season_fit).tolist(),
+)
+
 # 6. Simple random walk (Shreve §3.2)
 key["walk"] = dict(p_M10_eq_2=math.comb(10, 6) / 2 ** 10, p_M10_eq_0=math.comb(10, 5) / 2 ** 10,
                    sd_M100=10.0, sd_M400=20.0,
@@ -153,6 +226,7 @@ print("wrote", os.path.normpath(out))
 print("qe stationary", key["qe"]["stationary"], "mc", key["qe"]["mc_frac_state0"])
 print("sticky psiR", key["sticky"]["psiR"], "mc runs", key["sticky"]["mc_mean_run"], key["sticky"]["mc_coin_mean_run"])
 print("hamilton", key["hamilton"]["stationary"], key["hamilton"]["eigenvalues"], key["hamilton"]["P6_row0"])
+print("stand_in", {k: v for k, v in key["stand_in"].items() if k not in ("season_states",)})
 print("walk", key["walk"])
 print("memory", key["memory"])
 print("poisson pmf", [round(v, 4) for v in pmf], "mc6", key["poisson"]["mc_frac_exactly_6"], "gap", key["poisson"]["mc_mean_gap_min"],

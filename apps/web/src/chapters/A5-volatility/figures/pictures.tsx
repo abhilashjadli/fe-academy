@@ -3,9 +3,13 @@ import { Label, Plot, usePlot, type Pt } from "../../../ui/Plot";
 import { N, PCT, SQ, X_DOMAIN, YEAR, indexAtYear, movePct, niceDate, shortDate, useNarrow, type Storm, R, DATES } from "./a5";
 import { setClock, useClock } from "./clock";
 
-/** y frames: the top picture is cut at ±8 % (two days fall outside), the bottom at 40 %² (five days) */
+/** y frames: the top picture is cut at ±8 % (three days fall outside, counted below), the bottom at 40 %² */
 export const MOVE_CAP = 8;
 export const SQ_CAP = 40;
+/** how many real days are clipped by the ±MOVE_CAP frame — counted, not typed */
+export const CLIPPED_DAYS = PCT.filter((p) => Math.abs(p) > MOVE_CAP).length;
+const WORDS = ["no", "one", "two", "three", "four", "five", "six"];
+export const clippedWords = (n: number) => `${WORDS[n] ?? n} day${n === 1 ? "" : "s"} fall${n === 1 ? "s" : ""} off this frame`;
 const HEAD = 1.25; // headroom above the clamped spikes, for labels
 const DAY = 1 / 252;
 
@@ -151,7 +155,7 @@ export function TwoPictures({ top, bottom, extra, storms, named, window: win, or
           {top}
           {hand && inWin && <Hand i={i} date />}
           <Label at={[xDomain[0], topCap * HEAD]} text="the day's move, %" dx={4} dy={11} />
-          {!win && !narrow && <Label at={[xDomain[1], -topCap * HEAD]} text={`two days fall off this frame · worst ${movePct(worst)}`} dx={-4} dy={-3} anchor="end" />}
+          {!win && !narrow && <Label at={[xDomain[1], -topCap * HEAD]} text={`${clippedWords(CLIPPED_DAYS)} · worst ${movePct(worst)}`} dx={-4} dy={-3} anchor="end" />}
         </Plot>
         <Plot xDomain={xDomain} yDomain={[0, bottomCap * 1.14]} width={W} height={narrow ? 130 : 150} margin={{ ...margin, bottom: win ? 34 : 28 }} xTicks={xTicks} yTicks={3} grid={false} axisY={0} onDrag={onDrag} xLabel={xLabel} ariaLabel={ariaBottom ?? "The same days' moves squared, as thin bars from zero"}>
           {storms?.map((s, k) => <Shade key={k} from={s.from} to={s.to} role="error" />)}

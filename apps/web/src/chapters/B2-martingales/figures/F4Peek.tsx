@@ -84,7 +84,7 @@ export function F4Peek() {
           </>
         ) : cheat === "peek" ? (
           <>
-            The meter moves for the first time: <strong>{f2(fan.mean)}</strong> ± {n2(2 * fan.se)} — <strong>{f2(fan.mean / PEEKED)} per toss peeked</strong>, and the fan is lifted whole, not widened. The answer key's figure is {key.peek.mean_gain_per_toss.toFixed(2)} per peeked toss. Not a system, not an exit rule, not bet sizing: knowing the next toss before the bet.
+            The meter moves for the first time: <strong>{f2(fan.mean)}</strong> ± {n2(2 * fan.se)} — <strong>{f2(fan.mean / PEEKED)} per toss peeked</strong>, and the fan is lifted whole, not widened. Not a system, not an exit rule, not bet sizing: knowing the next toss before the bet.
           </>
         ) : (
           <>
@@ -169,7 +169,7 @@ function ShreveTree() {
         </text>
       </svg>
       <p className="b2-footnote">
-        Footnote, the same crime in three numbers. A fair tree: {L[0][0].toFixed(2)} is the average of {L[1][0].toFixed(2)} and {L[1][1].toFixed(2)}, each of which is the average of its two children, so any honest rule for when to stop averages {HONEST_STOP_MEAN.toFixed(2)}. The rule "stop at the start only if the first toss will be a win, otherwise stop at the first tail" needs tomorrow's toss today; its stopped values are {key.tree.rho_stopped_values.HH.toFixed(2)}, {key.tree.rho_stopped_values.HT.toFixed(2)}, {key.tree.rho_stopped_values.TH.toFixed(2)}, {key.tree.rho_stopped_values.TT.toFixed(2)} and their average is <strong>{RHO_MEAN.toFixed(2)}</strong>, not {L[0][0].toFixed(2)}. (Shreve, Figs 8.2.2–8.2.3.)
+        Footnote, the same crime in three numbers. A fair tree: {L[0][0].toFixed(2)} is the average of {L[1][0].toFixed(2)} and {L[1][1].toFixed(2)}, each of which is the average of its two children, so any honest rule for when to stop averages {HONEST_STOP_MEAN.toFixed(2)}. The rule "stop at the start only if the first toss will be a win, otherwise stop at the first tail" needs tomorrow's toss today; its stopped values are {key.tree.rho_stopped_values.HH.toFixed(2)}, {key.tree.rho_stopped_values.HT.toFixed(2)}, {key.tree.rho_stopped_values.TH.toFixed(2)}, {key.tree.rho_stopped_values.TT.toFixed(2)} and their average is <span className="b2-nowrap"><strong>{RHO_MEAN.toFixed(2)}</strong>, not {L[0][0].toFixed(2)}</span>. (Shreve, Figs 8.2.2–8.2.3.)
       </p>
     </div>
   );

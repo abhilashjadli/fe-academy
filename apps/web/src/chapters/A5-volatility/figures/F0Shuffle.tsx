@@ -5,7 +5,7 @@ import { Label, Plot } from "../../../ui/Plot";
 import { shuffle } from "../../../engine/volatility";
 import { rng } from "../../../engine/random";
 import { DATES, N, NAMED_STORMS, R, STATS, STORMS, X_DOMAIN, YEAR, movePct, n0, niceDate, shortDate, useNarrow, volPct } from "./a5";
-import { MOVE_CAP, Shade, Spikes } from "./pictures";
+import { CLIPPED_DAYS, MOVE_CAP, Shade, Spikes, clippedWords } from "./pictures";
 import "./figures.css";
 
 /**
@@ -38,6 +38,7 @@ export function F0Shuffle() {
           {revealed && isReal && NAMED_STORMS.map((s, k) => <Shade key={"n" + k} from={s.from} to={s.to} role="error" label={narrow ? shortDate(DATES[s.peak]) : niceDate(DATES[s.peak]) + " " + movePct(R[s.peak])} labelAt={(k + (narrow ? 1 : 0)) % 2 ? "bottom" : "top"} />)}
           <Spikes ys={ys} role="ink" clampLo={-MOVE_CAP} clampHi={MOVE_CAP} />
           {revealed && isReal && <Label at={[YEAR[0], -MOVE_CAP * 1.25]} text={`${DATES[0].slice(0, 4)} → ${DATES[N - 1].slice(0, 4)}`} dx={3} dy={-3} />}
+          {revealed && isReal && !narrow && <Label at={[YEAR[N - 1], -MOVE_CAP * 1.25]} text={`${clippedWords(CLIPPED_DAYS)} · worst ${movePct(R[STATS.worst])}`} dx={-3} dy={-3} anchor="end" />}
         </Plot>
         <span className="a5-tiles">
           <span className="a5-tile">

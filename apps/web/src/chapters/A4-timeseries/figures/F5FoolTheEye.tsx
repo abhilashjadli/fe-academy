@@ -116,8 +116,8 @@ export function F5FoolTheEye() {
               <>Every miss of the eye is a slow bowl that looks like a table, or a table that happened to turn round — and no chart can tell them apart near φ = 1.</>
             ) : (
               <>
-                Even the test is fooled on a short sample: the key's near-unit-root case (a bowl with φ = 0.98 on {near.y.length} points) gives t = {s2(near.t)}, short of the{" "}
-                {s2(near.crit["5%"])} it needs (engine key), so it is waved through as a random walk. Switch to 2,000 days and run the round again.
+                Even the test is fooled on a short sample: a bowl with φ = 0.98 on {near.y.length} points gives t = {s2(near.t)}, short of the {s2(near.crit["5%"])} it needs,
+                so it is waved through as a random walk. Given enough days it is not — switch to 2,000 and run the round again.
               </>
             )}{" "}
             <span className="a4-quiet">Each verdict is the engine's own Dickey–Fuller regression on that series; "comes home" means t below −{n2(-DF_CRIT_5)}.</span>

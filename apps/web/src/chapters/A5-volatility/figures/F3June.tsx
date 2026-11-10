@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from "react";
 import { Figure } from "../../../ui/Figure";
 import { Bet, ResultCard, useBet } from "../../../ui/Bet";
 import { Ledger } from "../../../ui/Ledger";
@@ -17,10 +18,18 @@ import "./figures.css";
 type Pick = "year" | "before" | "after";
 const WIN: [number, number] = [JUNE4 - 45, JUNE4 + 46];
 
+/** mounts with the ledger's last row; tells the figure the three numbers have been read off, so the bet buttons may show them */
+function Seen({ onSeen }: { onSeen: () => void }) {
+  useEffect(() => onSeen(), [onSeen]);
+  return null;
+}
+
 export function F3June() {
   const i = useClock();
   const [pick, setPick] = useBet<Pick>("A5-F3");
+  const [ledgerDone, setLedgerDone] = useState(false);
   const narrow = useNarrow();
+  const markDone = useCallback(() => setLedgerDone(true), []);
   const yearVol = Math.sqrt(RV250[JUNE4 - 1]);
   const before = Math.sqrt(EWMA94[JUNE4]);
   const after = Math.sqrt(EWMA94[JUNE4 + 1]);
@@ -110,18 +119,23 @@ export function F3June() {
                   √ (0.94 × {varPct2(EWMA94[JUNE4])} + 0.06 × {SQ[JUNE4].toFixed(1)} %²) = √ {varPct2(EWMA94[JUNE4 + 1])}
                 </>
               ),
-              value: volPct(after),
+              value: (
+                <>
+                  {volPct(after)}
+                  <Seen onSeen={markDone} />
+                </>
+              ),
               role: "error",
-              note: `One cup of ${SQ[JUNE4].toFixed(1)} %² — the square of a ${movePct(R[JUNE4])} day — and the level nearly doubles overnight.`,
+              note: `One cup of ${SQ[JUNE4].toFixed(1)} %² — the square of a ${movePct(R[JUNE4])} day — and the level (a variance) triples overnight, ${varPct2(EWMA94[JUNE4])} → ${varPct2(EWMA94[JUNE4 + 1])}; its square root, the volatility, nearly doubles, ${volPct(before)} → ${volPct(after)}.`,
             },
           ]}
         />
         <Bet<Pick>
           question={<>Which of the three was closest to what the next 25 trading days realised?</>}
           options={[
-            { id: "year", label: `the year's number, ${volPct(yearVol)}` },
-            { id: "before", label: `the bucket before, ${volPct(before)}` },
-            { id: "after", label: `the bucket after, ${volPct(after)}` },
+            { id: "year", label: ledgerDone ? `the year's number, ${volPct(yearVol)}` : "the year's number" },
+            { id: "before", label: ledgerDone ? `the bucket before, ${volPct(before)}` : "the bucket before" },
+            { id: "after", label: ledgerDone ? `the bucket after, ${volPct(after)}` : "the bucket after" },
           ]}
           pick={pick}
           onPick={setPick}

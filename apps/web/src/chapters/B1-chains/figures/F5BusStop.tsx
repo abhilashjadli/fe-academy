@@ -5,7 +5,7 @@ import { Comic, Panel, Says, Avatar } from "../../../ui/Comic";
 import { Readouts } from "../../../ui/controls";
 import { countsPerWindow, lotteryArrivals, poissonArrivals, poissonPmfTable, waitFrom } from "../../../engine/markov";
 import { rng } from "../../../engine/random";
-import { KEY, f1, f2, f3, f4, useNarrow } from "./rain";
+import { KEY, f1, f3, f4, useNarrow } from "./rain";
 
 /**
  * Figure 5 — the bus stop. Sign: buses every 10 minutes (on average). The reader drags 12 buses onto a two-hour line, then
@@ -175,10 +175,9 @@ export function F5BusStop() {
       observe={
         drops.waits.length >= DROPS ? (
           <>
-            <strong>{f1(meanWait)} minutes, not 5.</strong> The books' value is exactly {f1(KEY.poisson.mean_wait_min)} (the key's own thousand drops gave {f2(KEY.poisson.mc_mean_wait_min_1000_drops)}).
-            A random moment lands in a long gap more often than a short one, and the next bus does not know how long you have waited: however long it has been, the
-            chance of no bus in the next ten minutes is still {f3(KEY.poisson.p_none_10min)}. Small print: timetabled buses give {f1(KEY.poisson.timetabled_wait_min)} — your
-            own layout reads {Number.isFinite(yourWait) ? f1(yourWait) : "—"} — and real buses sit between the two.
+            <strong>{f1(meanWait)} minutes, not 5</strong> (exactly {f1(KEY.poisson.mean_wait_min)} in the long run). A random moment lands in a long gap more often than a short
+            one, and the next bus does not know how long you have waited: the chance of none in the next ten minutes is always {f3(KEY.poisson.p_none_10min)}. Small print:
+            timetabled buses give {f1(KEY.poisson.timetabled_wait_min)} — yours read {Number.isFinite(yourWait) ? f1(yourWait) : "—"} — and real buses, half-timetabled, sit between.
           </>
         ) : sweepDone ? (
           <>

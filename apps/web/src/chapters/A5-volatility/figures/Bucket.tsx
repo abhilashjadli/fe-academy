@@ -7,7 +7,7 @@
 export const BUCKET_CAP = 6; // %² — full at a volatility of √6 ≈ 2.45 % a day
 const CUP_CAP = 36; // a 6 % day fills the cup drawing
 
-export function Bucket({ level, cup, hole, ghost, drip = 0, label }: { level: number; cup: number; hole: number; ghost?: number; drip?: number; label?: string }) {
+export function Bucket({ level, cup, hole, ghost, drip = 0, label, holeText }: { level: number; cup: number; hole: number; ghost?: number; drip?: number; label?: string; holeText?: string }) {
   const W = 190,
     H = 228;
   const bx0 = 36,
@@ -80,7 +80,7 @@ export function Bucket({ level, cup, hole, ghost, drip = 0, label }: { level: nu
         ))}
       </g>
       <text x={cx} y={H - 3} textAnchor="middle" className="a5-bucket-txt">
-        hole leaks {(100 * hole).toFixed(0)} % a day
+        {holeText ?? `hole leaks ${(100 * hole).toFixed(0)} % a day`}
       </text>
       {/* level label */}
       <text x={bx1 + 5} y={Math.min(by1 - 2, Math.max(by0 + 30, lvlY + 4))} className="a5-bucket-txt truth">

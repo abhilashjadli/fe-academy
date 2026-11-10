@@ -8,7 +8,7 @@ import { fixedBet } from "../../../engine/martingale";
 import key from "../../../engine/__fixtures__/key-B2.json";
 import { FanPlot } from "./Fan";
 import { Meter } from "./Meter";
-import { TOSSES, chips, n1, n2, onePath, pct0, replayFan, useRecordReading, f2 } from "./table";
+import { TOSSES, chips, n1, n2, onePath, pct0, pct1, replayFan, useRecordReading, f2 } from "./table";
 
 /**
  * Figure 0 — rule 1: one chip a toss, two hundred tosses. The reader bets where the *average* player ends, plays one
@@ -53,7 +53,8 @@ export function F0Table() {
   };
   const xMax = you ? Math.max(SLOW, Math.min(TOSSES, shown)) : TOSSES;
   const done = you !== null && shown >= TOSSES;
-  const sdKey = key.spread.sd; // √200 = 14.14 from the answer key
+  const sdKey = key.spread.sd; // √200 = 14.14, the exact spread
+  const atZero = fan ? fan.finals.filter((v) => v === 0).length / fan.finals.length : 0;
   const verdict = pick && fan ? (pick === "even" ? "right" : "miss") : "none";
 
   return (
@@ -92,7 +93,7 @@ export function F0Table() {
           </>
         ) : (
           <>
-            The fan widens — after 200 tosses a typical player is about <strong>{n1(sdKey)} chips</strong> from zero (√200, the answer key's spread; this replay measured {n1(fan.sd)}) — and the meter does not. It reads{" "}
+            The fan widens — after 200 tosses a typical player is <strong>{n1(fan.sd)} chips</strong> from zero (√200 = {n1(sdKey)} exactly) — and the meter does not. It reads{" "}
             <strong>{f2(fan.mean)}</strong> with noise ±{n2(2 * fan.se)}: zero, within what 10,000 players can resolve. {pct0(fan.pAhead)} finished ahead, {pct0(1 - fan.pAhead)} did not, and the average of all of them is where it started. Rule two is next.
           </>
         )
@@ -115,7 +116,7 @@ export function F0Table() {
       </div>
       {pick && fan && (
         <ResultCard yours={LABEL[pick]} answer={<>even: the meter reads {f2(fan.mean)} ± {n2(2 * fan.se)} chips — the spread is ±{n1(sdKey)}, the average is zero</>} verdict={verdict}>
-          Nobody ends at zero — your own seat ended at {chips(you?.final ?? 0)} — and the average of everybody is zero exactly. The answer key's 10,000-player check puts the fixed bet at {f2(key.meter.strategies[0].mean)} with standard error {n2(key.meter.strategies[0].se)}. The spread grows with every toss; the meter is the one number that does not. This page is about what can move it.
+          Almost nobody ends at zero — only {pct1(atZero)} of seats did, and yours ended at {chips(you?.final ?? 0)} — yet the average of everybody is zero exactly. The spread grows with every toss; the meter is the one number that does not. This page is about what can move it.
         </ResultCard>
       )}
     </Figure>

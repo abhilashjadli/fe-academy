@@ -5,6 +5,15 @@
 .b1-dry {
   --cell: color-mix(in srgb, var(--ink-3) 32%, var(--surface-raised));
 }
+/* dark: a dry square must still read as a square, not as the background — lift it towards ink-2 */
+:root[data-theme="dark"] .b1-dry {
+  --cell: color-mix(in srgb, var(--ink-2) 55%, var(--surface-raised));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .b1-dry {
+    --cell: color-mix(in srgb, var(--ink-2) 55%, var(--surface-raised));
+  }
+}
 .b1-some {
   --cell: color-mix(in srgb, var(--truth) 45%, var(--surface-raised));
 }

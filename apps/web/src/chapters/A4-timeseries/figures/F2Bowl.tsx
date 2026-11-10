@@ -5,21 +5,23 @@ import { Readouts, Slider } from "../../../ui/controls";
 import { Curve, HLine, Plot, type Pt } from "../../../ui/Plot";
 import { normalSample, rng } from "../../../engine/random";
 import { ar1Stationary } from "../../../engine/timeseries";
-import { KEY, n1, n2, n3, sd, useNarrow } from "./a4";
+import { n1, n2, sd, useNarrow } from "./a4";
 
 /**
  * Round 2 — the forgetting machine. A marble in a bowl, kicked by news every tick; the one dial is the bowl's steepness φ.
  * today = φ × yesterday + news. The bowl is a picture of that multiplication (said on the figure), not gravity.
- * "Release 500 marbles": the cloud piles up into a settled shape when φ < 1, keeps widening forever at φ = 1, flies off above it.
+ * "Release 500 marbles" (250 from each side, QuantEcon's two-starts move): the two piles land on one settled shape when φ < 1,
+ * keep widening — and remember their side — at φ = 1, fly off above it. The table is ±12 while the home spread fits on it and
+ * ±40 once it does not (φ ≥ 0.96), so the random walk is seen widening rather than falling off the edge.
  * Readouts: the marbles' spread vs the engine's stationary spread (ar1Stationary), and how many ticks the cloud has run.
  */
 
 const SIGMA = 1;
-const TABLE = 12; // the bowl is drawn from −12 to +12
+const TABLE_NARROW = 12; // the bowl is drawn from −12 to +12 while the home spread fits
+const TABLE_WIDE = 40; // and from −40 to +40 when it does not (φ ≥ 0.96, the flat table, the upturned bowl)
 const N_CLOUD = 500;
 const CLOUD_STEPS = 300;
 const HIST = 160; // ticks of the single marble's trace kept
-const BIN = 0.4;
 
 const BW = 420,
   BH = 220,
@@ -29,8 +31,12 @@ const BW = 420,
   HMAX = 260; // px height of the bowl's rim at φ = 0
 /** the upturned bowl (φ > 1) is drawn with a visual gain so the hill can be seen at all; the picture, not a quantity */
 const GAIN_UP = 3;
-const px = (x: number) => PX0 + ((x + TABLE) / (2 * TABLE)) * (PX1 - PX0);
-const bowlY = (x: number, phi: number) => (phi <= 1 ? BASE - (1 - phi) * (x / TABLE) ** 2 * HMAX : BASE - (phi - 1) * GAIN_UP * HMAX * (1 - (x / TABLE) ** 2));
+const pxOn = (TABLE: number) => (x: number) => PX0 + ((x + TABLE) / (2 * TABLE)) * (PX1 - PX0);
+const bowlYOn = (TABLE: number) => (x: number, phi: number) =>
+  phi <= 1 ? BASE - (1 - phi) * (x / TABLE_NARROW) ** 2 * HMAX : BASE - (phi - 1) * GAIN_UP * HMAX * (1 - (x / TABLE) ** 2);
+/** the two release points: 250 marbles from each — ±8 on the narrow table (QuantEcon's move), ±10 on the wide one so a
+ *  random walk's 300-tick spread (√300 ≈ 17) stays on the table while it widens */
+const startOn = (TABLE: number) => (TABLE === TABLE_NARROW ? 8 : 10);
 
 interface Sim {
   x: number;
@@ -46,6 +52,13 @@ export function F2Bowl() {
   const simRef = useRef<Sim>({ x: 0, hist: [0], off: 0, cloud: null, step: 0, next: rng(2) });
   const [, setTick] = useState(0);
   const narrow = useNarrow("(max-width: 760px)");
+  const stat = ar1Stationary(phi, SIGMA);
+  const homeSd = stat ? Math.sqrt(stat.variance) : null;
+  const TABLE = homeSd !== null && homeSd <= 3.5 ? TABLE_NARROW : TABLE_WIDE;
+  const BIN = TABLE / 30;
+  const px = pxOn(TABLE);
+  const bowlY = bowlYOn(TABLE);
+  const START = startOn(TABLE);
 
   // the dial resets the marble (and the cloud) so each φ is seen from the centre
   useEffect(() => {
@@ -93,8 +106,7 @@ export function F2Bowl() {
   }, [phi]);
 
   const s = simRef.current;
-  const stat = ar1Stationary(phi, SIGMA);
-  const homeSd = stat ? Math.sqrt(stat.variance) : null;
+
   const alive = s.cloud ? s.cloud.filter((v) => Number.isFinite(v)) : [];
   const onTable = alive.filter((v) => Math.abs(v) <= TABLE);
   const lost = s.cloud ? N_CLOUD - onTable.length : 0;
@@ -115,7 +127,6 @@ export function F2Bowl() {
   const mx = Math.max(-TABLE - 0.4, Math.min(TABLE + 0.4, s.x));
   const trace: Pt[] = s.hist.map((v, i) => [i - s.hist.length + 1, Math.max(-TABLE - 1, Math.min(TABLE + 1, v))]);
   const regime = phi < 1 ? (phi < 0.7 ? "snaps home" : "wanders, but comes home") : phi === 1 ? "a flat table: a random walk" : "an upturned bowl: it flies off";
-  const q = KEY.stationary[0]; // the QuantEcon check: φ 0.9, c 0.1, σ 0.5 → mean 1.0, variance 1.316
 
   return (
     <Figure
@@ -134,7 +145,7 @@ export function F2Bowl() {
             className="btn primary"
             onClick={() => {
               const c = simRef.current;
-              c.cloud = new Array(N_CLOUD).fill(0);
+              c.cloud = Array.from({ length: N_CLOUD }, (_, i) => (i % 2 ? START : -START));
               c.step = 0;
               setTick((t) => t + 1);
             }}
@@ -155,21 +166,17 @@ export function F2Bowl() {
           φ = {n2(phi)}: <strong>{regime}</strong>.{" "}
           {homeSd !== null ? (
             <>
-              A home exists because every kick is multiplied by {n2(phi)} each day and fades. The pile settles into a fixed shape whose spread the engine gives
-              as √(σ²/(1−φ²)) = {n2(homeSd)}; the five hundred marbles should land near it.
+              A home exists because every kick is multiplied by {n2(phi)} each day and fades. Released from −{n1(START)} and +{n1(START)}, the two piles forget where they
+              started and land on one shape, spread {n2(homeSd)} — the home.
             </>
           ) : phi === 1 ? (
             <>
-              Nothing fades: every kick is kept in full. The pile has no shape to settle into — its spread grows like √ticks forever. That is a random walk,
-              and its best forecast for any day ahead is simply today's position.
+              Nothing fades: every kick is kept in full. The pile has no shape to settle into — its spread grows like √ticks forever ({n1(Math.sqrt(Math.max(1, s.step)))} after{" "}
+              {s.step} ticks). That is a random walk; its best forecast for any day ahead is today's position.
             </>
           ) : (
             <>Kicks are amplified, not forgotten: the marbles leave the table. A price cannot do this for long, which is why the boundary at φ = 1 matters.</>
-          )}{" "}
-          <span className="a4-quiet">
-            Engine check (QuantEcon): with φ = {n1(q.phi)}, a constant {n1(q.c)} and kicks of size {n1(q.sigma)}, the pile settles at mean {n1(q.mean)}, variance{" "}
-            {n3(q.variance)}.
-          </span>
+          )}
         </>
       }
     >
@@ -206,6 +213,16 @@ export function F2Bowl() {
           <text className="a4-axis" x={px(0)} y={BASE + 30} textAnchor="middle">
             0 · where the marbles pile up is the home
           </text>
+          {homeSd !== null && !s.cloud && (
+            <g className="a4-home">
+              <text x={px(-START)} y={BASE - 6} textAnchor="middle">
+                ▼ 250 start here
+              </text>
+              <text x={px(START)} y={BASE - 6} textAnchor="middle">
+                250 start here ▼
+              </text>
+            </g>
+          )}
           <text className="a4-axis" x={px(0)} y={BASE + 44} textAnchor="middle">
             {phi < 1 ? "a bowl: kicks are forgotten" : phi === 1 ? "a flat table: kicks are kept" : "upturned (drawn steeper than it is): kicks grow"}
           </text>

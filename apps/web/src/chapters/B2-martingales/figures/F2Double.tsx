@@ -7,9 +7,8 @@ import { Readouts } from "../../../ui/controls";
 import { Bars, Curve, HLine, Label, Marker, Plot, type Pt } from "../../../ui/Plot";
 import { doublingCycles, type Replay } from "../../../engine/martingale";
 import { rng } from "../../../engine/random";
-import key from "../../../engine/__fixtures__/key-B2.json";
 import { Meter } from "./Meter";
-import { PLAYERS, chips, doublingNight, f2, n2, pct0, pct1, useNarrow, useRecordReading } from "./table";
+import { PLAYERS, chips, doublingNight, f2, n2, pct0, useNarrow, useRecordReading } from "./table";
 
 /**
  * Figure 2 — rule 3: you may size your bets. One doubling cycle by hand in a ledger (1 lose, 2 lose, 4 win → +1), then one
@@ -52,7 +51,6 @@ export function F2Double() {
   const all = useMemo(() => (night ? doublingCycles(K, CYCLES, PLAYERS, rng(SEED_ALL)) : null), [night]);
   const replay: Replay | null = all;
   useRecordReading("F2", replay);
-  const kd = key.doubling_k5;
 
   // histogram over the distinct final values 100 − 32·ruins
   const hist = useMemo(() => {
@@ -94,7 +92,7 @@ export function F2Double() {
         ) : (
           <>
             A staircase of +1s and, one night in {Math.round(1 / all!.pRuinPerCycle)}, the cliff: five blacks in a row, the next bet would be 32, over the limit, and the night is down {LIMIT} in one cycle. Over 100 cycles the median night is{" "}
-            <strong>{chips(all!.median)}</strong> and {pct0(all!.pAhead)} of players go home ahead — and {pct0(all!.pAtLeastOneRuin)} of them met the cliff at least once (the answer key: median {chips(kd.median)}, {pct1(kd.p_ahead)} ahead, {pct1(kd.p_at_least_one_ruin)} ruined at least once, exact {pct1(kd.p_at_least_one_ruin_formula)}). The meter reads <strong>{f2(all!.mean)}</strong> ± {n2(2 * all!.se)}; the exact mean per cycle is {kd.mean_cycle_formula}: 31 chances in 32 of +1 against 1 in 32 of −31. The mathematics of fair games is named after this system — the thing that does not work.
+            <strong>{chips(all!.median)}</strong>, {pct0(all!.pAhead)} of players go home ahead — and {pct0(all!.pAtLeastOneRuin)} of them met the cliff at least once. The meter reads <strong>{f2(all!.mean)}</strong> ± {n2(2 * all!.se)}: 31 chances in 32 of +1 against 1 in 32 of −31 is exactly zero. The mathematics of fair games is named after this system — the thing that does not work.
           </>
         )
       }

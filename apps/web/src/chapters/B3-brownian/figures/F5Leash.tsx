@@ -104,8 +104,9 @@ export function F5Leash() {
           </>
         ) : (
           <>
-            The fan stops widening: a leash with pull 2 and wobble 1 % a year holds the dot within about ±{pctSp(sdExact, 1)} of the post, for ever, instead of spreading like √t. A kick
-            decays home with a half-life of {n2(half)} years. The stepped path, at this tick, is a little too loose ({pctSp(sdEuler, 3)} vs {pctSp(sdExact, 3)}).
+            The fan stops widening: a leash with pull 2 and wobble 1 % a year holds the dot within about ±{pctSp(sdExact, 1)} of the post, for ever, instead of spreading like √t — A4's
+            bowl, the marble that comes home, on a continuous clock. A kick decays home with a half-life of {n2(half)} years. The stepped path, at this tick, is a little too loose
+            ({pctSp(sdEuler, 3)} vs {pctSp(sdExact, 3)}).
           </>
         )
       }
