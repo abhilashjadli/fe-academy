@@ -11,7 +11,7 @@ import "./figures.css";
  * Figure 1 — two pictures, one clock. The real daily moves above their squares, one scrubber across ten years, one hand
  * through both. One button, "listen": a click per day, as loud as its square, from where the hand stands — the chapter's
  * one sonification beat. Readouts: date, move, square (drawn under the hand). The tile in words is computed from the
- * same 2,679 days: how often a big square follows a big square, against chance.
+ * same days: how often a big square follows a big square, against chance.
  */
 
 const DAYS_PER_SECOND = 60;

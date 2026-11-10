@@ -10,7 +10,7 @@ import "./figures.css";
 
 /**
  * Figure 0 — guess-then-reveal on a real artefact. Two unlabelled strips of daily moves, 2016 → 2026: the real index and
- * the same 2,679 days shuffled. The three tiles under each are identical by construction. The reader clicks the real
+ * the same days shuffled. The three tiles under each are identical by construction. The reader clicks the real
  * one; on reveal the real strip's storms are shaded and dated and "shuffle again" reshuffles the other as often as
  * they like. No clock yet — this figure is the one that earns it.
  */

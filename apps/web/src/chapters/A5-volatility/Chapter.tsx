@@ -111,7 +111,7 @@ export function VolatilityChapter() {
         <details className="prose a5-more">
           <summary>What computes the figures on this page</summary>
           <pre className="num a5-code">
-            {`real series: NIFTY 50 daily log moves, 2016-01-04 → 2026-10-28 (2,679 days), sd 1.02 %/day
+            {`real series: NIFTY 50 daily log moves, 2016-01-04 → 2026-11-03 (2,683 days), sd 1.02 %/day
 EWMA: σ²_{t+1} = λ σ²_t + (1 − λ) r_t²; half-life = ln ½ / ln λ
 GARCH(1,1): σ²_{t+1} = ω + α r_t² + β σ²_t, fitted by maximum likelihood (Nelder–Mead) on the real series; long-run σ² = ω/(1 − α − β)
 4 Jun 2024: trailing-year, EWMA before/after, GARCH forecast vs the next 25 days' realised

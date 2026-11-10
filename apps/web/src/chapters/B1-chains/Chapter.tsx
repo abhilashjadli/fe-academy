@@ -20,8 +20,8 @@ export function ChainsChapter() {
           inside it, and uses the same machine to explain why a drunk drifts and why buses arrive in clumps.
         </p>
         <p className="assumes">
-          Assumes: you can count and you know what a fraction is. That is all. The season on this page is simulated and labelled so until the real
-          Bengaluru 2024 file arrives; the page switches to it by itself.
+          Assumes: you can count and you know what a fraction is. That is all. The season is Bengaluru's 2024 monsoon, day by day, from Open-Meteo's
+          weather archive; nothing on this page is simulated except the strips the machine grows.
         </p>
       </header>
 
@@ -69,8 +69,8 @@ export function ChainsChapter() {
       <div className="prose">
         <p>
           The chain's strip has the season's spells and the fair coin's does not — and the coin's is the one most people pick as the original,
-          because it looks "more random". One honest gap, which the real file will show: a real monsoon's rain fraction drifts across the season
-          while the chain's is flat, the one thing fixed arrows cannot do. Last act: the same idea on a clock.
+          because it looks "more random". One honest gap: the real monsoon is wetter in June and August than in September, so its rain fraction
+          drifts across the season while the chain's is flat — the one thing fixed arrows cannot do. Last act: the same idea on a clock.
         </p>
       </div>
 

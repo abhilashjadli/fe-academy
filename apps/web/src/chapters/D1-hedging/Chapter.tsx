@@ -20,8 +20,7 @@ export function HedgingChapter() {
         </p>
         <p className="assumes">
           Assumes: chapter C4's three words — slope, bend, clock — and that a hedge means holding index against a call. Both are restated in the first
-          panel. The closes are NSE's; where the file ends before expiry the page says "simulated from here" and switches to the real rows when they
-          arrive.
+          panel. Every close is NSE's, from the Friday he sold to the Tuesday the option expired.
         </p>
       </header>
 
@@ -49,9 +48,11 @@ export function HedgingChapter() {
 
       <div className="prose">
         <p>
-          The break-even wobble of a hedged option is its implied volatility. Raj sold 15.9 %; for three days the index wobbled at 6.5 %, and every
-          one of those days the clock paid more than the bend charged. Mel's question is the one every fresher asks, and Raj's answer is the page:
-          theta is the fee he is paid to carry the bend, not his profit. Which leaves the part that was luck.
+          The break-even wobble of a hedged option is its implied volatility. Raj sold 15.9 %; over the week the index wobbled at 16.0 % — three
+          quiet days when the clock paid and nothing charged, then a 238-point Thursday and a 388-point Monday when the bend took back most of it, and
+          an index that ended five per cent higher than where he sold. A dead heat on the referee's card, and he still kept ₹1.6 lakh of the ₹16
+          lakh: that is the leak, not an edge. Mel's question is the one every fresher asks, and Raj's answer is the page: theta is the fee he is
+          paid to carry the bend, not his profit. Which leaves the part that was luck.
         </p>
       </div>
 
@@ -106,7 +107,7 @@ export function HedgingChapter() {
         <details className="prose d1-more">
           <summary>What computes the figures on this page</summary>
           <pre className="num d1-code">
-            {`ledger: each close → slope Δ (Black-76 on F = close × 22,603/22,600), trade −units·Δ − held, cash += held·ΔF (futures-style hedge), premium accrues at 6.5 %
+            {`ledger: the real closes 23 Oct → 3 Nov 2026 → slope Δ (Black-76 on F = close × 22,603/22,600), trade −units·Δ − held, cash += held·ΔF (futures-style hedge), premium accrues at 6.5 %
 day split: clock = units·Θ_day·days, bend = units·½Γ·ΔF²  (yesterday's Greeks); exact = units·ΔV + held·ΔF
 referee: edge/day = units·½ΓF²(σ_real² − σ_sold²)/365;  realised σ = rms of log moves × √252, no mean subtracted
 weeks: lognormal paths, hedge once per step, 1,500 paths; markers: mean, Wilmott V(σ_real) − V(σ_sold)

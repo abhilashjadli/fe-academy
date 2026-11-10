@@ -108,7 +108,7 @@ export function SmileChapter() {
             {`smile fit: σ(k) = a + b k + c k², k = ln(K/F), least squares on the 34 (strike, vol) dots → 0.1595 − 0.418 k + 7.2 k², rms 0.16 vol pts
 tents (h = 50): C(K−h) − 2C(K) + C(K+h); probability within ±h/2 = e^{rT} × tent / h;  raw LTPs: 6 of 15 negative
 density from the smoothed smile by the same second difference, h = 5; P(S_T < K) = e^{rT} × (P(K+h) − P(K−h)) / 2h
-record: 2,679 daily log moves 2016–2026, sd 1.02 %; beyond 2σ 62/44 (bell 61 each), 3σ 20/17 (3.6), 4σ 10/5 (0.1)
+record: 2,683 daily log moves 2016–2026, sd 1.02 %; beyond 2σ 62/44 (bell 61 each), 3σ 20/17 (3.6), 4σ 10/5 (0.1)
 // all tested against tests/answer-key/key_D2.py (Hull Ex. 15.1, Tables 15.2, 15.3 to printed precision)`}
           </pre>
         </details>

@@ -214,22 +214,22 @@ describe("A5 volatility engine vs the simulated GARCH key (ω = 2e-6, α = 0.08,
 describe("A5 volatility engine on the real NIFTY 50 returns (2016 → Oct 2026)", () => {
   const k = key.nifty;
 
-  it("2,679 returns; sd 1.02 %/day", () => {
+  it("2,683 returns (2016 → 3 Nov 2026); sd 1.02 %/day", () => {
     expect(niftyReturns.length).toBe(k.n);
-    expect(niftyReturns.length).toBe(2679);
+    expect(niftyReturns.length).toBe(2683);
     expect(meanSquare(niftyReturns)).toBeCloseTo(k.mean_sq, 16);
     expect(k.sd_daily).toBeCloseTo(0.0102, 3);
   });
 
-  it("autocorrelation of r and r² at lags 1..5 (lag-1: −0.034 vs 0.199)", () => {
+  it("autocorrelation of r and r² at lags 1..5 (lag-1: ≈ −0.03 vs ≈ 0.20)", () => {
     const ar = acf(niftyReturns, 5);
     const ar2 = acf(niftyReturns.map((v) => v * v), 5);
     for (let i = 0; i < 5; i++) {
       expect(ar[i]).toBeCloseTo(k.acf_r[i], 10);
       expect(ar2[i]).toBeCloseTo(k.acf_r2[i], 10);
     }
-    expect(ar[0]).toBeCloseTo(-0.034, 3);
-    expect(ar2[0]).toBeCloseTo(0.199, 3);
+    expect(ar[0]).toBeCloseTo(-0.03, 2);
+    expect(ar2[0]).toBeCloseTo(0.2, 2);
   });
 
   it("Ljung–Box at 20 lags on r and on r² match statsmodels; r² is an order of magnitude larger", () => {

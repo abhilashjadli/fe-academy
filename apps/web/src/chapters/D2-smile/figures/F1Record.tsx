@@ -124,7 +124,7 @@ export function F1Record() {
       }
     >
       <div className="d2-stage">
-        <Plot xDomain={[P * LO, P * HI]} yDomain={[0, yMax]} width={narrow ? 420 : 620} height={narrow ? 260 : 320} margin={{ top: 14, right: 14, bottom: 34, left: 40 }} xLabel="one day's move, %" yLabel="days" xTicks={narrow ? 5 : 7} yTicks={4} axisX={P * LO} ariaLabel="A histogram of 2,679 daily NIFTY 50 log moves between minus and plus six percent, with a bell curve of the same standard deviation drawn over it; bins beyond the chosen number of standard deviations are highlighted">
+        <Plot xDomain={[P * LO, P * HI]} yDomain={[0, yMax]} width={narrow ? 420 : 620} height={narrow ? 260 : 320} margin={{ top: 14, right: 14, bottom: 34, left: 40 }} xLabel="one day's move, %" yLabel="days" xTicks={narrow ? 5 : 7} yTicks={4} axisX={P * LO} ariaLabel="A histogram of 2,683 daily NIFTY 50 log moves between minus and plus six percent, with a bell curve of the same standard deviation drawn over it; bins beyond the chosen number of standard deviations are highlighted">
           <Bins counts={counts} lit={lit} />
           <Curve pts={bell} role="ink" width={1.8} />
           <VLine at={P * lo} />

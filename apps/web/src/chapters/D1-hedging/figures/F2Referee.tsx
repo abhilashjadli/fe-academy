@@ -66,7 +66,7 @@ export function F2Referee() {
       observe={
         <>
           The bars tie at <strong>{pct1(POS.sigmaSold)}</strong> and nowhere else: a hedged option breaks even when the index wobbles at the vol it was sold at. Below it Raj is
-          paid more than the bend costs; above it, less. The market's {WEEK.realisedDays} real days so far wobbled at <strong>{pct1(realised)}</strong>, worth {rsSigned(edgeReal)} a day
+          paid more than the bend costs; above it, less. The market's {WEEK.realisedDays} real days{WEEK.complete ? "" : " so far"} wobbled at <strong>{pct1(realised)}</strong>, worth {rsSigned(edgeReal)} a day
           to him — and that is the only sense in which theta was ever his profit.
         </>
       }
@@ -114,7 +114,7 @@ export function F2Referee() {
             {/* the real week so far */}
             <line x1={tx(100 * realised)} x2={tx(100 * realised)} y1={ty - 14} y2={ty + 4} stroke="var(--error)" strokeWidth="2" />
             <text className="mark-t" x={tx(100 * realised)} y={ty + 30} textAnchor={100 * realised < 11 ? "start" : "middle"} fill="var(--error-text)">
-              the real week so far {pct1(realised)}
+              the real week{WEEK.complete ? "" : " so far"} {pct1(realised)}
             </text>
             {/* the dial */}
             <circle cx={tx(wob)} cy={ty} r="6" fill="var(--approx)" stroke="var(--surface-figure)" strokeWidth="2" />
@@ -134,7 +134,7 @@ export function F2Referee() {
             So theta is your profit?
           </Says>
           <Says who="Raj" mood="neutral">
-            Theta is what I'm paid to take the bend. My profit is the gap between what the index did and what I sold — {pct1(realised)} against {pct1(POS.sigmaSold)} so far, {short(edgeReal)} a day.
+            Theta is what I'm paid to take the bend. My profit is the gap between what the index did and what I sold — {pct1(realised)} against {pct1(POS.sigmaSold)}{WEEK.complete ? "" : " so far"}, {short(edgeReal)} a day.
           </Says>
         </div>
       </div>
