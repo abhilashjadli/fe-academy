@@ -25,6 +25,7 @@ const K = HIST99.k;
 const nearestOption = OPTIONS.reduce((b, o) => (Math.abs(o.v - VAR) < Math.abs(b.v - VAR) ? o : b), OPTIONS[0]);
 
 const Y_MIN = -13.5e5;
+const INSET_N = 60;
 const Y_MAX = 9.5e5;
 const YEARS = ["2016", "2018", "2020", "2022", "2024", "2026"];
 
@@ -101,6 +102,12 @@ export function F0Sort() {
     [xOfDate, M.left, innerW],
   );
 
+  const insetBox = useCallback(() => {
+    const x = M.left + innerW * (narrow ? 0.3 : 0.42);
+    const y = yOf(-ES) + (narrow ? 22 : 30);
+    return { x, y, w: M.left + innerW - 6 - x, h: height - M.bottom - 24 - y };
+  }, [M.left, M.bottom, innerW, yOf, height, narrow]);
+
   // draw
   useEffect(() => {
     const c = canvasRef.current;
@@ -138,6 +145,17 @@ export function F0Sort() {
     ctx.lineTo(M.left + innerW, y0 + 0.5);
     ctx.stroke();
 
+    // faint height marks
+    ctx.font = font(400, 10.5);
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "left";
+    for (const v of [-10e5, -5e5, 5e5]) {
+      ctx.fillStyle = col.ink3;
+      ctx.globalAlpha = 0.8;
+      ctx.fillText(v > 0 ? "+₹5 lakh" : v === -5e5 ? "−₹5 lakh" : "−₹10 lakh", M.left + 2, yOf(v));
+      ctx.globalAlpha = 1;
+    }
+
     // bars
     const worstSet = new Set(HIST99.worst);
     for (let i = 0; i < N; i++) {
@@ -162,6 +180,7 @@ export function F0Sort() {
       for (const y of YEARS) {
         const i = DATES.findIndex((d) => d >= y + "-01-01");
         if (i < 0) continue;
+        ctx.textAlign = i === 0 ? "left" : "center";
         ctx.fillText(y, xOfDate(i), height - M.bottom + 7);
       }
       ctx.globalAlpha = 1;
@@ -214,23 +233,57 @@ export function F0Sort() {
       line(VAR, col.errorText, narrow ? `VaR ${lakh(VAR)} · ${K}th worst` : `VaR ${lakh(VAR)} — the ${K}th worst day of ${count(N)}`, [], "above");
       line(ES, col.ink2, narrow ? `ES ${lakh(ES)}` : `ES ${lakh(ES)} — the mean of those ${K}`, [6, 4], "below");
       if (bell) line(BELL_VAR99, col.approxText, narrow ? `the bell's 1 % ${lakh(BELL_VAR99)}` : `the bell's 1 % line ${lakh(BELL_VAR99)} — ${BEYOND_BELL} real days beyond it`, [2, 3], "above");
-      // the 27th bar, when sorted
+      // the worst bars, enlarged (the pile squeezes them into 1 % of the width)
       if (t > 0.98) {
-        const x = M.left + ((K - 0.5) / N) * innerW;
+        const ib = insetBox();
+        ctx.fillStyle = col.raised;
+        ctx.strokeStyle = col.rule;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.roundRect(ib.x, ib.y, ib.w, ib.h, 3);
+        ctx.fill();
+        ctx.stroke();
+        const iy = (v: number) => ib.y + 16 + ((-v) / -Y_MIN) * (ib.h - 22);
+        const ibw = (ib.w - 12) / INSET_N;
+        for (let r = 0; r < INSET_N; r++) {
+          const i = RANK[r];
+          const x = ib.x + 6 + r * ibw;
+          ctx.fillStyle = col.error;
+          ctx.globalAlpha = r < K ? 0.95 : 0.45;
+          if (hover === i) ctx.globalAlpha = 1;
+          ctx.fillRect(x + 0.5, iy(0), Math.max(1, ibw - 1), iy(PNL[i]) - iy(0));
+        }
+        ctx.globalAlpha = 1;
+        const hline = (v: number, color: string, dash: number[]) => {
+          ctx.setLineDash(dash);
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(ib.x + 4, iy(-v) + 0.5);
+          ctx.lineTo(ib.x + ib.w - 4, iy(-v) + 0.5);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        };
+        hline(VAR, col.errorText, []);
+        hline(ES, col.ink2, [5, 3]);
+        if (bell) hline(BELL_VAR99, col.approxText, [2, 3]);
+        // the 27th bar
+        const x27 = ib.x + 6 + (K - 0.5) * ibw;
         ctx.strokeStyle = col.ink;
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.moveTo(x + 0.5, yOf(-VAR) + 2);
-        ctx.lineTo(x + 0.5, y0 + 10);
+        ctx.moveTo(x27 + 0.5, iy(-VAR) + 2);
+        ctx.lineTo(x27 + 0.5, ib.y + ib.h - 4);
         ctx.stroke();
-        ctx.font = font(400, 11);
+        ctx.font = font(600, 10.5);
+        ctx.fillStyle = col.ink;
         ctx.textAlign = "left";
         ctx.textBaseline = "top";
-        ctx.fillStyle = col.ink;
-        ctx.fillText(`← ${K} bars`, x + 4, y0 + 2);
+        ctx.fillText(`the ${K}th bar`, x27 + 4, ib.y + ib.h - 15);
+        ctx.font = font(400, 10.5);
+        ctx.fillStyle = col.ink3;
+        ctx.fillText(`the worst ${INSET_N} bars, enlarged`, ib.x + 6, ib.y + 4);
       }
-    }
-
     // hover tip
     if (hover !== null) {
       const x = xOf(hover, t);
@@ -257,7 +310,7 @@ export function F0Sort() {
       ctx.lineWidth = 1;
       ctx.strokeRect(x - Math.max(1, bw / 2) - 0.5, Math.min(y0, yOf(v)) - 0.5, Math.max(2, bw) + 1, Math.abs(yOf(v) - y0) + 1);
     }
-  }, [width, height, t, bell, hover, placed, narrow, xOf, xOfDate, yOf, innerW, innerH, M.left, M.top, M.bottom]);
+  }, [width, height, t, bell, hover, placed, narrow, xOf, xOfDate, yOf, innerW, innerH, M.left, M.top, M.bottom, insetBox]);
 
   // redraw when the theme flips (the canvas reads CSS variables)
   const [, bump] = useState(0);
@@ -280,6 +333,14 @@ export function F0Sort() {
     if (py < M.top - 4 || py > height - M.bottom + 4) {
       setHover(null);
       return;
+    }
+    if (placed && t > 0.98) {
+      const ib = insetBox();
+      if (px >= ib.x && px <= ib.x + ib.w && py >= ib.y && py <= ib.y + ib.h) {
+        const r = Math.floor((px - ib.x - 6) / ((ib.w - 12) / INSET_N));
+        setHover(r >= 0 && r < INSET_N ? RANK[r] : null);
+        return;
+      }
     }
     let best = -1;
     let bd = 6;
