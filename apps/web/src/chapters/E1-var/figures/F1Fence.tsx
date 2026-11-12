@@ -123,7 +123,6 @@ export function F1Fence() {
           ariaLabel={`daily losses of ₹1 crore long NIFTY over ${count(T)} test days with the ${FENCE_NAMES[id]} 99 % fence; ${res.exceptions} crossings lit red`}
         >
           <YearTicks dates={bt.dates} />
-          <rect className="e1-window" x={0} y={0} width={0} height={0} />
           <InsetBand a={inset.a} b={inset.b} />
           <Points pts={dots} role="ghost" r={narrow ? 1.2 : 1.6} opacity={0.45} />
           <Curve pts={fenceLine} role={id === "historical" ? "truth" : "approx"} width={1.6} smooth={false} />
@@ -180,13 +179,13 @@ function InsetBand({ a, b }: { a: number; b: number }) {
 }
 
 function InsetTicks({ a, b, dates }: { a: number; b: number; dates: string[] }) {
-  const { x, inner } = usePlot();
+  const { x, y } = usePlot();
   const firsts = ["2020-02-01", "2020-03-01", "2020-04-01"].map((d) => dates.findIndex((e, i) => i >= a && i <= b && e >= d)).filter((i) => i >= 0);
   const names = ["Feb", "Mar", "Apr"];
   return (
     <g>
       {firsts.map((i, k) => (
-        <text key={i} className="label e1-ticklabel" x={x(i)} y={inner.top + inner.height + 14} textAnchor="start">
+        <text key={i} className="label e1-ticklabel" x={x(i)} y={y(0) + 12} textAnchor="start">
           {names[k]} 2020
         </text>
       ))}

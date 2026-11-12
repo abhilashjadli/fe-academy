@@ -65,7 +65,7 @@ export const SYLLABUS: Track[] = [
     id: "E",
     title: "Risk & simulation",
     chapters: [
-      { id: "E1", title: "VaR and Expected Shortfall" },
+      { id: "E1", title: "VaR and Expected Shortfall", built: true },
       { id: "E2", title: "Monte Carlo methods" },
       { id: "E3", title: "Portfolio theory, efficient frontier, PCA on curves" },
     ],

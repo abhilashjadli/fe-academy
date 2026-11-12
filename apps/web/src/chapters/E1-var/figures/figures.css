@@ -1,0 +1,266 @@
+/* Chapter E1 — figure-local styles. House tokens only.
+   Roles: losing days red (error), winning days blue (truth); the historical fence blue (truth); the bells amber (approx);
+   the linear model red (error); the real pile's dots ghost. */
+
+.e1-quiet {
+  color: var(--ink-3);
+  font-weight: 400;
+}
+.e1-err {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.plot .label.e1-ticklabel {
+  font-size: 10.5px;
+  fill: var(--ink-3);
+}
+.e1-tick {
+  stroke: var(--axis);
+  stroke-width: 1;
+}
+.e1-panel-title {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  align-items: baseline;
+  padding: 0 2px 4px;
+}
+.e1-panel-title strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---- Figure 0: the sort ---- */
+.e1-sort {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.e1-sort .bet {
+  padding-left: var(--space-1);
+  padding-right: var(--space-1);
+}
+.e1-canvas-wrap {
+  width: 100%;
+  min-width: 0;
+}
+.e1-canvas {
+  display: block;
+  touch-action: pan-y;
+  cursor: crosshair;
+}
+.e1-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--ink-3);
+  padding: 0 var(--space-1);
+  font-variant-numeric: tabular-nums;
+}
+.e1-sw {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  margin-right: 5px;
+  vertical-align: -2px;
+  opacity: 0.8;
+}
+.e1-sw.line {
+  height: 3px;
+  vertical-align: 2px;
+}
+
+/* ---- Figure 1: the fence ---- */
+.e1-fence {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.e1-fence > svg.plot {
+  width: 100%;
+  max-width: 800px;
+  align-self: center;
+}
+.e1-counter {
+  font-family: var(--font-ui);
+  font-size: 0.92rem;
+  padding: var(--space-2) var(--space-3);
+  border-left: 4px solid var(--truth);
+  background: var(--surface);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-variant-numeric: tabular-nums;
+}
+.e1-counter.fail {
+  border-left-color: var(--error);
+}
+.e1-counter strong {
+  font-weight: 600;
+}
+.e1-zone {
+  font-weight: 600;
+}
+.e1-zone-green {
+  color: var(--truth-text);
+}
+.e1-zone-yellow {
+  color: var(--approx-text);
+}
+.e1-zone-red {
+  color: var(--error-text);
+}
+.e1-window {
+  fill: var(--approx-soft);
+}
+.e1-inset-row {
+  display: grid;
+  grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--space-3);
+}
+@media (max-width: 760px) {
+  .e1-inset-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.e1-inset {
+  min-width: 0;
+}
+.e1-inset > svg.plot {
+  width: 100%;
+}
+.e1-fence-note {
+  font-family: var(--font-prose);
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  line-height: 1.45;
+}
+.e1-fence-note p {
+  margin: 0;
+}
+.e1-fence-note strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---- Figure 2: Raj ---- */
+.e1-raj {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.e1-raj-stage {
+  padding: var(--space-1) 0;
+}
+.e1-raj-stage > svg.plot {
+  width: 100%;
+  max-width: 560px;
+  display: block;
+  margin: 0 auto;
+}
+.e1-result-inline {
+  margin-top: var(--space-2);
+  font-size: 0.92rem;
+}
+.e1-result-inline .result-head {
+  margin-bottom: 0;
+}
+.e1-dial {
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--space-3);
+}
+.e1-dial > svg.plot {
+  width: 100%;
+  max-width: 800px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ---- Figure 3: the stills ---- */
+.e1-stills {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-2);
+}
+.e1-stills-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .e1-stills-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.e1-still {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.e1-still > svg.plot {
+  width: 100%;
+  max-width: 800px;
+}
+.e1-still-cap {
+  margin: 0;
+  font-family: var(--font-prose);
+  font-size: 0.92rem;
+  color: var(--ink-3);
+  line-height: 1.45;
+}
+.e1-still-cap strong {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+.e1-desks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-1) 0;
+}
+.e1-desk {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.e1-desk-joint {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-3);
+}
+.e1-desk-joint svg {
+  flex: 0 0 auto;
+  width: 40%;
+}
+@media (max-width: 520px) {
+  .e1-desk-joint {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .e1-desk-joint svg {
+    width: 60%;
+  }
+}
+.e1-desk-t {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.e1-desk-t strong {
+  color: var(--ink);
+  font-weight: 600;
+}
