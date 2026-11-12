@@ -24,6 +24,7 @@ import { ChainsChapter } from "./chapters/B1-chains/Chapter";
 import { VolatilityChapter } from "./chapters/A5-volatility/Chapter";
 import { TimeSeriesChapter } from "./chapters/A4-timeseries/Chapter";
 import { VarChapter } from "./chapters/E1-var/Chapter";
+import { MonteCarloChapter } from "./chapters/E2-montecarlo/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
@@ -48,6 +49,7 @@ const CHAPTERS: Record<string, ComponentType> = {
   A5: VolatilityChapter,
   A4: TimeSeriesChapter,
   E1: VarChapter,
+  E2: MonteCarloChapter,
   lab: Lab,
 };
 
