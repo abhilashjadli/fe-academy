@@ -31,16 +31,16 @@ function Ghost({ narrow }: { narrow: boolean }) {
       <div className="e1-panel-title">
         <strong>(a) the ghost</strong> <span>the historical fence, Feb–Apr 2022, with each day's loss</span>
       </div>
-      <Plot xDomain={[a - 0.5, b + 0.5]} yDomain={[-4, 7]} width={narrow ? 400 : 520} height={narrow ? 220 : 230} margin={{ top: 8, right: 10, bottom: 8, left: 8 }} xTicks={0} yTicks={0} grid={false} axisX={a - 0.5} axisY={0} ariaLabel="the historical 99 % fence from February to April 2022 falling from 5.56 lakh to 3.76 lakh while daily losses stay small">
+      <Plot xDomain={[a - 0.5, b + 0.5]} yDomain={[-5, 7]} width={narrow ? 400 : 520} height={narrow ? 220 : 230} margin={{ top: 8, right: 10, bottom: 8, left: 8 }} xTicks={0} yTicks={0} grid={false} axisX={a - 0.5} axisY={0} ariaLabel="the historical 99 % fence from February to April 2022 falling from 5.56 lakh to 3.76 lakh while daily losses stay small">
         <MonthTicks dates={bt.dates} a={a} b={b} months={["2022-02-01", "2022-03-01", "2022-04-01"]} names={["Feb", "Mar", "Apr"]} year="2022" />
         <Bars bars={Array.from({ length: b - a + 1 }, (_, j) => ({ x: a + j, y: bt.loss[a + j] / 1e5, w: 0.8 }))} role="ghost" opacity={0.5} gap={0} />
         <Curve pts={fence} role="truth" width={2} smooth={false} />
         <Marker at={[iS, before / 1e5]} role="truth" r={4.5} />
-        <Label at={[iS, before / 1e5]} text={`${fmtDay(g.start)}: ${lakh(before)}`} role="truth" dx={-6} dy={-8} anchor="end" />
+        <Label at={[iS, before / 1e5]} text={`${fmtDay(g.start)}: ${lakh(before)}`} role="truth" dx={8} dy={-8} />
         <Marker at={[iE, after / 1e5]} role="truth" r={4.5} />
         <Label at={[iE, after / 1e5]} text={`${fmtDay(g.end)}: ${lakh(after)}`} role="truth" dx={6} dy={16} />
-        <Label at={[iS, 6.6]} text={narrow ? "−" + Math.round(100 * (1 - after / before)) + " % in " + g.days_between + " days" : `the fence falls ${Math.round(100 * (1 - after / before))} % in ${g.days_between} trading days`} role="ink" dx={-6} dy={4} anchor="end" />
-        <Label at={[a, -3.6]} text="each day's loss, ₹ lakh" role="ghost" dx={4} dy={0} />
+        <Label at={[b, 6.6]} text={narrow ? "−" + Math.round(100 * (1 - after / before)) + " % in " + g.days_between + " days" : `the fence falls ${Math.round(100 * (1 - after / before))} % in ${g.days_between} trading days`} role="ink" dx={-2} dy={4} anchor="end" />
+        
       </Plot>
       <p className="e1-still-cap">
         Nothing happened. Between {fmtDate(g.start)} and {fmtDate(g.end)} the worst day lost {lakh(Math.max(...Array.from(bt.loss.subarray(iS, iE + 1))))}, and the line fell from{" "}
@@ -52,14 +52,14 @@ function Ghost({ narrow }: { narrow: boolean }) {
 }
 
 function MonthTicks({ dates, a, b, months, names, year }: { dates: string[]; a: number; b: number; months: string[]; names: string[]; year: string }) {
-  const { x, y } = usePlot();
+  const { x, inner } = usePlot();
   return (
     <g>
       {months.map((m, k) => {
         const i = dates.findIndex((e, j) => j >= a && j <= b && e >= m);
         if (i < 0) return null;
         return (
-          <text key={m} className="label e1-ticklabel" x={x(i)} y={y(0) + 12}>
+          <text key={m} className="label e1-ticklabel" x={x(i) + 2} y={inner.top + inner.height - 4}>
             {names[k]} {year}
           </text>
         );
@@ -139,20 +139,21 @@ function Outside({ narrow }: { narrow: boolean }) {
       <div className="e1-panel-title">
         <strong>(c) outside the pile</strong> <span>the bell in standard deviations, with the record's worst day and Hull's 1987 day</span>
       </div>
-      <Plot xDomain={X} yDomain={[-0.06, yMax]} width={narrow ? 400 : 800} height={narrow ? 220 : 230} margin={{ top: 8, right: 10, bottom: 8, left: 8 }} xTicks={0} yTicks={0} grid={false} axisX={X[0]} axisY={0} ariaLabel="the normal bell with the 1 % line at 2.33 standard deviations, the record's worst day at about 12.8 standard deviations and the 1987 S&P day at 22, both far beyond the curve">
+      <Plot xDomain={X} yDomain={[-0.075, yMax]} width={narrow ? 400 : 800} height={narrow ? 220 : 230} margin={{ top: 8, right: 10, bottom: 8, left: 8 }} xTicks={0} yTicks={0} grid={false} axisX={X[0]} axisY={0} ariaLabel="the normal bell with the 1 % line at 2.33 standard deviations, the record's worst day at about 12.8 standard deviations and the 1987 S&P day at 22, both far beyond the curve">
         <SdTicks />
         <Curve pts={bell} role="approx" width={2} />
         <Curve pts={[[-Z99, 0], [-Z99, pdf(Z99) + 0.06]]} role="approx" width={1.2} dash="4 3" smooth={false} />
-        <Label at={[-Z99, pdf(Z99) + 0.06]} text={`the bell's 1 % line, ${f2(Z99)} sd`} role="approx" dx={4} dy={-4} />
+        <Label at={[-Z99, pdf(Z99) + 0.06]} text={narrow ? `1 % line, ${f2(Z99)} sd` : `the bell's 1 % line, ${f2(Z99)} sd`} role="approx" dx={narrow ? -4 : 4} dy={-4} anchor={narrow ? "end" : "start"} />
         {ticks.map((z, i) => (
           <Curve key={i} pts={[[z, -0.012], [z, -0.04]]} role="error" width={1} smooth={false} />
         ))}
+        <Curve pts={[[worstZ, 0], [worstZ, 0.07]]} role="error" width={1} smooth={false} />
         <Marker at={[worstZ, 0]} role="error" r={5} />
-        <Label at={[worstZ, 0]} text={narrow ? `${fmtDay(DATES[WORST_INDEX])} 2020: ${f1(WORST_IN_SD)} sd (real)` : `${fmtDate(DATES[WORST_INDEX])}: ${lakhSigned(-LOSS[WORST_INDEX])} on ₹1 crore, ${f1(WORST_IN_SD)} sd (real)`} role="error" dx={0} dy={-14} anchor="middle" />
+        <Label at={[worstZ, 0.07]} text={narrow ? `${fmtDay(DATES[WORST_INDEX])} 2020: ${f1(WORST_IN_SD)} sd (real)` : `${fmtDate(DATES[WORST_INDEX])}: ${lakhSigned(-LOSS[WORST_INDEX])} on ₹1 crore, ${f1(WORST_IN_SD)} sd (real)`} role="error" dx={0} dy={-6} anchor="middle" />
         <Marker at={[worstHull, 0]} role="ink" r={5} />
         <Label at={[worstHull, 0]} text={narrow ? `19 Oct 1987, S&P 500: ${HULL_1987_SD} sd (textbook)` : `19 Oct 1987, S&P 500: ${HULL_1987_SD} standard deviations (textbook, Hull)`} role="ink" dx={-4} dy={-14} anchor="start" />
         <Label at={[X[0], yMax]} text="the bell: a normal of the record's width" role="approx" dx={6} dy={14} />
-        <Label at={[-6, -0.026]} text={narrow ? "red ticks: real days past 2.33 sd" : `red ticks: the ${ticks.length} real days beyond 2.33 sd`} role="error" dx={6} dy={4} />
+        <Label at={[-Z99, -0.062]} text={narrow ? "red ticks: real days past 2.33 sd" : `red ticks: the ${ticks.length} real days beyond 2.33 sd`} role="error" dx={-4} dy={4} anchor="end" />
       </Plot>
       <p className="e1-still-cap">
         Under the bell the record's worst day — {fmtDate(DATES[WORST_INDEX])}, {lakhSigned(-LOSS[WORST_INDEX])} on ₹1 crore, {f1(WORST_IN_SD)} standard deviations — is a day the bell gives no
@@ -167,7 +168,7 @@ function SdTicks() {
   const { x, y } = usePlot();
   return (
     <g>
-      {[-20, -15, -10, -5, 0, 5].map((v) => (
+      {[-20, -15, -10, 0, 5].map((v) => (
         <text key={v} className="label e1-ticklabel" x={x(v)} y={y(0) + 14} textAnchor="middle">
           {v === 0 ? "0" : `${v > 0 ? "+" : "−"}${Math.abs(v)} sd`}
         </text>

@@ -13,7 +13,8 @@ import { FENCE_NAMES, KEY, WINDOW, count, f1, f2, fmtDate, fmtDay, getBacktest, 
  * expected, Basel zone. The counter card carries Kupiec's verdict.
  */
 
-const Y: [number, number] = [-9, 13.6];
+const Y: [number, number] = [-9, 15];
+const YI: [number, number] = [-10.5, 15];
 const SEG: Array<{ id: FenceId; label: string; short: string }> = [
   { id: "historical", label: "the days themselves", short: "the days" },
   { id: "normal", label: "a bell, 500-day width", short: "bell, 500 d" },
@@ -21,7 +22,7 @@ const SEG: Array<{ id: FenceId; label: string; short: string }> = [
 ];
 
 function YearTicks({ dates }: { dates: string[] }) {
-  const { x, y, inner } = usePlot();
+  const { x, y: yv, inner } = usePlot();
   const years = ["2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026"];
   return (
     <g>
@@ -30,7 +31,6 @@ function YearTicks({ dates }: { dates: string[] }) {
         if (i < 0) return null;
         return (
           <g key={yr}>
-            <line className="e1-tick" x1={x(i)} x2={x(i)} y1={y(Y[0])} y2={y(Y[0]) - 4} />
             <text className="label e1-ticklabel" x={x(i) + 3} y={inner.top + inner.height - 4}>
               {yr}
             </text>
@@ -38,7 +38,7 @@ function YearTicks({ dates }: { dates: string[] }) {
         );
       })}
       {[-5, 0, 5, 10].map((v) => (
-        <text key={v} className="label e1-ticklabel" x={inner.left + 3} y={y(v) - 3}>
+        <text key={v} className="label e1-ticklabel" x={inner.left + 3} y={yv(v) - 3}>
           {v === 0 ? "0" : `${v > 0 ? "" : "−"}${Math.abs(v)} lakh`}
         </text>
       ))}
@@ -128,7 +128,7 @@ export function F1Fence() {
           <Curve pts={fenceLine} role={id === "historical" ? "truth" : "approx"} width={1.6} smooth={false} />
           <Points pts={hits} role="error" r={narrow ? 3 : 3.6} opacity={1} />
           <Label at={[T - 1, Y[1]]} text={narrow ? "loss, ₹ lakh" : "each day's loss, ₹ lakh (gains below the axis)"} role="ghost" dx={-2} dy={12} anchor="end" />
-          <Label at={[inset.a, Y[1]]} text="Feb–Apr 2020 ↓" role="ghost" dx={-2} dy={12} anchor="end" />
+          <Label at={[narrow ? inset.b : inset.a, Y[1]]} text={narrow ? "↓ Feb–Apr 2020" : "Feb–Apr 2020 ↓"} role="ghost" dx={narrow ? 4 : -2} dy={12} anchor={narrow ? "start" : "end"} />
         </Plot>
         <div className="e1-inset-row">
           <div className="e1-inset">
@@ -137,7 +137,7 @@ export function F1Fence() {
             </div>
             <Plot
               xDomain={[inset.a - 0.5, inset.b + 0.5]}
-              yDomain={[-9, 13.6]}
+              yDomain={YI}
               width={narrow ? 400 : 520}
               height={narrow ? 220 : 240}
               margin={{ top: 10, right: 10, bottom: 20, left: 8 }}
@@ -153,8 +153,8 @@ export function F1Fence() {
               <Bars bars={inset.hitsIn.map((i) => ({ x: i, y: bt.loss[i] / 1e5, w: 0.8 }))} role="error" opacity={0.95} gap={0} />
               <Curve pts={fenceLine.slice(inset.a, inset.b + 1)} role={id === "historical" ? "truth" : "approx"} width={1.8} smooth={false} />
               <Marker at={[inset.i20, inset.fence20 / 1e5]} role={id === "historical" ? "truth" : "approx"} r={4} />
-              <Label at={[inset.i20, inset.fence20 / 1e5]} text={`fence on ${fmtDay(bt.dates[inset.i20])}: ${lakh(inset.fence20)}`} role={id === "historical" ? "truth" : "approx"} dx={-8} dy={narrow ? -10 : -8} anchor="end" />
-              <Label at={[inset.i23, inset.loss23 / 1e5]} text={`${fmtDay(bt.dates[inset.i23])}: ${lakh(inset.loss23)} — ${f1(inset.loss23 / inset.fence23)}× the line`} role="error" dx={8} dy={4} anchor="start" />
+              <Label at={[inset.a, YI[1]]} text={`● fence on ${fmtDay(bt.dates[inset.i20])}: ${lakh(inset.fence20)}`} role={id === "historical" ? "truth" : "approx"} dx={2} dy={14} />
+              <Label at={[inset.i23, inset.loss23 / 1e5]} text={`${fmtDay(bt.dates[inset.i23])}: ${lakh(inset.loss23)} — ${f1(inset.loss23 / inset.fence23)}× the line`} role="error" dx={narrow ? -8 : 8} dy={narrow ? -6 : 4} anchor={narrow ? "end" : "start"} />
             </Plot>
           </div>
           <div className="e1-fence-note">
@@ -179,13 +179,13 @@ function InsetBand({ a, b }: { a: number; b: number }) {
 }
 
 function InsetTicks({ a, b, dates }: { a: number; b: number; dates: string[] }) {
-  const { x, y } = usePlot();
+  const { x, inner } = usePlot();
   const firsts = ["2020-02-01", "2020-03-01", "2020-04-01"].map((d) => dates.findIndex((e, i) => i >= a && i <= b && e >= d)).filter((i) => i >= 0);
   const names = ["Feb", "Mar", "Apr"];
   return (
     <g>
       {firsts.map((i, k) => (
-        <text key={i} className="label e1-ticklabel" x={x(i)} y={y(0) + 12} textAnchor="start">
+        <text key={i} className="label e1-ticklabel" x={x(i)} y={inner.top + inner.height - 4} textAnchor="start">
           {names[k]} 2020
         </text>
       ))}

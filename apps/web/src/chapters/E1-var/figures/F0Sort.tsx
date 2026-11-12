@@ -42,7 +42,7 @@ export function F0Sort() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [width, setWidth] = useState(880);
-  const height = narrow ? 260 : 330;
+  const height = narrow ? 300 : 390;
   const anim = useRef<number | null>(null);
 
   // the reveal: once the bet is placed, the bars slide into the pile
@@ -104,8 +104,8 @@ export function F0Sort() {
 
   const insetBox = useCallback(() => {
     const x = M.left + innerW * (narrow ? 0.3 : 0.42);
-    const y = yOf(-ES) + (narrow ? 22 : 30);
-    return { x, y, w: M.left + innerW - 6 - x, h: height - M.bottom - 24 - y };
+    const y = yOf(-ES) + (narrow ? 16 : 20);
+    return { x, y, w: M.left + innerW - 6 - x, h: height - M.bottom - 22 - y };
   }, [M.left, M.bottom, innerW, yOf, height, narrow]);
 
   // draw
@@ -214,7 +214,7 @@ export function F0Sort() {
         ctx.globalAlpha = 1;
       }
       // VaR and ES lines
-      const line = (v: number, color: string, text: string, dash: number[], side: "above" | "below") => {
+      const line = (v: number, color: string, text: string, dash: number[], side: "above" | "below", lift = 0) => {
         const y = yOf(-v);
         ctx.setLineDash(dash);
         ctx.strokeStyle = color;
@@ -228,11 +228,11 @@ export function F0Sort() {
         ctx.textAlign = "right";
         ctx.textBaseline = side === "above" ? "bottom" : "top";
         ctx.fillStyle = color;
-        ctx.fillText(text, M.left + innerW - 4, side === "above" ? y - 3 : y + 4);
+        ctx.fillText(text, M.left + innerW - 4, (side === "above" ? y - 3 : y + 4) - lift);
       };
       line(VAR, col.errorText, narrow ? `VaR ${lakh(VAR)} · ${K}th worst` : `VaR ${lakh(VAR)} — the ${K}th worst day of ${count(N)}`, [], "above");
       line(ES, col.ink2, narrow ? `ES ${lakh(ES)}` : `ES ${lakh(ES)} — the mean of those ${K}`, [6, 4], "below");
-      if (bell) line(BELL_VAR99, col.approxText, narrow ? `the bell's 1 % ${lakh(BELL_VAR99)}` : `the bell's 1 % line ${lakh(BELL_VAR99)} — ${BEYOND_BELL} real days beyond it`, [2, 3], "above");
+      if (bell) line(BELL_VAR99, col.approxText, narrow ? `the bell's 1 % ${lakh(BELL_VAR99)}` : `the bell's 1 % line ${lakh(BELL_VAR99)} — ${BEYOND_BELL} real days beyond it`, [2, 3], "above", narrow ? 13 : 15);
       // the worst bars, enlarged (the pile squeezes them into 1 % of the width)
       if (t > 0.98) {
         const ib = insetBox();
@@ -284,17 +284,24 @@ export function F0Sort() {
         ctx.fillStyle = col.ink3;
         ctx.fillText(`the worst ${INSET_N} bars, enlarged`, ib.x + 6, ib.y + 4);
       }
+    }
     // hover tip
     if (hover !== null) {
-      const x = xOf(hover, t);
+      let x = xOf(hover, t);
       const v = PNL[hover];
+      let yTip = yOf(v);
+      if (placed && t > 0.98 && rankOf.current![hover] < INSET_N) {
+        const ib = insetBox();
+        x = ib.x + 6 + (rankOf.current![hover] + 0.5) * ((ib.w - 12) / INSET_N);
+        yTip = ib.y + 16;
+      }
       const lines = [fmtDate(DATES[hover]), `${lakhSigned(v)} on ₹1 crore`];
       ctx.font = font(400, 11.5);
       const w = Math.max(...lines.map((l) => ctx.measureText(l).width)) + 14;
       const h = 8 + lines.length * 15;
       let px = x + 10;
       if (px + w > M.left + innerW) px = x - 10 - w;
-      const py = Math.max(M.top, Math.min(yOf(v) - h / 2, M.top + innerH - h));
+      const py = Math.max(M.top, Math.min(yTip - h / 2, M.top + innerH - h));
       ctx.fillStyle = col.raised;
       ctx.strokeStyle = col.rule;
       ctx.beginPath();
@@ -308,7 +315,14 @@ export function F0Sort() {
       // the hovered bar, outlined
       ctx.strokeStyle = col.ink;
       ctx.lineWidth = 1;
-      ctx.strokeRect(x - Math.max(1, bw / 2) - 0.5, Math.min(y0, yOf(v)) - 0.5, Math.max(2, bw) + 1, Math.abs(yOf(v) - y0) + 1);
+      if (placed && t > 0.98 && rankOf.current![hover] < INSET_N) {
+        const ib = insetBox();
+        const ibw = (ib.w - 12) / INSET_N;
+        const iy = (vv: number) => ib.y + 16 + (-vv / -Y_MIN) * (ib.h - 22);
+        ctx.strokeRect(x - ibw / 2, iy(0) - 0.5, Math.max(2, ibw - 1), iy(v) - iy(0) + 1);
+      } else {
+        ctx.strokeRect(x - Math.max(1, bw / 2) - 0.5, Math.min(y0, yOf(v)) - 0.5, Math.max(2, bw) + 1, Math.abs(yOf(v) - y0) + 1);
+      }
     }
   }, [width, height, t, bell, hover, placed, narrow, xOf, xOfDate, yOf, innerW, innerH, M.left, M.top, M.bottom, insetBox]);
 

@@ -13,7 +13,7 @@ import { BOOK, CF, DATES, DIAL, DIAL_DEFAULT, GREEKS, HEDGE, KEY, N, RETURNS, co
  * the bend on a bell says ₹7.35 lakh. One dial, the futures held, over the key's fifteen stops; three readouts.
  */
 
-const XR = 4.5; // % move either way
+const XR = 6; // % move either way
 const GRID: number[] = Array.from({ length: 91 }, (_, i) => -XR + (2 * XR * i) / 90);
 const SIG_PCT = 100 * BOOK.sigDay;
 
@@ -24,8 +24,8 @@ function Ticks({ yLo, yHi, rupees }: { yLo: number; yHi: number; rupees: boolean
   for (let v = Math.ceil(yLo / step) * step; v <= yHi; v += step) ticks.push(v);
   return (
     <g>
-      {[-4, -2, 0, 2, 4].map((v) => (
-        <text key={v} className="label e1-ticklabel" x={x(v)} y={inner.top + inner.height - 4} textAnchor="middle">
+      {[-6, -4, -2, 0, 2, 4, 6].map((v) => (
+        <text key={v} className="label e1-ticklabel" x={x(v)} y={inner.top + inner.height - 4} textAnchor={v === -6 ? "start" : v === 6 ? "end" : "middle"}>
           {v === 0 ? "no move" : `${v > 0 ? "+" : "−"}${Math.abs(v)} %`}
         </text>
       ))}
@@ -67,10 +67,10 @@ export function F2Raj() {
 
   // y domain: step 1 zooms to the slope alone; steps 2–3 to the whole book
   const linMax = Math.max(Math.abs(book.a * XR) / 100, 400);
-  const fullMin = Math.min(...book.curve.map((p) => p[1]), ...book.dots.map((p) => p[1]));
+  const fullMin = Math.min(...book.dots.filter((p) => Math.abs(p[0]) <= XR).map((p) => p[1]));
   const fullMax = Math.max(book.full[book.best], 0);
-  const yLo = step === 0 ? -linMax * 1.25 : fullMin * 1.1;
-  const yHi = step === 0 ? linMax * 1.25 : Math.max(fullMax * 3.5, (fullMin * -1) / 6);
+  const yLo = step === 0 ? -linMax * 1.25 : fullMin * 1.3;
+  const yHi = step === 0 ? linMax * 1.25 : Math.max(fullMax * 4, -yLo * 0.14);
   const rupees = yHi - yLo < 1.5e5;
   const zx = Z99 * SIG_PCT;
 
@@ -105,7 +105,7 @@ export function F2Raj() {
           most of the gap from {rs(stop.linear)}; the record's fat tails explain the rest, up to {lakh(stop.full)}.{" "}
           {h === HEDGE && (
             <>
-              Cornish–Fisher's shortcut on the same moments (skew {f2(CF.skew)}) gives {lakh(KEY.raj.cornish_fisher.var99)} (key).
+              Cornish–Fisher's shortcut on the same moments (skew {f2(CF.skew).replace("-", "−")}) gives {lakh(KEY.raj.cornish_fisher.var99)} (key).
             </>
           )}
         </>
@@ -138,8 +138,8 @@ export function F2Raj() {
         <>
           VaR for a book with options is a revaluation problem. The slope alone (linear, delta-normal) lies exactly where a hedger lives: at {n0(HEDGE)} futures it reads {rs(KEY.raj.linear_var99)};
           the repriced pile reads {lakh(KEY.raj.full_var99)} and the bend on a bell {lakh(KEY.raj.quad_var99)} (key). With no futures at all the linear answer is {lakh(DIAL[0].linear)} against{" "}
-          {lakh(DIAL[0].full)} repriced — wrong by less than a third; at delta-neutral it is wrong by a factor of thousands. Book: F {n0(BOOK.F)}, K {n0(BOOK.K)}, 11 days, σ{" "}
-          {(100 * BOOK.sigma).toFixed(1)} %, Δ {f2(GREEKS.delta)}, Γ {GREEKS.gamma.toExponential(2)}, daily wobble {f2(SIG_PCT)} % (the record's own).
+          {lakh(DIAL[0].full)} repriced — {Math.round(100 * (1 - DIAL[0].linear / DIAL[0].full))} % low; at delta-neutral it is low by a factor of {n0(KEY.raj.full_var99 / KEY.raj.linear_var99)}. Book: F {n0(BOOK.F)}, K {n0(BOOK.K)}, 11 days, σ{" "}
+          {(100 * BOOK.sigma).toFixed(1)} %, Δ {f2(GREEKS.delta)}, Γ {GREEKS.gamma.toFixed(5)}, daily wobble {f2(SIG_PCT)} % (the record's own).
         </>
       }
     >
@@ -183,15 +183,15 @@ export function F2Raj() {
                     <Marker at={book.dots[book.k27]} role="truth" r={5} />
                     <Marker at={book.dots[book.best]} role="ink" r={4} />
                     <Label at={book.dots[book.best]} text={`best day ${rsSigned(book.full[book.best])} = the clock`} role="ink" dx={book.dots[book.best][0] > 0 ? -8 : 8} dy={-8} anchor={book.dots[book.best][0] > 0 ? "end" : "start"} />
-                    {i === 1 && <Label at={[-XR, yHi]} text={`the real ${count(N)} days, repriced`} role="truth" dx={6} dy={14} />}
-                    <Label at={[-XR, yLo]} text={`slope only (red): ${stop.linear < 1e4 ? rs(stop.linear) : lakh(stop.linear)}`} role="error" dx={6} dy={-18} />
+                    <Label at={[0, yLo]} text={`repriced on the real ${count(N)} days (blue, dots)`} role="truth" dx={0} dy={i >= 2 ? -50 : -36} anchor="middle" />
+                    <Label at={[0, yLo]} text={`slope only (red): ${stop.linear < 1e4 ? rs(stop.linear) : lakh(stop.linear)} at ${f2(Z99)} wobbles`} role="error" dx={0} dy={-22} anchor="middle" />
                   </>
                 )}
                 {i >= 2 && (
                   <>
                     <Curve pts={[[-XR, -stop.quad], [XR, -stop.quad]]} role="approx" width={1.2} dash="4 3" smooth={false} />
                     <Label at={[-XR, -stop.quad]} text={`bend on a bell, 1 %: ${lakh(stop.quad)}`} role="approx" dx={6} dy={narrow ? -5 : -6} />
-                    <Label at={[-XR, yHi]} text="dashed amber: slope + bend" role="approx" dx={6} dy={14} />
+                    <Label at={[0, yLo]} text="slope + bend, on a bell (dashed amber)" role="approx" dx={0} dy={-36} anchor="middle" />
                   </>
                 )}
               </Plot>
@@ -223,10 +223,10 @@ function DialChart({ di, narrow }: { di: number; narrow: boolean }) {
       <Curve pts={toPts("quad")} role="approx" width={2} dash="6 4" />
       <Curve pts={toPts("linear")} role="error" width={2} smooth={false} />
       <Marker at={[atHedge.h, atHedge.linear / 1e5]} role="error" r={4} />
-      <Label at={[atHedge.h, atHedge.linear / 1e5]} text={`${rs(atHedge.linear)} at ${n0(atHedge.h)}`} role="error" dx={0} dy={-10} anchor="middle" />
-      <Label at={[H1, DIAL[DIAL.length - 1].full / 1e5]} text="repriced on the real days" role="truth" dx={-6} dy={-6} anchor="end" />
-      <Label at={[H1, DIAL[DIAL.length - 1].quad / 1e5]} text="slope + bend, on a bell" role="approx" dx={-6} dy={14} anchor="end" />
-      <Label at={[H0, DIAL[0].linear / 1e5]} text="slope only" role="error" dx={6} dy={14} />
+      <Label at={[atHedge.h, atHedge.linear / 1e5]} text={narrow ? `${rs(atHedge.linear)} at ${n0(atHedge.h)}` : `${rs(atHedge.linear)} at ${n0(atHedge.h)} futures`} role="error" dx={0} dy={-12} anchor="middle" />
+      <Label at={[H1, DIAL[DIAL.length - 1].full / 1e5]} text={narrow ? "repriced" : "repriced on the real days"} role="truth" dx={-6} dy={-6} anchor="end" />
+      <Label at={[H1, DIAL[DIAL.length - 1].quad / 1e5]} text={narrow ? "slope + bend" : "slope + bend, on a bell"} role="approx" dx={-6} dy={14} anchor="end" />
+      <Label at={[H1, DIAL[DIAL.length - 1].linear / 1e5]} text={narrow ? "slope only" : "slope only (linear)"} role="error" dx={-6} dy={16} anchor="end" />
       <Curve pts={[[cur.h, 0], [cur.h, yMax * 1.15]]} role="ghost" width={1} dash="3 3" smooth={false} />
       <Marker at={[cur.h, cur.full / 1e5]} role="truth" r={5} />
       <Marker at={[cur.h, cur.quad / 1e5]} role="approx" r={5} />
@@ -238,8 +238,8 @@ function DialTicks({ yMax }: { yMax: number }) {
   const { x, y, inner } = usePlot();
   return (
     <g>
-      {[0, 1000, 2000, 3000, 4000, 5000, 6000].map((v) => (
-        <text key={v} className="label e1-ticklabel" x={x(v) + 3} y={inner.top + inner.height - 4}>
+      {[0, 1000, 2000, 4000, 5000, 6000].map((v) => (
+        <text key={v} className="label e1-ticklabel" x={x(v) + (v === 6000 ? -3 : 3)} y={inner.top + inner.height - 4} textAnchor={v === 6000 ? "end" : "start"}>
           {v === 0 ? "0 futures" : n0(v)}
         </text>
       ))}

@@ -26,5 +26,12 @@ const m = await (await b.newContext({ viewport: { width: 390, height: 844 }, dev
 await m.goto("http://localhost:4230/fe-academy/#/E1"); await m.waitForSelector("figure.figure"); await m.waitForTimeout(1500);
 await m.screenshot({ path: "/home/claude/e1-phone.png", fullPage: true });
 const sw = await m.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]); console.log("phone scrollWidth/clientWidth", sw);
+// dark theme: F0 sorted + F2
+const d = await (await b.newContext({ viewport: { width: 1000, height: 900 } })).newPage();
+await d.addInitScript(() => localStorage.setItem("fe-theme", "dark"));
+await d.goto("http://localhost:4230/fe-academy/#/E1"); await d.waitForSelector("figure.figure"); await d.waitForTimeout(1500);
+let df = d.locator("figure.figure:visible").nth(0); await df.getByRole("button", { name: "₹5 lakh" }).click(); await d.waitForTimeout(2500); await df.getByRole("button", { name: "the bell" }).click(); await d.waitForTimeout(300);
+await df.screenshot({ path: "/home/claude/e1-f0-dark.png" });
+df = d.locator("figure.figure:visible").nth(3); await df.scrollIntoViewIfNeeded(); await df.screenshot({ path: "/home/claude/e1-f3-dark.png" });
 console.log("errors", errors);
 await b.close();
