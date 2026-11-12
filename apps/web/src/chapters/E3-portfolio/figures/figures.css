@@ -1,0 +1,200 @@
+/* Chapter E3 — figure-local styles. House tokens only.
+   Roles: the efficient half and the frontier, axis 1/2 and the rebuilt day — blue (truth); the dial's dot, the no-short envelope,
+   your line and its projections — amber (approx); the reveal portfolio and what k factors miss — red (error); the drawn cloud — ghost. */
+
+.e3-quiet {
+  color: var(--ink-3);
+  font-weight: 400;
+  font-size: 0.82rem;
+  max-width: 24rem;
+}
+.plot .label.e3-ticklabel {
+  font-size: 10.5px;
+  fill: var(--ink-3);
+}
+.e3-tick {
+  stroke: var(--rule-soft);
+  stroke-width: 1;
+}
+.e3-panel-title {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  align-items: baseline;
+  padding: 0 2px 4px;
+}
+.e3-panel-title strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.e3-still-cap {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-prose);
+  font-size: 0.9rem;
+  color: var(--ink-3);
+  line-height: 1.45;
+}
+
+/* ---- Figure 0: the frontier ---- */
+.e3-frontier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.e3-frontier > svg.plot {
+  width: 100%;
+  max-width: 760px;
+  display: block;
+}
+.e3-frontier .bet {
+  padding-left: var(--space-1);
+  padding-right: var(--space-1);
+}
+.e3-weights {
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--space-2);
+}
+.e3-weights > svg.plot {
+  width: 100%;
+  max-width: 440px;
+  display: block;
+}
+
+/* ---- Figure 1: the cloud's axes ---- */
+.e3-axes {
+  display: grid;
+  grid-template-columns: minmax(0, 400px) minmax(0, 340px);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+  padding-bottom: var(--space-2);
+}
+@media (max-width: 760px) {
+  .e3-axes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.e3-axes-cloud,
+.e3-axes-side {
+  min-width: 0;
+}
+.e3-axes-cloud > svg.plot {
+  width: 100%;
+  max-width: 400px;
+  display: block;
+}
+.e3-axes-side > svg.plot {
+  width: 100%;
+  max-width: 400px;
+  display: block;
+}
+.e3-axes-side .e3-panel-title + svg.plot + .e3-panel-title {
+  margin-top: var(--space-3);
+}
+
+/* ---- Figure 2: the curve ---- */
+.e3-curve {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-2);
+}
+.e3-curve-row {
+  display: grid;
+  grid-template-columns: minmax(0, 480px) minmax(0, 1fr);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .e3-curve-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.e3-curve-panel {
+  min-width: 0;
+}
+.e3-curve-panel > svg.plot {
+  width: 100%;
+  display: block;
+}
+.e3-multiples {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.e3-multiple > svg.plot {
+  width: 100%;
+  max-width: 400px;
+  display: block;
+}
+.e3-book {
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--error);
+  border-radius: var(--radius);
+  background: var(--surface-figure);
+  padding: var(--space-3);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  line-height: 1.45;
+  min-width: 0;
+}
+.e3-book > strong {
+  display: block;
+  margin-bottom: var(--space-2);
+  font-size: 0.9rem;
+}
+.e3-booktable {
+  border-collapse: collapse;
+  font-size: 0.86rem;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: var(--space-2);
+}
+.e3-booktable th,
+.e3-booktable td {
+  text-align: right;
+  padding: 3px 8px 3px 0;
+  border-bottom: 1px solid var(--rule-soft);
+}
+.e3-booktable th:first-child,
+.e3-booktable td:first-child {
+  text-align: left;
+  padding-right: 12px;
+}
+.e3-booktable th {
+  font-weight: 600;
+  color: var(--ink-3);
+  font-size: 0.78rem;
+}
+.e3-neg {
+  color: var(--error-text);
+}
+.e3-dim {
+  color: var(--ink-3);
+}
+.e3-bad {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.e3-book-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.e3-book-rows .k {
+  color: var(--ink-3);
+}
+.e3-book-rows .v {
+  color: var(--ink);
+  font-weight: 600;
+}
+.e3-book-why {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-prose);
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
