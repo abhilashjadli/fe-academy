@@ -89,3 +89,9 @@ One line per decision, newest first. Product decisions in the charter are not re
 - Figure-level test added (`figures/f2.test.ts`): the live SABR surface equals the key cell for cell; valley cells reproduce; tape and seeded runs equal the key. 332 tests.
 - Prose correction: the best central bump is a millionth (key), not a hundred-thousandth.
 - Project docs 25–28 written (F1/F2 research + storyboards).
+
+## 2026-11-14 — G1 started (sponsor: "all decisions approved", 2026-11-13 23:57)
+- Data pick approved: G1 runs on the repo's NIFTY record (closes for Figure 0, |return| for Figures 1–3); the loan/KYC alternative was offered and not taken up.
+- Research `research/r1/G1.md`, storyboard `research/storyboards/G1.md` (Project docs 29–30). Technique: break-it dial with a bet (fit the index: degree 15 reads 179 million on 3 Nov) → two-curve explorable (lags; test minimum at 4 lags, 8.2 % better than guessing; 60 lags back to guessing; 29 % worse on 250 days) → coefficient bars with a λ dial (ridge: 25 negative coefficients at λ 0, 0 at 100,000) → five-fold step-through (CV picks λ ≈ 560, the test set would pick ≈ 1,800; the 2019–20 fold is more than half the CV error). Only textbook number: Tsay Example 4.7 (91.74 vs 91.85).
+- Engine `learning.ts` (Cholesky ridge, polyFit, crossValidate, EWMA benchmark), key `key_G1.py`, 11 tests. Figures delegated; prose drafted.
+- Honest finding worth keeping: on this record the hand-picked 4-lag OLS (0.3364) beats ridge at CV's λ (0.3446) and at the test-best λ (0.3384); the page says "within half a point", not "as good".
