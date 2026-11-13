@@ -28,6 +28,7 @@ import { MonteCarloChapter } from "./chapters/E2-montecarlo/Chapter";
 import { PortfolioChapter } from "./chapters/E3-portfolio/Chapter";
 import { FdmChapter } from "./chapters/F1-fdm/Chapter";
 import { LsmChapter } from "./chapters/F2-lsm/Chapter";
+import { LearningChapter } from "./chapters/G1-learning/Chapter";
 
 const CHAPTERS: Record<string, ComponentType> = {
   "0.1": TaylorChapter,
@@ -56,6 +57,7 @@ const CHAPTERS: Record<string, ComponentType> = {
   E3: PortfolioChapter,
   F1: FdmChapter,
   F2: LsmChapter,
+  G1: LearningChapter,
   lab: Lab,
 };
 

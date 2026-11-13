@@ -82,7 +82,7 @@ export const SYLLABUS: Track[] = [
     id: "G",
     title: "Machine learning for finance",
     chapters: [
-      { id: "G1", title: "Supervised learning, regularisation, validation" },
+      { id: "G1", title: "Supervised learning, regularisation, validation", built: true },
       { id: "G2", title: "Unsupervised: clustering, PCA, autoencoders" },
       { id: "G3", title: "Time-series ML; leakage and backtest overfitting" },
     ],
