@@ -5,7 +5,16 @@ import { Bet, ResultCard, useBet } from "../../../ui/Bet";
 import { Readouts, Slider, Toggle } from "../../../ui/controls";
 import { Curve, Label, Marker, Plot, usePlot, type Pt } from "../../../ui/Plot";
 import { DotsPath, XTicks, YTicks } from "./parts";
-import { DAYS, FORMULA_ROW, GRID, KEY, ROD_DAYS, ROD_DF, ROD_F, ROD_J0, ROD_ROWS, TRUTH, maxPull, n0, n1, n2, nodesPerSd, rowAt, ruleAt, useNarrow, type Rule } from "./f1";
+import { DAYS, FORMULA_ROW, GRID, KEY, ROD_DAYS, ROD_DF, ROD_F, ROD_J0, ROD_ROWS, TRUTH, getRodSolve, maxPull, n0, n1, n2, nodesPerSd, rowAt, ruleAt, useLazy, useNarrow, type Rule } from "./f1";
+import type { Solution } from "../../../engine/fdm";
+
+/** the value over 22,603 read off the 800-node row (the key's value_at_F0 at 11 days), not off the 101 dots shown */
+function fineAt(sol: Solution | null, di: number): number {
+  if (di === 0) return Math.max(GRID.F - GRID.K, 0);
+  if (!sol) return NaN;
+  return rowAt(sol.snaps.get(8 * ROD_DAYS[di])!, GRID.F, sol.Fg);
+}
+const show = (v: number) => (Number.isFinite(v) ? n2(v) : "…");
 
 /**
  * Figure 0 — the rod relaxes. The real 22,600 call's payoff laid along B6's rod as 101 dots from 18,000 to 28,000, then walked
@@ -21,10 +30,10 @@ const OPTIONS: Array<{ id: Pick; label: string }> = [
   { id: "slides", label: "slides up" },
 ];
 const X: [number, number] = [GRID.Flo, GRID.Fhi];
-const Y_ALL: [number, number] = [-700, 5700];
+const Y_ALL: [number, number] = [-820, 5700];
 const X_ZOOM: [number, number] = [21600, 23600];
 const Y_ZOOM: [number, number] = [-60, 1080];
-const STRIP_Y: [number, number] = [-620, -200];
+const STRIP_Y: [number, number] = [-560, -200];
 const VMAX = GRID.Fhi - GRID.K;
 
 /** B6's rod: the value along the grid as heat, hot where the option is worth most */
@@ -62,7 +71,7 @@ function RuleMarks({ rule, zoom }: { rule: Rule; zoom: boolean }) {
       <circle cx={xm} cy={y(rule.Vm)} r={4.5} fill="var(--approx)" stroke="var(--surface-figure)" strokeWidth={2} />
       <circle cx={xp} cy={y(rule.Vp)} r={4.5} fill="var(--approx)" stroke="var(--surface-figure)" strokeWidth={2} />
       <circle cx={x0} cy={yV} r={5.5} fill="var(--ink)" stroke="var(--surface-figure)" strokeWidth={2} />
-      {zoom && gap > 10 && <text className="label approx" x={x0 + 12} y={yAvg + 4}>{`neighbours' average ${n2(rule.avg)}`}</text>}
+      {zoom && gap > 10 && <text className="label approx" x={x0 + 14} y={yAvg + 4}>average</text>}
     </g>
   );
 }
@@ -77,8 +86,7 @@ function Arrow() {
   );
 }
 
-function Rod({ row, rule, formula, hoverJ, onHover, narrow }: { row: number[]; rule: Rule; formula: boolean; hoverJ: number | null; onHover: (j: number | null) => void; narrow: boolean }) {
-  const v0 = rowAt(row, GRID.F);
+function Rod({ row, v0, rule, formula, onHover, narrow }: { row: number[]; v0: number; rule: Rule; formula: boolean; onHover: (j: number | null) => void; narrow: boolean }) {
   const formulaPts: Pt[] = ROD_F.map((F, i) => [F, FORMULA_ROW[i]]);
   return (
     <Plot
@@ -97,22 +105,21 @@ function Rod({ row, rule, formula, hoverJ, onHover, narrow }: { row: number[]; r
     >
       <Arrow />
       <YTicks at={[1000, 2000, 3000, 4000, 5000]} fmt={n0} />
-      <XTicks at={[18000, 20000, 22000, 24000, 26000, 28000]} fmt={n0} />
       <HeatStrip row={row} />
-      <Label at={[X[0], STRIP_Y[1]]} text="the rod: hotter where the call is worth more" role="ink" dx={4} dy={-5} />
+      <XTicks at={[20000, 22000, 24000, 26000]} fmt={n0} label="index" />
+      <Label at={[X[0], (STRIP_Y[0] + STRIP_Y[1]) / 2]} text="the rod: cold where the call is worthless, hot where it pays →" role="ink" dx={4} dy={4} />
       {formula && <Curve pts={formulaPts} role="truth" width={1.6} dash="6 4" smooth={false} />}
       <DotsPath xs={ROD_F} ys={row} role="truth" r={narrow ? 2 : 2.6} />
       <Curve pts={[[GRID.F, 0], [GRID.F, v0]]} role="ghost" width={1} dash="3 3" smooth={false} />
       <Marker at={[GRID.F, v0]} role="ink" r={4.5} />
-      <Label at={[GRID.F, v0]} text={`${n0(GRID.F)}: ${n2(v0)}`} role="ink" dx={-8} dy={-8} anchor="end" />
-      {hoverJ !== null && <RuleMarks rule={rule} zoom={false} />}
-      {formula && <Label at={[X[1], FORMULA_ROW[ROD_F.length - 1]]} text="the formula (Black-76)" role="truth" dx={-6} dy={16} anchor="end" />}
+      <Label at={[GRID.F, v0]} text={`${n0(GRID.F)}: ${show(v0)}`} role="ink" dx={-8} dy={-8} anchor="end" />
+      <RuleMarks rule={rule} zoom={false} />
+      {formula && <Label at={[24000, rowAt(FORMULA_ROW, 24000)]} text="dashed: the formula (Black-76)" role="truth" dx={-10} dy={-10} anchor="end" />}
     </Plot>
   );
 }
 
-function Zoom({ row, rule, formula, hoverJ, onHover, narrow }: { row: number[]; rule: Rule; formula: boolean; hoverJ: number | null; onHover: (j: number | null) => void; narrow: boolean }) {
-  const v0 = rowAt(row, GRID.F);
+function Zoom({ row, v0, rule, formula, onHover, narrow }: { row: number[]; v0: number; rule: Rule; formula: boolean; onHover: (j: number | null) => void; narrow: boolean }) {
   const idx = ROD_F.map((F, i) => [F, i] as const).filter(([F]) => F >= X_ZOOM[0] && F <= X_ZOOM[1]);
   const xs = idx.map(([F]) => F);
   const ys = idx.map(([, i]) => row[i]);
@@ -133,15 +140,15 @@ function Zoom({ row, rule, formula, hoverJ, onHover, narrow }: { row: number[]; 
       ariaLabel="the same dots within a thousand points of the strike, close up"
     >
       <Arrow />
-      <YTicks at={[250, 500, 750, 1000]} fmt={n0} />
+      <YTicks at={[250, 500, 750]} fmt={n0} />
       <XTicks at={[22000, 22600, 23200]} fmt={n0} />
       {formula && <Curve pts={formulaPts} role="truth" width={1.6} dash="6 4" smooth={false} />}
       <Curve pts={[[X_ZOOM[0], 0], [GRID.K, 0], [X_ZOOM[1], X_ZOOM[1] - GRID.K]]} role="ghost" width={1} smooth={false} />
       <DotsPath xs={xs} ys={ys} role="truth" r={3.2} />
       <Curve pts={[[GRID.F, 0], [GRID.F, v0]]} role="ghost" width={1} dash="3 3" smooth={false} />
       <Marker at={[GRID.F, v0]} role="ink" r={5} />
-      <Label at={[GRID.F, v0]} text={`${n2(v0)} over ${n0(GRID.F)}`} role="ink" dx={-9} dy={-8} anchor="end" />
-      {hoverJ !== null && rule.F >= X_ZOOM[0] && rule.F <= X_ZOOM[1] && <RuleMarks rule={rule} zoom />}
+      <Label at={[GRID.F, v0]} text={`${show(v0)} over ${n0(GRID.F)}`} role="ink" dx={-9} dy={-8} anchor="end" />
+      {rule.F >= X_ZOOM[0] && rule.F <= X_ZOOM[1] && <RuleMarks rule={rule} zoom />}
       <Label at={[X_ZOOM[0], Y_ZOOM[1]]} text="the corner, close up" role="ink" dx={4} dy={12} />
     </Plot>
   );
@@ -156,12 +163,13 @@ export function F0Rod() {
   const placed = !!pick;
   const row = ROD_ROWS[di];
   const days = ROD_DAYS[di];
-  const v0 = rowAt(row, GRID.F);
+  const fine = useLazy("rod", getRodSolve);
+  const v0 = fineAt(fine, di);
   const j = hoverJ ?? ROD_J0;
   const rule = ruleAt(row, j);
   const mp = maxPull(row);
-  const v1 = rowAt(ROD_ROWS[1], GRID.F);
-  const vEnd = rowAt(ROD_ROWS[ROD_ROWS.length - 1], GRID.F);
+  const v1 = fineAt(fine, 1);
+  const vEnd = fine ? fineAt(fine, ROD_ROWS.length - 1) : KEY.rod.value_at_F0;
   const verdict = pick === "rounds" ? "right" : "miss";
   const yoursLabel = OPTIONS.find((o) => o.id === pick)?.label ?? "";
   const E = KEY.rod.rule_example;
@@ -180,7 +188,7 @@ export function F0Rod() {
         <>
           <Slider label="days to expiry" value={di} min={0} max={ROD_DAYS.length - 1} step={1} onChange={setDi} locked={!placed} fmt={() => String(days)} />
           <Toggle label="the formula" on={formula} onChange={setFormula} />
-          <Readouts items={[[`value at ${n0(GRID.F)}`, n2(v0)], ["days to expiry", String(days)], ["largest pull", `${n0(Math.abs(mp.pull))} a year, at ${n0(ROD_F[mp.j])}`]]} />
+          <Readouts items={[[`value at ${n0(GRID.F)}`, show(v0)], ["days to expiry", String(days)], ["largest pull", `${n0(Math.abs(mp.pull))} a year, at ${n0(ROD_F[mp.j])}`]]} />
         </>
       }
       observe={
@@ -203,7 +211,7 @@ export function F0Rod() {
             setDi(v === null ? 0 : 1);
           }}
         >
-          <ResultCard yours={yoursLabel} answer={<>it rounds off — after one day the dot over {n0(GRID.F)} reads {n2(v1)}; after all {DAYS} days, {n2(vEnd)}, the formula's price</>} verdict={verdict}>
+          <ResultCard yours={yoursLabel} answer={<>it rounds off — after one day the dot over {n0(GRID.F)} reads {show(v1)}; after all {DAYS} days, {n2(vEnd)} — the formula says {n2(TRUTH)}</>} verdict={verdict}>
             Every dot moves toward the average of its two neighbours. On the straight parts the average <em>is</em> the dot, so nothing moves; at the corner the average sits above the dot, so the corner
             is pulled up and rounds. Nothing slides: the strike stays where the slope starts. Scrub the days; hover a dot to see its rule.
           </ResultCard>
@@ -213,13 +221,13 @@ export function F0Rod() {
             <div className="f1-panel-title">
               <strong>the whole rod</strong> <span>value of the call over the index, {days} {days === 1 ? "day" : "days"} to expiry</span>
             </div>
-            <Rod row={row} rule={rule} formula={formula} hoverJ={hoverJ} onHover={setHoverJ} narrow={narrow} />
+            <Rod row={row} v0={v0} rule={rule} formula={formula} onHover={setHoverJ} narrow={narrow} />
           </div>
           <div className="f1-panel">
             <div className="f1-panel-title">
               <strong>the corner</strong> <span>grey: the payoff</span>
             </div>
-            <Zoom row={row} rule={rule} formula={formula} hoverJ={hoverJ} onHover={setHoverJ} narrow={narrow} />
+            <Zoom row={row} v0={v0} rule={rule} formula={formula} onHover={setHoverJ} narrow={narrow} />
           </div>
         </div>
         <div className="f1-rule" role="status">

@@ -4,7 +4,7 @@ import { Figure } from "../../../ui/Figure";
 import { Readouts, Segmented, Slider } from "../../../ui/controls";
 import { Bars, Curve, Label, Marker, Plot, type Pt } from "../../../ui/Plot";
 import { RowPath, XTicks, YTicks } from "./parts";
-import { DIAL, FORMULA_ROW, GRID, ROD_F, STEP_DAYS, TRUTH, dayLabel, getDial, n0, n2, rupees, useLazy, useNarrow, type DialRun, type GridName } from "./f1";
+import { DIAL, FORMULA_ROW, GRID, ROD_F, STEP_DAYS, TRUTH, dayLabel, getDial, n0, n2, neg, rupees, useLazy, useNarrow, type DialRun, type GridName } from "./f1";
 
 /**
  * Figure 1 — too big a step. The explicit scheme on the same chain: dial the time step over the key's twelve stops (0.1 → 1 day),
@@ -38,15 +38,15 @@ function Row({ run, narrow }: { run: DialRun; narrow: boolean }) {
   return (
     <div className="f1-step-stage">
       <Plot xDomain={X} yDomain={Y} width={narrow ? 400 : 560} height={narrow ? 270 : 320} margin={{ top: 8, right: 10, bottom: 8, left: 10 }} xTicks={0} yTicks={0} grid={false} axisX={X[0]} axisY={Y[0]} ariaLabel={`the explicit scheme's final row over the index at a step of ${dayLabel(run.stepDays)} on ${run.M} grid points${blown ? ": a saw-tooth" : ": the call's curve"}`}>
-        <YTicks at={ticks} fmt={n0} />
-        <XTicks at={[18000, 20000, 22000, 24000, 26000, 28000]} fmt={n0} />
+        <YTicks at={ticks} fmt={(v) => neg(n0(v))} />
+        <XTicks at={[20000, 22000, 24000, 26000]} fmt={n0} label="index" />
         {Y[0] < -100 && <Curve pts={[[X[0], 0], [X[1], 0]]} role="ghost" width={1} smooth={false} />}
         <Curve pts={formulaPts} role="truth" width={1.6} dash="6 4" smooth={false} />
         <RowPath xs={run.sol.Fg} ys={run.sol.V} role={blown ? "error" : "approx"} width={blown ? 1.4 : 2.2} />
         {!blown && <Marker at={[GRID.F, run.sol.value]} role="ink" r={4.5} />}
         {!blown && <Label at={[GRID.F, run.sol.value]} text={`${n0(GRID.F)}: ${n2(run.sol.value)}`} role="ink" dx={-8} dy={-8} anchor="end" />}
         <Label at={[X[0], Y[1]]} text={`${run.M} points (δF = ${n0(run.sol.dF)}), step ${dayLabel(run.stepDays)}, ${run.N} steps`} role="ink" dx={4} dy={12} />
-        <Label at={[X[1], FORMULA_ROW[ROD_F.length - 1]]} text="dashed: the formula" role="truth" dx={-6} dy={16} anchor="end" />
+        <Label at={[24000, FORMULA_ROW[60]]} text="dashed: the formula" role="truth" dx={-10} dy={-10} anchor="end" />
       </Plot>
       {off && (
         <div className="f1-banner" role="status">
@@ -62,7 +62,7 @@ function Weights({ run, narrow }: { run: DialRun; narrow: boolean }) {
   const w = run.weights;
   const vals = [w.down, w.stay, w.up];
   const names = ["down", "stay", "up"];
-  const Y: [number, number] = [Math.min(-0.6, w.stay * 1.25), Math.max(1.25, w.down * 1.25)];
+  const Y: [number, number] = [Math.min(-0.6, w.stay * 1.3), Math.max(1.3, w.down * 1.6)];
   return (
     <Plot xDomain={[-0.6, 2.6]} yDomain={Y} width={narrow ? 400 : 300} height={narrow ? 220 : 320} margin={{ top: 8, right: 10, bottom: 8, left: 10 }} xTicks={0} yTicks={0} grid={false} axisX={-0.6} axisY={0} ariaLabel={`the explicit scheme's three weights at the top node: down ${w.down.toFixed(2)}, stay ${w.stay.toFixed(2)}, up ${w.up.toFixed(2)}`}>
       <YTicks at={[1].filter((t) => t < Y[1])} fmt={(v) => String(v)} />
@@ -75,7 +75,6 @@ function Weights({ run, narrow }: { run: DialRun; narrow: boolean }) {
         <Label key={nm} at={[i, 0]} text={nm} role="ink" dx={0} dy={vals[i] < 0 ? -6 : 14} anchor="middle" />
       ))}
       <Label at={[-0.6, Y[1]]} text={`weights at the top node, ${n0(GRID.Fhi)}`} role="ink" dx={4} dy={12} />
-      <Label at={[2.6, Y[0]]} text={w.stay >= 0 ? "all three positive: stable" : "the middle one is negative"} role={w.stay >= 0 ? "ink" : "error"} dx={-4} dy={-6} anchor="end" />
     </Plot>
   );
 }
@@ -119,9 +118,9 @@ export function F1Step() {
           steps (key). At 0.1 day it reads {n2(row("grid100", 0.1).price)}; at 0.25 day still {n2(row("grid100", 0.25).price)} at the node, and the largest value on the grid is still the boundary's{" "}
           {n0(row("grid100", 0.25).max_abs)} — past the limit, but {row("grid100", 0.25).N} steps are too few for the error to grow. At 0.3 day: {n2(row("grid100", 0.3).price)}, with {n0(row("grid100", 0.3).max_abs)} on the grid. At
           0.4 day: {rupees(row("grid100", 0.4).price)}. At 1 day: {rupees(row("grid100", 1).price)} for a ₹{Math.round(TRUTH)} option (key). The three weights are a_jδt, 1 − 2a_jδt − rδt, a_jδt — Hull's trinomial
-          reading — and the middle one is {DIAL.grid100.weights_at[2].stay.toFixed(2)} at 0.25 day, {DIAL.grid100.weights_at[4].stay.toFixed(2)} at 1 day (key). On 50 points (δF = 200) the limit is four
+          reading — and the middle one is {neg(DIAL.grid100.weights_at[2].stay.toFixed(2))} at 0.25 day, {neg(DIAL.grid100.weights_at[4].stay.toFixed(2))} at 1 day (key). On 50 points (δF = 200) the limit is four
           times longer, {DIAL.grid50.limit_days.toFixed(3)} days: the 1-day step is just past it, reads {n2(row("grid50", 1).price)} after 11 steps, and its middle weight is already{" "}
-          {DIAL.grid50.weights_at[4].stay.toFixed(2)}.
+          {neg(DIAL.grid50.weights_at[4].stay.toFixed(2))}.
         </>
       }
     >
@@ -135,7 +134,7 @@ export function F1Step() {
           </div>
           <div className="f1-panel">
             <div className="f1-panel-title">
-              <strong>the three weights</strong> <span>stable while the middle weight is positive</span>
+              <strong>the three weights</strong> <span>stable while the middle weight is positive{shown ? (shown.weights.stay >= 0 ? " — all three are" : " — here it is not") : ""}</span>
             </div>
             {shown ? <Weights run={shown} narrow={narrow} /> : <div className="f1-wait">…</div>}
           </div>

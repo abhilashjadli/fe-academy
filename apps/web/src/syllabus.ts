@@ -74,7 +74,7 @@ export const SYLLABUS: Track[] = [
     id: "F",
     title: "Numerical methods",
     chapters: [
-      { id: "F1", title: "Finite-difference PDE solvers" },
+      { id: "F1", title: "Finite-difference PDE solvers", built: true },
       { id: "F2", title: "Longstaff-Schwartz, calibration, AD" },
     ],
   },

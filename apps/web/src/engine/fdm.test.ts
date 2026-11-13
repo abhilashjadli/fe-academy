@@ -142,3 +142,14 @@ describe("F1 — Wilmott Tables 77.1 and 77.2", () => {
     key.wilmott.book_put.forEach((v, i) => expect(pu.V[6 + i]).toBeCloseTo(v, 3));
   });
 });
+
+describe('the two admitted mistakes (key.mistakes)', () => {
+  it('a wide 0–45,200 grid starves the eleven-day call by about 18 rupees', () => {
+    expect(key.mistakes.wide_grid.error).toBeLessThan(-15);
+    expect(key.mistakes.wide_grid.error).toBeGreaterThan(-25);
+  });
+  it('the undiscounted deep-in boundary breaks parity by about 55 points at the edge', () => {
+    expect(key.mistakes.wrong_boundary.max_abs).toBeGreaterThan(50);
+    expect(key.mistakes.wrong_boundary.at_F).toBe(28000);
+  });
+});

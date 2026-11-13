@@ -1,0 +1,208 @@
+/* Chapter F1 — figure-local styles. House tokens only.
+   Roles: the grid's values and the rod's heat — blue (truth); the explicit scheme's row, the neighbours and the pull — amber (approx);
+   the blown-up row, a negative weight, a negative cell — red (error); the formula — blue dashed. */
+
+.plot .label.f1-ticklabel {
+  font-size: 10.5px;
+  fill: var(--ink-3);
+}
+.f1-tick {
+  stroke: var(--rule-soft);
+  stroke-width: 1;
+}
+.f1-panel {
+  min-width: 0;
+}
+.f1-panel > svg.plot {
+  width: 100%;
+  display: block;
+}
+.f1-panel-title {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  align-items: baseline;
+  padding: 0 2px 4px;
+}
+.f1-panel-title strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.f1-wait {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-3);
+  padding: var(--space-6) var(--space-3);
+  text-align: center;
+}
+.f1-good {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.f1-bad {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.f1-up {
+  color: var(--approx-text);
+}
+.f1-down {
+  color: var(--error-text);
+}
+/* the one-line status under a picture: the rule at a dot, the value of a cell */
+.f1-rule {
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  color: var(--ink-2);
+  border-top: 1px solid var(--rule-soft);
+  padding: var(--space-2) 2px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  align-items: baseline;
+  line-height: 1.45;
+}
+.f1-rule strong {
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.f1-rule b {
+  font-weight: 600;
+}
+
+/* ---- Figure 0: the rod ---- */
+.f1-rod {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.f1-rod .bet {
+  padding-left: var(--space-1);
+  padding-right: var(--space-1);
+}
+.f1-rod-two {
+  display: grid;
+  grid-template-columns: minmax(0, 560px) minmax(0, 320px);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .f1-rod-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Figure 1: the step ---- */
+.f1-step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.f1-step-two {
+  display: grid;
+  grid-template-columns: minmax(0, 560px) minmax(0, 300px);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .f1-step-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.f1-step-stage {
+  position: relative;
+}
+.f1-step-stage > svg.plot {
+  width: 100%;
+  display: block;
+}
+.f1-banner {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  max-width: 90%;
+  background: var(--surface-raised);
+  border: 1.5px solid var(--error);
+  color: var(--error-text);
+  border-radius: var(--radius);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* ---- Figure 2: the schemes ---- */
+.f1-schemes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+.f1-schemes-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--space-3);
+}
+@media (max-width: 760px) {
+  .f1-schemes-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Figure 3: Hull's grid ---- */
+.f1-american {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.f1-american-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 260px);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .f1-american-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.f1-grid {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-ui);
+  user-select: none;
+  touch-action: manipulation;
+}
+.f1-grid-head {
+  font-size: 10px;
+  fill: var(--ink-3);
+}
+.f1-cell {
+  font-size: 9.5px;
+  fill: var(--ink-2);
+  pointer-events: none;
+}
+.f1-cell-light {
+  fill: #ffffff;
+}
+.f1-cell-neg {
+  fill: var(--error-text);
+  font-weight: 600;
+}
+.f1-inset .f1-grid {
+  max-width: 260px;
+}

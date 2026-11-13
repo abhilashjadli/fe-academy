@@ -250,7 +250,43 @@ def wilmott(call, vol=0.2, r=0.05, E=100.0, Tt=1.0, NAS=20):
 wil = dict(call=wilmott(True), put=wilmott(False),
            book_call=[0.066, 0.430, 1.754, 4.899, 10.255, 17.523, 26.089, 35.402, 45.095], book_put=[35.182, 25.546, 16.871, 10.015, 5.372, 2.639, 1.205, 0.518, 0.211])
 
-key = dict(chain=dict(F=F0, K=K, r=R, T=T, sigma=SIG, Flo=FLO, Fhi=FHI, truth=TRUE), rod=rod, dial=dial, schemes=schemes, err_dF=err_dF, err_dt=err_dt, slopes=slopes,
+# the two mistakes the chapter admits: a wide grid, and the wrong deep-in boundary
+def wide_grid_error(M=100, N=44):
+    global FLO, FHI
+    lo, hi = FLO, FHI
+    FLO, FHI = 0.0, 45200.0
+    v, _, _, _ = solve_forward(M, N, "cn", rannacher=1)
+    FLO, FHI = lo, hi
+    return v - TRUE
+
+
+def wrong_boundary_parity(M=400, N=44):
+    dF = (FHI - FLO) / M
+    Fg = FLO + np.arange(M + 1) * dF
+    out = {}
+    for call in (True, False):
+        V = np.maximum(Fg - K, 0.0) if call else np.maximum(K - Fg, 0.0)
+        a = 0.5 * SIG * SIG * Fg * Fg / dF / dF
+        lo, di, up = a, -(2 * a + R), a
+        dt = T / N
+        tau = 0.0
+        for _ in range(N):
+            tau += dt
+            sub = np.concatenate([[0.0], -0.5 * dt * lo[1:M], [0.0]])
+            dia = np.concatenate([[1.0], 1 - 0.5 * dt * di[1:M], [1.0]])
+            sup = np.concatenate([[0.0], -0.5 * dt * up[1:M], [0.0]])
+            rhs = V.copy()
+            rhs[1:M] = V[1:M] + 0.5 * dt * (lo[1:M] * V[0:M - 1] + di[1:M] * V[1:M] + up[1:M] * V[2:M + 1])
+            rhs[0], rhs[M] = (0.0, FHI - K * math.exp(-R * tau)) if call else (K * math.exp(-R * tau) - FLO, 0.0)  # the WRONG boundary
+            V = thomas(sub, dia, sup, rhs)
+        out["call" if call else "put"] = V
+    dev = np.abs((out["call"] - out["put"]) - math.exp(-R * T) * (Fg - K))
+    return dict(max_abs=float(dev.max()), at_F=float(Fg[int(np.argmax(dev))]))
+
+
+mistakes = dict(wide_grid=dict(Flo=0.0, Fhi=45200.0, M=100, N=44, error=wide_grid_error()), wrong_boundary=wrong_boundary_parity())
+
+key = dict(mistakes=mistakes, chain=dict(F=F0, K=K, r=R, T=T, sigma=SIG, Flo=FLO, Fhi=FHI, truth=TRUE), rod=rod, dial=dial, schemes=schemes, err_dF=err_dF, err_dt=err_dt, slopes=slopes,
            parity=parity, hull=hull, wilmott=wil,
            wide_grid_note=dict(sd_points=float(F0 * SIG * math.sqrt(T)), nodes_per_sd_wide=float(F0 * SIG * math.sqrt(T) / (45200 / 100)), nodes_per_sd_here=float(F0 * SIG * math.sqrt(T) / 100)))
 with open(os.path.join(web, "engine", "__fixtures__", "key-F1.json"), "w") as f:
