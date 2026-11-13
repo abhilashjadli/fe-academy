@@ -1,0 +1,242 @@
+/* Chapter F2 — figure-local styles. House tokens only.
+   Roles: the truth we check against (the grid, the fit, the tape's exact derivative) — blue (truth); the thing the reader dials
+   (the LSM run, the smile at the dial, the in-the-money paths, the forward bump) — amber (approx); a path that exercises, the
+   fresh-seed bump, a bad gap — red (error); the key's own runs and the market — grey / ink. */
+
+.plot .label.f2-ticklabel {
+  font-size: 10.5px;
+  fill: var(--ink-3);
+}
+.f2-tick {
+  stroke: var(--rule-soft);
+  stroke-width: 1;
+}
+.f2-panel {
+  min-width: 0;
+}
+.f2-panel > svg.plot {
+  width: 100%;
+  display: block;
+}
+.f2-panel-title {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  color: var(--ink-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 8px;
+  align-items: baseline;
+  padding: 0 2px 4px;
+}
+.f2-panel-title strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.f2-wait {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-3);
+  padding: var(--space-6) var(--space-3);
+  text-align: center;
+}
+.f2-good {
+  color: var(--truth-text);
+  font-weight: 600;
+}
+.f2-bad {
+  color: var(--error-text);
+  font-weight: 600;
+}
+/* the one-line status under a picture */
+.f2-rule {
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  color: var(--ink-2);
+  border-top: 1px solid var(--rule-soft);
+  padding: var(--space-2) 2px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  align-items: baseline;
+  line-height: 1.45;
+}
+.f2-rule strong {
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.f2-rule b {
+  font-weight: 600;
+}
+/* small tables: Hull's cash flows, the Monte Carlo deltas */
+.f2-table {
+  border-collapse: collapse;
+  font-family: var(--font-ui);
+  font-size: 0.84rem;
+  font-variant-numeric: tabular-nums;
+  width: 100%;
+  margin: 2px 0 0;
+}
+.f2-table th,
+.f2-table td {
+  text-align: right;
+  padding: 4px 8px 4px 0;
+  border-bottom: 1px solid var(--rule-soft);
+  vertical-align: top;
+}
+.f2-table th:first-child,
+.f2-table td:first-child {
+  text-align: left;
+}
+.f2-table th {
+  font-weight: 600;
+  color: var(--ink-3);
+  font-size: 0.76rem;
+}
+.f2-cash {
+  color: var(--error-text);
+  font-weight: 600;
+}
+.f2-dim {
+  color: var(--ink-3);
+}
+.f2-total td {
+  text-align: left;
+  color: var(--ink-2);
+  border-bottom: 0;
+  padding-top: 8px;
+}
+.f2-total b {
+  color: var(--ink);
+  font-size: 1.05em;
+}
+.f2-bad-row td {
+  color: var(--error-text);
+}
+
+/* ---- Figure 0: the eight paths ---- */
+.f2-eight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.f2-eight .bet {
+  padding-left: var(--space-1);
+  padding-right: var(--space-1);
+}
+.f2-eight-two {
+  display: grid;
+  grid-template-columns: minmax(0, 330px) minmax(0, 310px);
+  gap: var(--space-3) var(--space-3);
+  align-items: start;
+  padding: var(--space-2) var(--space-2) 0 0;
+}
+@media (max-width: 760px) {
+  .f2-eight-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Figure 1: the scale ---- */
+.f2-scale {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.f2-scale-two {
+  display: grid;
+  grid-template-columns: minmax(0, 480px) minmax(0, 380px);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .f2-scale-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- Figure 2: the valley ---- */
+.f2-valley {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-2);
+}
+.f2-valley-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 420px);
+  gap: var(--space-3) var(--space-4);
+  align-items: start;
+}
+@media (max-width: 760px) {
+  .f2-valley-two {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.f2-heat {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-ui);
+  user-select: none;
+  touch-action: manipulation;
+}
+.f2-heat-head {
+  font-size: 10px;
+  fill: var(--ink-3);
+}
+
+/* ---- Figure 3: the tape ---- */
+.f2-tape-fig {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-2);
+}
+.f2-tape-panel {
+  padding: var(--space-2) var(--space-2) 0 0;
+}
+.f2-tape {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--font-ui);
+}
+.f2-node-name {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+.f2-node-val {
+  font-size: 11.5px;
+  fill: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.f2-node-d {
+  font-size: 11.5px;
+  font-weight: 600;
+  fill: var(--truth-text);
+  font-variant-numeric: tabular-nums;
+}
+.f2-tape-key {
+  font-size: 10px;
+  fill: var(--ink-3);
+}
+.f2-tape-left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.f2-tape-left .f2-panel > svg.plot {
+  max-width: 520px;
+}
+.f2-tape-mc {
+  border-top: 1px solid var(--rule-soft);
+  padding-top: var(--space-3);
+  max-width: 560px;
+}
+.f2-mc td:first-child {
+  white-space: normal;
+}

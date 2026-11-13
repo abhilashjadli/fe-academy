@@ -83,3 +83,9 @@ One line per decision, newest first. Product decisions in the charter are not re
 - Storyboard F1's "±₹2.4 million at 0.25 day" was wrong (the explosion starts past 0.3 day); corrected.
 - CN's dt-order on the kinked payoff is 1.6 with Rannacher, not 2 — page says so.
 - F2 (LSM / SABR calibration / AD) research, storyboard, engine, key done under the 2026-11-12 blanket approval; figures next.
+
+## 2026-11-13 — F2 built
+- F2 (Longstaff–Schwartz, calibration, AD) built and installed: Hull's eight paths step-through with bet; LSM vs F1's grid (paths dial, basis segmented); SABR (ρ, ν) valley heat-map with two dials; the dual-number tape with a seed segmented and a bump dial, plus the three MC deltas. Technique reasons in `research/storyboards/F2.md`.
+- Figure-level test added (`figures/f2.test.ts`): the live SABR surface equals the key cell for cell; valley cells reproduce; tape and seeded runs equal the key. 332 tests.
+- Prose correction: the best central bump is a millionth (key), not a hundred-thousandth.
+- Project docs 25–28 written (F1/F2 research + storyboards).
