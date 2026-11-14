@@ -96,3 +96,9 @@ One line per decision, newest first. Product decisions in the charter are not re
 - Engine `learning.ts` (Cholesky ridge, polyFit, crossValidate, EWMA benchmark), key `key_G1.py`, 11 tests. Figures delegated; prose drafted.
 - Honest finding worth keeping: on this record the hand-picked 4-lag OLS (0.3364) beats ridge at CV's λ (0.3446) and at the test-best λ (0.3384); the page says "within half a point", not "as good".
 - 2026-11-14: **G1 built** — four figures by the figure agent, prose mine (one rounding tightened: "nearly thirty per cent worse", key 28.8 %). 343 tests. Figure 2 kept to one control (no 250-day segmented). Project docs 29–30.
+
+## 2026-11-14 — G2 started (sponsor: "approved", 22:01, to the single-series route)
+- Data: the NIFTY record alone. The sector-index route is dropped from the page rather than stood in for; if the five NSE sector files arrive, a fifth figure is added.
+- Research `research/r1/G2.md`, storyboard `research/storyboards/G2.md` (Project docs 31–32). Technique: k-means step-through with a bet (two piles: 36 days, 13 Mar–8 May 2020; units toggle turns three piles into up / down / covid) → two-curve explorable (elbow vs silhouette; seeds 1–3 agree at every k) → PCA loadings with a components dial (level 27.9 %, slope 7.3 %, curvature 4.8 % on 20-day move-size windows — E3's shapes again) → autoencoder training step-through (linear reaches the PCA-2 floor 0.3697; tanh only 0.394).
+- Engine `unsupervised.ts` (Lloyd with mulberry32 starts, silhouette, windowPca via symEigen, full-batch autoencoder), key `key_G2.py` (RNG ported bit for bit; linear run agrees to 1e-8, tanh to 1e-6), 10 tests. Figures delegated; prose drafted.
+- Correction during research: Tsay Example 9.3's first component is 49 % (λ₁ 2.456 of 5), not the 61 % first written from memory.
