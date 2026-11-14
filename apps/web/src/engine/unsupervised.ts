@@ -55,7 +55,8 @@ export interface KmResult {
   trace: KmRound[];
 }
 
-function assign(Q: Pt[], C: Pt[]): { labels: Int32Array; spread: number; sizes: number[] } {
+/** One Lloyd assignment: every point to its nearest centre; the pile sizes and the within-pile spread. Exported for the step-through's colouring. */
+export function assign(Q: Pt[], C: Pt[]): { labels: Int32Array; spread: number; sizes: number[] } {
   const labels = new Int32Array(Q.length);
   const sizes = new Array<number>(C.length).fill(0);
   let spread = 0;
